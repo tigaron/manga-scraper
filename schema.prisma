@@ -1,0 +1,177 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "go run github.com/steebchen/prisma-client-go"
+    output = "./internal/database/prisma"
+}
+
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+model Provider {
+    id       String  @id @default(uuid())
+    slug     String  @unique
+    name     String
+    scheme   String
+    host     String  @db.Text
+    listPath String  @db.Text
+    isActive Boolean @default(false)
+
+    series   Series[]
+    chapters Chapter[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Series {
+    id         String @id @default(uuid())
+    slug       String
+    title      String @db.Text
+    sourcePath String @db.Text
+
+    thumbnailUrl String? @db.Text
+    synopsis     String? @db.Text
+    genres       Json?
+
+    providerSlug String
+    provider     Provider @relation(fields: [providerSlug], references: [slug], onDelete: Cascade)
+
+    chapters Chapter[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([providerSlug, slug], name: "seriesUnique")
+    @@index([providerSlug], name: "providerIndex")
+}
+
+model Chapter {
+    id         String @id @default(uuid())
+    slug       String
+    number     Float
+    shortTitle String @db.Text
+    sourceHref String @db.Text
+
+    fullTitle  String? @db.Text
+    sourcePath String? @db.Text
+    nextSlug   String? @db.Text
+    nextPath   String? @db.Text
+    prevSlug   String? @db.Text
+    prevPath   String? @db.Text
+    contentPaths Json?
+
+    providerSlug String
+    provider     Provider @relation(fields: [providerSlug], references: [slug], onDelete: Cascade)
+    seriesSlug   String
+    series       Series   @relation(fields: [providerSlug, seriesSlug], references: [providerSlug, slug], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([providerSlug, seriesSlug, slug], name: "chapterUnique")
+    @@index([providerSlug], name: "providerIndex")
+    @@index([providerSlug, seriesSlug], name: "seriesIndex")
+}
+
+enum ScrapeRequestType {
+    SERIES_LIST
+    SERIES_DETAIL
+    CHAPTER_LIST
+    CHAPTER_DETAIL
+}
+
+model ScrapeRequest {
+    id          String            @id @default(uuid())
+    type        ScrapeRequestType
+    baseUrl     String            @db.Text
+    requestPath String            @db.Text
+    provider    String            @db.Text
+    series      String?           @db.Text
+    chapter     String?           @db.Text
+
+    status    String?
+    retries   Int?     @default(0)
+    totalTime Float?
+    error     Boolean? @default(false)
+    message   String?  @db.Text
+
+    seriesListData    SeriesListData[]
+    seriesDetailData  SeriesDetailData[]
+    chapterListData   ChapterListData[]
+    ChapterDetailData ChapterDetailData[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([type], name: "typeIndex")
+}
+
+model SeriesListData {
+    id         String @id @default(uuid())
+    title      String @db.Text
+    slug       String @db.Text
+    sourcePath String @db.Text
+
+    requestId String
+    request   ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([requestId], name: "requestIndex")
+}
+
+model SeriesDetailData {
+    id           String @id @default(uuid())
+    thumbnailUrl String @db.Text
+    synopsis     String @db.Text
+    genres       Json
+
+    requestId String
+    request   ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([requestId], name: "requestIndex")
+}
+
+model ChapterListData {
+    id         String @id @default(uuid())
+    shortTitle String @db.Text
+    slug       String @db.Text
+    number     Float
+    href       String @db.Text
+
+    requestId String
+    request   ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([requestId], name: "requestIndex")
+}
+
+model ChapterDetailData {
+    id          String  @id @default(uuid())
+    fullTitle   String  @db.Text
+    sourcePath  String  @db.Text
+    nextSlug    String? @db.Text
+    nextPath    String? @db.Text
+    prevSlug    String? @db.Text
+    prevPath    String? @db.Text
+    contentPaths Json
+
+    requestId String
+    request   ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([requestId], name: "requestIndex")
+}
