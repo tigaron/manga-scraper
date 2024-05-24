@@ -80,19 +80,19 @@ func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
 	providers.GET("/:provider_slug", s.v1.GetProvider)
 	providers.PUT("/:provider_slug", s.v1.PutProvider)
 
-	series := v1Api.Group("/series")
-	series.GET("/:provider_slug", s.v1.GetSeriesListPaginated)
-	series.GET("/:provider_slug/all", s.v1.GetSeriesListAll)
-	series.GET("/:provider_slug/:series_slug", s.v1.GetSeries)
-
 	scrapeRequests := v1Api.Group("/scrape-requests")
 	scrapeRequests.POST("/series/list", s.v1.PostScrapeSeriesList)
 	scrapeRequests.PUT("/series/detail", s.v1.PutScrapeSeriesDetail)
 	scrapeRequests.POST("/chapters/list", s.v1.PostScrapeChapterList)
 	scrapeRequests.PUT("/chapters/detail", s.v1.PutScrapeChapterDetail)
 
-	// chapters := v1Api.Group("/chapters")
-	// chapters.GET("/:provider_slug/:series_slug", s.v1.GetChapterListPaginated)
-	// chapters.GET("/:provider_slug/:series_slug/all", s.v1.GetChapterListAll)
-	// chapters.GET("/:provider_slug/:series_slug/:chapter_slug", s.v1.GetChapter)
+	series := v1Api.Group("/series")
+	series.GET("/:provider_slug", s.v1.GetSeriesListPaginated)
+	series.GET("/:provider_slug/all", s.v1.GetSeriesListAll)
+	series.GET("/:provider_slug/:series_slug", s.v1.GetSeries)
+
+	chapters := v1Api.Group("/chapters")
+	chapters.GET("/:provider_slug/:series_slug", s.v1.GetChapterListPaginated)
+	chapters.GET("/:provider_slug/:series_slug/all", s.v1.GetChapterListAll)
+	chapters.GET("/:provider_slug/:series_slug/:chapter_slug", s.v1.GetChapter)
 }

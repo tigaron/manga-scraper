@@ -39,7 +39,7 @@ func (c *RedisClient) SetChapterListV1(ctx context.Context, provider string, ser
 	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:%d:%d", provider, series, page, limit), b.Bytes(), 24*time.Hour).Err()
 }
 
-func (c *RedisClient) GetAllChapterListV1(ctx context.Context, provider string, series string) ([]v1Response.ChapterData, error) {
+func (c *RedisClient) GetChapterListAllV1(ctx context.Context, provider string, series string) ([]v1Response.ChapterData, error) {
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:all", provider, series))
 
 	cmdb, err := cmd.Bytes()
@@ -58,7 +58,7 @@ func (c *RedisClient) GetAllChapterListV1(ctx context.Context, provider string, 
 	return res, nil
 }
 
-func (c *RedisClient) SetAllChapterListV1(ctx context.Context, provider string, series string, ch []v1Response.ChapterData) error {
+func (c *RedisClient) SetChapterListAllV1(ctx context.Context, provider string, series string, ch []v1Response.ChapterData) error {
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(ch); err != nil {

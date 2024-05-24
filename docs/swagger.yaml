@@ -121,6 +121,130 @@ info:
   title: Manga Scraper API
   version: "1.0"
 paths:
+  /api/v1/chapters/{provider_slug}/{series_slug}:
+    get:
+      description: Get paginated chapter list
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      - description: Page
+        example: "10"
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: Size
+        example: "100"
+        in: query
+        name: size
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get paginated chapter list
+      tags:
+      - chapters
+  /api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}:
+    get:
+      description: Get chapter by slug
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      - description: Chapter slug
+        example: reincarnator-chapter-0
+        in: path
+        name: chapter_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get chapter by slug
+      tags:
+      - chapters
+  /api/v1/chapters/{provider_slug}/{series_slug}/all:
+    get:
+      description: Get all chapter list
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get all chapter list
+      tags:
+      - chapters
   /api/v1/providers:
     get:
       description: Get provider list
@@ -405,6 +529,10 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/v1Response.Response'
         "404":

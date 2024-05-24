@@ -13,21 +13,22 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//	@Summary		Get paginated series list
-//	@Description	Get paginated series list
-//	@Tags			series
+//	@Summary		Get paginated chapter list
+//	@Description	Get paginated chapter list
+//	@Tags			chapters
 //	@Produce		json
 //	@Param			provider_slug	path		string	true	"Provider slug"	example(asura)
+//	@Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
 //	@Param			page			query		string	true	"Page"			example(10)
 //	@Param			size			query		string	true	"Size"			example(100)
 //	@Success		200				{object}	v1Response.Response
 //	@Failure		400				{object}	v1Response.Response
 //	@Failure		404				{object}	v1Response.Response
 //	@Failure		500				{object}	v1Response.Response
-//	@Router			/api/v1/series/{provider_slug} [get]
-func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
-	span := sentry.StartSpan(c.Request().Context(), "v1.GetSeriesListPaginated")
-	span.Name = "v1.GetSeriesListPaginated"
+//	@Router			/api/v1/chapters/{provider_slug}/{series_slug} [get]
+func (h *Handler) GetChapterListPaginated(c echo.Context) error {
+	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapterListPaginated")
+	span.Name = "v1.GetChapterListPaginated"
 	defer span.Finish()
 
 	var req v1Binding.PaginatedRequest
@@ -52,8 +53,9 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 	}
 
 	providerSlug := c.Param("provider_slug")
+	seriesSlug := c.Param("series_slug")
 
-	cache, err := h.redis.GetSeriesListV1(c.Request().Context(), providerSlug, req.Page, req.Size)
+	cache, err := h.redis.GetChapterListV1(c.Request().Context(), providerSlug, seriesSlug, req.Page, req.Size)
 	if err == nil {
 		span.Status = sentry.SpanStatusOK
 		return c.JSON(http.StatusOK, v1Response.Response{
@@ -79,16 +81,32 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 		})
 	}
 
-	series, err := h.prisma.FindSeriesManyPaginatedV1(c.Request().Context(), providerSlug, req)
-	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindSeriesManyPaginatedV1")
+	series, err := h.prisma.FindSeriesUniqueV1(c.Request().Context(), providerSlug, seriesSlug)
+	if errors.Is(err, db.ErrNotFound) {
+		span.Status = sentry.SpanStatusNotFound
+		return c.JSON(http.StatusNotFound, v1Response.Response{
+			Error:   true,
+			Message: "Not found",
+			Detail:  fmt.Sprintf("Series with slug '%s' not found", seriesSlug),
+		})
+	} else if err != nil {
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindSeriesUniqueV1")
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
 		})
 	}
 
-	if len(series) == 0 {
+	chapterList, err := h.prisma.FindChaptersManyPaginatedV1(c.Request().Context(), providerSlug, seriesSlug, req)
+	if err != nil {
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChaptersManyPaginatedV1")
+		return c.JSON(http.StatusInternalServerError, v1Response.Response{
+			Error:   true,
+			Message: "Internal Server Error",
+		})
+	}
+
+	if len(chapterList) == 0 {
 		span.Status = sentry.SpanStatusNotFound
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
@@ -96,11 +114,11 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewSeriesListData(provider, series)
+	result := v1Response.NewChapterListData(provider, series, chapterList)
 
-	err = h.redis.SetSeriesListV1(c.Request().Context(), providerSlug, req.Page, req.Size, result)
+	err = h.redis.SetChapterListV1(c.Request().Context(), providerSlug, seriesSlug, req.Page, req.Size, result)
 	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "redis.SetSeriesListV1")
+		middlewares.SentryHandleInternalError(c, span, err, "redis.SetChapterListV1")
 	}
 
 	span.Status = sentry.SpanStatusOK

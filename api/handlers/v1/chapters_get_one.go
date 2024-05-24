@@ -12,25 +12,27 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//	@Summary		Get series by slug
-//	@Description	Get series by slug
-//	@Tags			series
+//	@Summary		Get chapter by slug
+//	@Description	Get chapter by slug
+//	@Tags			chapters
 //	@Produce		json
 //	@Param			provider_slug	path		string	true	"Provider slug"	example(asura)
 //	@Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
+//	@Param			chapter_slug	path		string	true	"Chapter slug"	example(reincarnator-chapter-0)
 //	@Success		200				{object}	v1Response.Response
 //	@Failure		404				{object}	v1Response.Response
 //	@Failure		500				{object}	v1Response.Response
-//	@Router			/api/v1/series/{provider_slug}/{series_slug} [get]
-func (h *Handler) GetSeries(c echo.Context) error {
-	span := sentry.StartSpan(c.Request().Context(), "v1.GetSeries")
-	span.Name = "v1.GetSeries"
+//	@Router			/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug} [get]
+func (h *Handler) GetChapter(c echo.Context) error {
+	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapter")
+	span.Name = "v1.GetChapter"
 	defer span.Finish()
 
 	providerSlug := c.Param("provider_slug")
 	seriesSlug := c.Param("series_slug")
+	chapterSlug := c.Param("chapter_slug")
 
-	cache, err := h.redis.GetSeriesV1(c.Request().Context(), providerSlug, seriesSlug)
+	cache, err := h.redis.GetChapterV1(c.Request().Context(), providerSlug, seriesSlug, chapterSlug)
 	if err == nil {
 		span.Status = sentry.SpanStatusOK
 		return c.JSON(http.StatusOK, v1Response.Response{
@@ -72,11 +74,20 @@ func (h *Handler) GetSeries(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewSeriesData(provider, series)
-
-	err = h.redis.SetSeriesV1(c.Request().Context(), providerSlug, seriesSlug, result)
+	chapter, err := h.prisma.FindChapterUniqueV1(c.Request().Context(), providerSlug, seriesSlug, chapterSlug)
 	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "redis.SetSeriesV1")
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChapterUniqueV1")
+		return c.JSON(http.StatusInternalServerError, v1Response.Response{
+			Error:   true,
+			Message: "Internal Server Error",
+		})
+	}
+
+	result := v1Response.NewChapterData(provider, series, chapter)
+
+	err = h.redis.SetChapterV1(c.Request().Context(), providerSlug, seriesSlug, chapterSlug, result)
+	if err != nil {
+		middlewares.SentryHandleInternalError(c, span, err, "redis.SetChapterV1")
 	}
 
 	span.Status = sentry.SpanStatusOK
