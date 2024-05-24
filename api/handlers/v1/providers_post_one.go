@@ -73,7 +73,7 @@ func (h *Handler) PostProvider(c echo.Context) error {
 		middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetProviderListV1", req)
 	}
 
-	result := v1Response.NewGetProviderData(provider)
+	result := v1Response.NewProviderData(provider)
 
 	span.Status = sentry.SpanStatusOK
 	return c.JSON(http.StatusCreated, v1Response.Response{

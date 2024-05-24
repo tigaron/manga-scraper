@@ -9,7 +9,7 @@ import (
 	v1Response "fourleaves.studio/manga-scraper/api/renderings/v1"
 )
 
-func (c *RedisClient) GetProviderListV1(ctx context.Context) ([]v1Response.GetProviderData, error) {
+func (c *RedisClient) GetProviderListV1(ctx context.Context) ([]v1Response.ProviderData, error) {
 	cmd := c.client.Get(ctx, "v1:provider_list")
 
 	cmdb, err := cmd.Bytes()
@@ -19,7 +19,7 @@ func (c *RedisClient) GetProviderListV1(ctx context.Context) ([]v1Response.GetPr
 
 	b := bytes.NewReader(cmdb)
 
-	var res []v1Response.GetProviderData
+	var res []v1Response.ProviderData
 
 	if err := gob.NewDecoder(b).Decode(&res); err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func (c *RedisClient) GetProviderListV1(ctx context.Context) ([]v1Response.GetPr
 	return res, nil
 }
 
-func (c *RedisClient) SetProviderListV1(ctx context.Context, p []v1Response.GetProviderData) error {
+func (c *RedisClient) SetProviderListV1(ctx context.Context, p []v1Response.ProviderData) error {
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(p); err != nil {

@@ -2,24 +2,24 @@ package v1Response
 
 import db "fourleaves.studio/manga-scraper/internal/database/prisma"
 
-type GetProviderData struct {
+type ProviderData struct {
 	Name    string `json:"name"`
 	Slug    string `json:"slug"`
 	BaseURL string `json:"baseURL"`
 }
 
-func NewGetProviderData(provider *db.ProviderModel) GetProviderData {
-	return GetProviderData{
+func NewProviderData(provider *db.ProviderModel) ProviderData {
+	return ProviderData{
 		Name:    provider.Name,
 		Slug:    provider.Slug,
 		BaseURL: provider.Scheme + provider.Host,
 	}
 }
 
-func NewGetProvidersListData(providers []db.ProviderModel) []GetProviderData {
-	result := make([]GetProviderData, 0, len(providers))
+func NewProvidersListData(providers []db.ProviderModel) []ProviderData {
+	result := make([]ProviderData, 0, len(providers))
 	for _, provider := range providers {
-		result = append(result, NewGetProviderData(&provider))
+		result = append(result, NewProviderData(&provider))
 	}
 
 	return result

@@ -95,7 +95,7 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewGetSeriesListData(provider, series)
+	result := v1Response.NewSeriesListData(provider, series)
 
 	err = h.redis.SetSeriesListV1(c.Request().Context(), providerSlug, req.Page, req.Size, result)
 	if err != nil {

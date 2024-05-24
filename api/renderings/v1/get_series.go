@@ -6,7 +6,7 @@ import (
 	db "fourleaves.studio/manga-scraper/internal/database/prisma"
 )
 
-type GetSeriesData struct {
+type SeriesData struct {
 	Provider  string   `json:"provider"`
 	Slug      string   `json:"slug"`
 	Title     string   `json:"title"`
@@ -16,7 +16,7 @@ type GetSeriesData struct {
 	Genres    []string `json:"genres"`
 }
 
-func NewGetSeriesData(provider *db.ProviderModel, series *db.SeriesModel) GetSeriesData {
+func NewSeriesData(provider *db.ProviderModel, series *db.SeriesModel) SeriesData {
 	thumbnailUrl, ok := series.ThumbnailURL()
 	if !ok {
 		thumbnailUrl = ""
@@ -38,7 +38,7 @@ func NewGetSeriesData(provider *db.ProviderModel, series *db.SeriesModel) GetSer
 		genres = []string{}
 	}
 
-	return GetSeriesData{
+	return SeriesData{
 		Provider:  series.ProviderSlug,
 		Slug:      series.Slug,
 		Title:     series.Title,
@@ -49,10 +49,10 @@ func NewGetSeriesData(provider *db.ProviderModel, series *db.SeriesModel) GetSer
 	}
 }
 
-func NewGetSeriesListData(provider *db.ProviderModel, seriesList []db.SeriesModel) []GetSeriesData {
-	result := make([]GetSeriesData, 0, len(seriesList))
+func NewSeriesListData(provider *db.ProviderModel, seriesList []db.SeriesModel) []SeriesData {
+	result := make([]SeriesData, 0, len(seriesList))
 	for _, series := range seriesList {
-		result = append(result, NewGetSeriesData(provider, &series))
+		result = append(result, NewSeriesData(provider, &series))
 	}
 
 	return result

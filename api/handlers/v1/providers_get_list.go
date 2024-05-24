@@ -49,7 +49,7 @@ func (h *Handler) GetProvidersList(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewGetProvidersListData(providers)
+	result := v1Response.NewProvidersListData(providers)
 
 	err = h.redis.SetProviderListV1(c.Request().Context(), result)
 	if err != nil {

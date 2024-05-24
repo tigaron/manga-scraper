@@ -72,7 +72,7 @@ func (h *Handler) GetSeries(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewGetSeriesData(provider, series)
+	result := v1Response.NewSeriesData(provider, series)
 
 	err = h.redis.SetSeriesV1(c.Request().Context(), providerSlug, seriesSlug, result)
 	if err != nil {

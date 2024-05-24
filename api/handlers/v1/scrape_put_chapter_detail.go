@@ -15,23 +15,23 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary		Create request to scrape series detail
-// @Description	Create request to scrape series detail
+// @Summary		Create request to scrape chapter detail
+// @Description	Create request to scrape chapter detail
 // @Tags			scrape-requests
 // @Accept			json
 // @Produce		json
-// @Param			body	body		v1Binding.PutScrapeSeriesDetail	true	"Request body"
+// @Param			body	body		v1Binding.PutScrapeChapterDetail	true	"Request body"
 // @Success		200		{object}	v1Response.Response
 // @Failure		400		{object}	v1Response.Response
 // @Failure		404		{object}	v1Response.Response
 // @Failure		500		{object}	v1Response.Response
-// @Router			/api/v1/scrape-requests/series/detail [put]
-func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
-	span := sentry.StartSpan(c.Request().Context(), "v1.PutScrapeSeriesDetail")
-	span.Name = "v1.PutScrapeSeriesDetail"
+// @Router			/api/v1/scrape-requests/chapters/detail [put]
+func (h *Handler) PutScrapeChapterDetail(c echo.Context) error {
+	span := sentry.StartSpan(c.Request().Context(), "v1.PutScrapeChapterDetail")
+	span.Name = "v1.PutScrapeChapterDetail"
 	defer span.Finish()
 
-	var req v1Binding.PutScrapeSeriesDetail
+	var req v1Binding.PutScrapeChapterDetail
 	err := c.Bind(&req)
 	if err != nil {
 		span.Status = sentry.SpanStatusInvalidArgument
@@ -84,9 +84,25 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 		})
 	}
 
-	receipt, err := h.prisma.CreateSeriesDetailScrapeRequestV1(c.Request().Context(), provider, series)
+	chapter, err := h.prisma.FindChapterUniqueV1(c.Request().Context(), req.Provider, req.Series, req.Chapter)
+	if errors.Is(err, db.ErrNotFound) {
+		span.Status = sentry.SpanStatusNotFound
+		return c.JSON(http.StatusNotFound, v1Response.Response{
+			Error:   true,
+			Message: "Not found",
+			Detail:  fmt.Sprintf("Chapter with slug '%s' not found", req.Chapter),
+		})
+	} else if err != nil {
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChapterUniqueV1")
+		return c.JSON(http.StatusInternalServerError, v1Response.Response{
+			Error:   true,
+			Message: "Internal Server Error",
+		})
+	}
+
+	receipt, err := h.prisma.CreateChapterDetailScrapeRequestV1(c.Request().Context(), provider, series, chapter)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateSeriesDetailScrapeRequestV1", req)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateChapterDetailScrapeRequestV1", req)
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
@@ -95,9 +111,18 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 
 	startTime := time.Now()
 
-	scrapeData, err := scraper.ScrapeSeriesDetail(req.Provider, provider.Scheme+provider.Host+series.SourcePath)
+	var reqURL string
+
+	sourcePath, ok := chapter.SourcePath()
+	if !ok {
+		reqURL = chapter.SourceHref
+	} else {
+		reqURL = provider.Scheme + provider.Host + sourcePath
+	}
+
+	scrapeData, err := scraper.ScrapeChapterDetail(req.Provider, reqURL)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "scraper.ScrapeSeriesDetail", req)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "scraper.ScrapeChapterList", req)
 		h.prisma.UpdateScrapeRequestUniqueV1(c.Request().Context(), receipt.ID, "failed", time.Since(startTime).Seconds(), err.Error())
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
@@ -114,27 +139,27 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 		})
 	}
 
-	_, err = h.prisma.CreateSeriesDetailRowV1(c.Request().Context(), receipt.ID, scrapeData)
+	_, err = h.prisma.CreateChapterDetailRowV1(c.Request().Context(), receipt.ID, scrapeData)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateSeriesDetailRowV1", req)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateChapterDetailRowV1", req)
 	}
 
-	updatedSeries, err := h.prisma.UpdateDetailSeriesRowV1(c.Request().Context(), req.Provider, series.Slug, scrapeData)
+	updatedChapter, err := h.prisma.UpdateDetailChapterRowV1(c.Request().Context(), req.Provider, req.Series, req.Chapter, scrapeData)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.UpdateDetailSeriesRowV1", req)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.UpdateDetailChapterRowV1", req)
 	}
 
-	err = h.redis.UnsetSeriesV1(c.Request().Context(), req.Provider, series.Slug)
+	err = h.redis.UnsetChapterV1(c.Request().Context(), req.Provider, req.Series, chapter.Slug)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetSeriesV1", series)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetChapterV1", req)
 	}
 
-	err = h.redis.UnsetSeriesListV1(c.Request().Context(), req.Provider)
+	err = h.redis.UnsetChapterListV1(c.Request().Context(), req.Provider, req.Series)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetSeriesListV1", req)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetChapterListV1", req)
 	}
 
-	result := v1Response.NewSeriesData(provider, updatedSeries)
+	result := v1Response.NewChapterData(provider, series, updatedChapter)
 
 	span.Status = sentry.SpanStatusOK
 	return c.JSON(http.StatusOK, v1Response.Response{

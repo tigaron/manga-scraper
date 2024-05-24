@@ -28,12 +28,12 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 	v1 := v1Handler.NewV1Handler(config, db, redis)
 	server := &RESTServer{v1: v1}
 
-	server.SetupRouter()
+	server.setupServer()
 
 	return server
 }
 
-func (s *RESTServer) SetupRouter() {
+func (s *RESTServer) setupServer() {
 	// Setup router
 	app := echo.New()
 	app.Logger.SetLevel(log.INFO)
@@ -49,21 +49,7 @@ func (s *RESTServer) SetupRouter() {
 	s.router.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	v1Api := s.router.Group("/api/v1")
-
-	providers := v1Api.Group("/providers")
-	providers.GET("", s.v1.GetProvidersList)
-	providers.POST("", s.v1.PostProvider)
-	providers.GET("/:provider_slug", s.v1.GetProvider)
-	providers.PUT("/:provider_slug", s.v1.PutProvider)
-
-	series := v1Api.Group("/series")
-	series.GET("/:provider_slug", s.v1.GetSeriesListPaginated)
-	series.GET("/:provider_slug/all", s.v1.GetSeriesListAll)
-	series.GET("/:provider_slug/:series_slug", s.v1.GetSeries)
-
-	scrapeRequests := v1Api.Group("/scrape-requests")
-	scrapeRequests.POST("/series/list", s.v1.PostScrapeSeriesList)
-	scrapeRequests.PUT("/series/detail", s.v1.PutScrapeSeriesDetail)
+	s.setupV1Router(v1Api)
 }
 
 func (s *RESTServer) StartServer(port string) {
@@ -85,4 +71,28 @@ func (s *RESTServer) StartServer(port string) {
 	if err := s.router.Shutdown(ctx); err != nil {
 		s.router.Logger.Fatal(err)
 	}
+}
+
+func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
+	providers := v1Api.Group("/providers")
+	providers.GET("", s.v1.GetProvidersList)
+	providers.POST("", s.v1.PostProvider)
+	providers.GET("/:provider_slug", s.v1.GetProvider)
+	providers.PUT("/:provider_slug", s.v1.PutProvider)
+
+	series := v1Api.Group("/series")
+	series.GET("/:provider_slug", s.v1.GetSeriesListPaginated)
+	series.GET("/:provider_slug/all", s.v1.GetSeriesListAll)
+	series.GET("/:provider_slug/:series_slug", s.v1.GetSeries)
+
+	scrapeRequests := v1Api.Group("/scrape-requests")
+	scrapeRequests.POST("/series/list", s.v1.PostScrapeSeriesList)
+	scrapeRequests.PUT("/series/detail", s.v1.PutScrapeSeriesDetail)
+	scrapeRequests.POST("/chapters/list", s.v1.PostScrapeChapterList)
+	scrapeRequests.PUT("/chapters/detail", s.v1.PutScrapeChapterDetail)
+
+	// chapters := v1Api.Group("/chapters")
+	// chapters.GET("/:provider_slug/:series_slug", s.v1.GetChapterListPaginated)
+	// chapters.GET("/:provider_slug/:series_slug/all", s.v1.GetChapterListAll)
+	// chapters.GET("/:provider_slug/:series_slug/:chapter_slug", s.v1.GetChapter)
 }

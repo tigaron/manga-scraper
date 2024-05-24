@@ -54,7 +54,7 @@ func (h *Handler) GetProvider(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewGetProviderData(provider)
+	result := v1Response.NewProviderData(provider)
 
 	err = h.redis.SetProviderV1(c.Request().Context(), providerSlug, result)
 	if err != nil {

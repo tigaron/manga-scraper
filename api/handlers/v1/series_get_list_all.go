@@ -71,7 +71,7 @@ func (h *Handler) GetSeriesListAll(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewGetSeriesListData(provider, series)
+	result := v1Response.NewSeriesListData(provider, series)
 
 	err = h.redis.SetSeriesListAllV1(c.Request().Context(), providerSlug, result)
 	if err != nil {

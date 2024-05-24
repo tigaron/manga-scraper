@@ -206,6 +206,110 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/scrape-requests/chapters/detail": {
+            "put": {
+                "description": "Create request to scrape chapter detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scrape-requests"
+                ],
+                "summary": "Create request to scrape chapter detail",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1Binding.PutScrapeChapterDetail"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/scrape-requests/chapters/list": {
+            "post": {
+                "description": "Create request to scrape chapter list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scrape-requests"
+                ],
+                "summary": "Create request to scrape chapter list",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1Binding.PostScrapeChapterList"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/scrape-requests/series/detail": {
             "put": {
                 "description": "Create request to scrape series detail",
@@ -231,8 +335,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/v1Response.Response"
                         }
@@ -499,6 +603,23 @@ const docTemplate = `{
                 }
             }
         },
+        "v1Binding.PostScrapeChapterList": {
+            "type": "object",
+            "required": [
+                "provider",
+                "series"
+            ],
+            "properties": {
+                "provider": {
+                    "type": "string",
+                    "example": "asura"
+                },
+                "series": {
+                    "type": "string",
+                    "example": "reincarnator"
+                }
+            }
+        },
         "v1Binding.PostScrapeSeriesList": {
             "type": "object",
             "required": [
@@ -540,6 +661,28 @@ const docTemplate = `{
                 "scheme": {
                     "type": "string",
                     "example": "https://"
+                }
+            }
+        },
+        "v1Binding.PutScrapeChapterDetail": {
+            "type": "object",
+            "required": [
+                "chapter",
+                "provider",
+                "series"
+            ],
+            "properties": {
+                "chapter": {
+                    "type": "string",
+                    "example": "reincarnator-chapter-27"
+                },
+                "provider": {
+                    "type": "string",
+                    "example": "asura"
+                },
+                "series": {
+                    "type": "string",
+                    "example": "reincarnator"
                 }
             }
         },

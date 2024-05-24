@@ -27,6 +27,18 @@ definitions:
     - scheme
     - slug
     type: object
+  v1Binding.PostScrapeChapterList:
+    properties:
+      provider:
+        example: asura
+        type: string
+      series:
+        example: reincarnator
+        type: string
+    required:
+    - provider
+    - series
+    type: object
   v1Binding.PostScrapeSeriesList:
     properties:
       provider:
@@ -58,6 +70,22 @@ definitions:
     - list_path
     - name
     - scheme
+    type: object
+  v1Binding.PutScrapeChapterDetail:
+    properties:
+      chapter:
+        example: reincarnator-chapter-27
+        type: string
+      provider:
+        example: asura
+        type: string
+      series:
+        example: reincarnator
+        type: string
+    required:
+    - chapter
+    - provider
+    - series
     type: object
   v1Binding.PutScrapeSeriesDetail:
     properties:
@@ -214,6 +242,74 @@ paths:
       summary: Update provider
       tags:
       - providers
+  /api/v1/scrape-requests/chapters/detail:
+    put:
+      consumes:
+      - application/json
+      description: Create request to scrape chapter detail
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1Binding.PutScrapeChapterDetail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Create request to scrape chapter detail
+      tags:
+      - scrape-requests
+  /api/v1/scrape-requests/chapters/list:
+    post:
+      consumes:
+      - application/json
+      description: Create request to scrape chapter list
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/v1Binding.PostScrapeChapterList'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Create request to scrape chapter list
+      tags:
+      - scrape-requests
   /api/v1/scrape-requests/series/detail:
     put:
       consumes:
@@ -229,8 +325,8 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
             $ref: '#/definitions/v1Response.Response'
         "400":
