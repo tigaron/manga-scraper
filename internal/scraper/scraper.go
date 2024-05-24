@@ -15,3 +15,12 @@ func ScrapeSeriesList(provider, url string) ([]v1Model.SeriesList, error) {
 		return nil, fmt.Errorf("not implemented yet")
 	}
 }
+
+func ScrapeSeriesDetail(provider, url string) (v1Model.SeriesDetail, error) {
+	switch provider {
+	case "asura":
+		return asura.ScrapeSeriesDetail(url)
+	default:
+		return v1Model.SeriesDetail{}, fmt.Errorf("not implemented yet")
+	}
+}

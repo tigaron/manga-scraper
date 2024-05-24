@@ -15,23 +15,23 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary		Create request to scrape series list
-// @Description	Create request to scrape series list
+// @Summary		Create request to scrape series detail
+// @Description	Create request to scrape series detail
 // @Tags			scrape-requests
 // @Accept			json
 // @Produce		json
-// @Param			body	body		v1Binding.PostScrapeSeriesList	true	"Request body"
+// @Param			body	body		v1Binding.PutScrapeSeriesDetail	true	"Request body"
 // @Success		201		{object}	v1Response.Response
 // @Failure		400		{object}	v1Response.Response
 // @Failure		404		{object}	v1Response.Response
 // @Failure		500		{object}	v1Response.Response
-// @Router			/api/v1/scrape-requests/series/list [post]
-func (h *Handler) PostScrapeSeriesList(c echo.Context) error {
-	span := sentry.StartSpan(c.Request().Context(), "v1.PostScrapeSeriesList")
-	span.Name = "v1.PostScrapeSeriesList"
+// @Router			/api/v1/scrape-requests/series/detail [put]
+func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
+	span := sentry.StartSpan(c.Request().Context(), "v1.PutScrapeSeriesDetail")
+	span.Name = "v1.PutScrapeSeriesDetail"
 	defer span.Finish()
 
-	var req v1Binding.PostScrapeSeriesList
+	var req v1Binding.PutScrapeSeriesDetail
 	err := c.Bind(&req)
 	if err != nil {
 		span.Status = sentry.SpanStatusInvalidArgument
@@ -68,9 +68,25 @@ func (h *Handler) PostScrapeSeriesList(c echo.Context) error {
 		})
 	}
 
-	receipt, err := h.prisma.CreateSeriesListScrapeRequestV1(c.Request().Context(), provider)
+	series, err := h.prisma.FindSeriesUniqueV1(c.Request().Context(), req.Provider, req.Series)
+	if errors.Is(err, db.ErrNotFound) {
+		span.Status = sentry.SpanStatusNotFound
+		return c.JSON(http.StatusNotFound, v1Response.Response{
+			Error:   true,
+			Message: "Not found",
+			Detail:  fmt.Sprintf("Series with slug '%s' not found", req.Series),
+		})
+	} else if err != nil {
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindSeriesUniqueV1")
+		return c.JSON(http.StatusInternalServerError, v1Response.Response{
+			Error:   true,
+			Message: "Internal Server Error",
+		})
+	}
+
+	receipt, err := h.prisma.CreateSeriesDetailScrapeRequestV1(c.Request().Context(), provider, series)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateScrapeRequestV1", req)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateSeriesDetailScrapeRequestV1", req)
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
@@ -79,9 +95,9 @@ func (h *Handler) PostScrapeSeriesList(c echo.Context) error {
 
 	startTime := time.Now()
 
-	scrapeData, err := scraper.ScrapeSeriesList(req.Provider, provider.Scheme+provider.Host+provider.ListPath)
+	scrapeData, err := scraper.ScrapeSeriesDetail(req.Provider, provider.Scheme+provider.Host+series.SourcePath)
 	if err != nil {
-		middlewares.SentryHandleInternalErrorWithData(c, span, err, "scraper.ScrapeSeriesList", req)
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "scraper.ScrapeSeriesDetail", req)
 		h.prisma.UpdateScrapeRequestUniqueV1(c.Request().Context(), receipt.ID, "failed", time.Since(startTime).Seconds(), err.Error())
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
@@ -98,25 +114,19 @@ func (h *Handler) PostScrapeSeriesList(c echo.Context) error {
 		})
 	}
 
-	seriesList := make([]db.SeriesModel, len(scrapeData))
+	_, err = h.prisma.CreateSeriesDetailRowV1(c.Request().Context(), receipt.ID, scrapeData)
+	if err != nil {
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateSeriesDetailRowV1", scrapeData)
+	}
 
-	for _, series := range scrapeData {
-		_, err = h.prisma.CreateSeriesListRowV1(c.Request().Context(), receipt.ID, series)
-		if err != nil {
-			middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateSeriesListRowV1", series)
-		}
+	updatedSeries, err := h.prisma.UpdateDetailSeriesRowV1(c.Request().Context(), req.Provider, series.Slug, scrapeData)
+	if err != nil {
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.UpdateDetailSeriesRowV1", scrapeData)
+	}
 
-		res, err := h.prisma.UpsertSeriesRowV1(c.Request().Context(), req.Provider, series)
-		if err != nil {
-			middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.UpsertSeriesRowV1", series)
-		}
-
-		seriesList = append(seriesList, *res)
-
-		err = h.redis.UnsetSeriesV1(c.Request().Context(), req.Provider, series.Slug)
-		if err != nil {
-			middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetSeriesV1", series)
-		}
+	err = h.redis.UnsetSeriesV1(c.Request().Context(), req.Provider, series.Slug)
+	if err != nil {
+		middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetSeriesV1", series)
 	}
 
 	err = h.redis.UnsetSeriesListV1(c.Request().Context(), req.Provider)
@@ -124,12 +134,12 @@ func (h *Handler) PostScrapeSeriesList(c echo.Context) error {
 		middlewares.SentryHandleInternalErrorWithData(c, span, err, "redis.UnsetSeriesListV1", req)
 	}
 
-	result := v1Response.NewGetSeriesListData(provider, seriesList)
+	result := v1Response.NewGetSeriesData(provider, updatedSeries)
 
 	span.Status = sentry.SpanStatusOK
-	return c.JSON(http.StatusCreated, v1Response.Response{
+	return c.JSON(http.StatusOK, v1Response.Response{
 		Error:   false,
-		Message: "Created",
+		Message: "OK",
 		Data:    result,
 	})
 }

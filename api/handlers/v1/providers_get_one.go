@@ -2,6 +2,7 @@ package v1Handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"fourleaves.studio/manga-scraper/api/middlewares"
@@ -43,6 +44,7 @@ func (h *Handler) GetProvider(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
+			Detail:  fmt.Sprintf("Provider with slug '%s' not found", providerSlug),
 		})
 	} else if err != nil {
 		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindProviderUniqueV1")

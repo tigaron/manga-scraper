@@ -6,12 +6,13 @@ import (
 	db "fourleaves.studio/manga-scraper/internal/database/prisma"
 )
 
-func (p *DBService) CreateScrapeRequestV1(ctx context.Context, provider *db.ProviderModel) (*db.ScrapeRequestModel, error) {
+func (p *DBService) CreateSeriesDetailScrapeRequestV1(ctx context.Context, provider *db.ProviderModel, series *db.SeriesModel) (*db.ScrapeRequestModel, error) {
 	receipt, err := p.DB.ScrapeRequest.CreateOne(
-		db.ScrapeRequest.Type.Set(db.ScrapeRequestTypeSeriesList),
+		db.ScrapeRequest.Type.Set(db.ScrapeRequestTypeSeriesDetail),
 		db.ScrapeRequest.BaseURL.Set(provider.Scheme+provider.Host),
-		db.ScrapeRequest.RequestPath.Set(provider.ListPath),
+		db.ScrapeRequest.RequestPath.Set(series.SourcePath),
 		db.ScrapeRequest.Provider.Set(provider.Slug),
+		db.ScrapeRequest.Series.Set(series.Slug),
 		db.ScrapeRequest.Status.Set("pending"),
 	).Exec(ctx)
 

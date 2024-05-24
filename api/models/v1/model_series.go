@@ -5,3 +5,9 @@ type SeriesList struct {
 	Slug       string
 	SourcePath string
 }
+
+type SeriesDetail struct {
+	ThumbnailURL string
+	Synopsis     string
+	Genres       []byte
+}

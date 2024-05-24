@@ -206,6 +206,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/scrape-requests/series/detail": {
+            "put": {
+                "description": "Create request to scrape series detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "scrape-requests"
+                ],
+                "summary": "Create request to scrape series detail",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1Binding.PutScrapeSeriesDetail"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/scrape-requests/series/list": {
             "post": {
                 "description": "Create request to scrape series list",
@@ -226,7 +278,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1Binding.PostScrapeSeries"
+                            "$ref": "#/definitions/v1Binding.PostScrapeSeriesList"
                         }
                     }
                 ],
@@ -447,7 +499,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1Binding.PostScrapeSeries": {
+        "v1Binding.PostScrapeSeriesList": {
             "type": "object",
             "required": [
                 "provider"
@@ -488,6 +540,23 @@ const docTemplate = `{
                 "scheme": {
                     "type": "string",
                     "example": "https://"
+                }
+            }
+        },
+        "v1Binding.PutScrapeSeriesDetail": {
+            "type": "object",
+            "required": [
+                "provider",
+                "series"
+            ],
+            "properties": {
+                "provider": {
+                    "type": "string",
+                    "example": "asura"
+                },
+                "series": {
+                    "type": "string",
+                    "example": "reincarnator"
                 }
             }
         },

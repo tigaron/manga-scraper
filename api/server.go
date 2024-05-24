@@ -63,6 +63,7 @@ func (s *RESTServer) SetupRouter() {
 
 	scrapeRequests := v1Api.Group("/scrape-requests")
 	scrapeRequests.POST("/series/list", s.v1.PostScrapeSeriesList)
+	scrapeRequests.PUT("/series/detail", s.v1.PutScrapeSeriesDetail)
 }
 
 func (s *RESTServer) StartServer(port string) {
