@@ -250,6 +250,64 @@
                 }
             }
         },
+        "/api/v1/series/{provider_slug}": {
+            "get": {
+                "description": "Get paginated series list",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "series"
+                ],
+                "summary": "Get paginated series list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "10",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "100",
+                        "description": "Size",
+                        "name": "size",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/series/{provider_slug}/all": {
             "get": {
                 "description": "Get all series list",
@@ -266,6 +324,56 @@
                         "example": "asura",
                         "description": "Provider slug",
                         "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/series/{provider_slug}/{series_slug}": {
+            "get": {
+                "description": "Get series by slug",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "series"
+                ],
+                "summary": "Get series by slug",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator",
+                        "description": "Series slug",
+                        "name": "series_slug",
                         "in": "path",
                         "required": true
                     }

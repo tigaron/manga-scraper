@@ -57,7 +57,9 @@ func (s *RESTServer) SetupRouter() {
 	providers.PUT("/:provider_slug", s.v1.PutProvider)
 
 	series := v1Api.Group("/series")
+	series.GET("/:provider_slug", s.v1.GetSeriesListPaginated)
 	series.GET("/:provider_slug/all", s.v1.GetSeriesListAll)
+	series.GET("/:provider_slug/:series_slug", s.v1.GetSeries)
 
 	scrapeRequests := v1Api.Group("/scrape-requests")
 	scrapeRequests.POST("/series/list", s.v1.PostScrapeSeriesList)

@@ -236,6 +236,80 @@ paths:
       summary: Create request to scrape series list
       tags:
       - scrape-requests
+  /api/v1/series/{provider_slug}:
+    get:
+      description: Get paginated series list
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Page
+        example: "10"
+        in: query
+        name: page
+        required: true
+        type: string
+      - description: Size
+        example: "100"
+        in: query
+        name: size
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get paginated series list
+      tags:
+      - series
+  /api/v1/series/{provider_slug}/{series_slug}:
+    get:
+      description: Get series by slug
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get series by slug
+      tags:
+      - series
   /api/v1/series/{provider_slug}/all:
     get:
       description: Get all series list
