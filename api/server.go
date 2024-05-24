@@ -28,12 +28,12 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 	v1 := v1Handler.NewV1Handler(config, db, redis)
 	server := &RESTServer{v1: v1}
 
-	server.setupServer()
+	server.setupServer(config.ENV)
 
 	return server
 }
 
-func (s *RESTServer) setupServer() {
+func (s *RESTServer) setupServer(env string) {
 	// Setup router
 	app := echo.New()
 	app.Logger.SetLevel(log.INFO)
@@ -46,7 +46,13 @@ func (s *RESTServer) setupServer() {
 
 	s.router = app
 
-	s.router.GET("/swagger/*", echoSwagger.WrapHandler)
+	s.router.GET("/healthz", func(c echo.Context) error {
+		return c.String(http.StatusOK, "OK")
+	})
+
+	if env == "development" {
+		s.router.GET("/swagger/*", echoSwagger.WrapHandler)
+	}
 
 	v1Api := s.router.Group("/api/v1")
 	s.setupV1Router(v1Api)
