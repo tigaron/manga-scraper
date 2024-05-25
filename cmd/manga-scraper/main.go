@@ -7,6 +7,7 @@ import (
 
 	"fourleaves.studio/manga-scraper/api"
 	_ "fourleaves.studio/manga-scraper/docs"
+	"fourleaves.studio/manga-scraper/internal/authenticator"
 	"fourleaves.studio/manga-scraper/internal/config"
 	db "fourleaves.studio/manga-scraper/internal/database/prisma"
 	"fourleaves.studio/manga-scraper/internal/database/redis"
@@ -79,7 +80,12 @@ func main() {
 		}
 	}()
 
-	server := api.NewRESTServer(envConfig, dbClient, redisClient)
+	auth, err := authenticator.New(envConfig)
+	if err != nil {
+		log.Fatal("[main] failed to initialize authenticator: ", err)
+	}
+
+	server := api.NewRESTServer(envConfig, dbClient, redisClient, auth)
 
 	server.StartServer(envConfig.Port)
 }
