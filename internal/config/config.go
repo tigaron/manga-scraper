@@ -5,11 +5,16 @@ import "github.com/spf13/viper"
 // Stores the configuration for the application.
 // The values are read by viper from the config file or environment variables.
 type Config struct {
-	ENV       string `mapstructure:"ENVIRONMENT"`
-	DBURL     string `mapstructure:"DATABASE_URL"`
-	SentryDSN string `mapstructure:"SENTRY_DSN"`
-	RedisURL  string `mapstructure:"REDIS_URL"`
-	Version   string `mapstructure:"VERSION"`
+	ENV               string `mapstructure:"ENVIRONMENT"`
+	Port              string `mapstructure:"HTTP_PORT"`
+	DBURL             string `mapstructure:"DATABASE_URL"`
+	SentryDSN         string `mapstructure:"SENTRY_DSN"`
+	RedisURL          string `mapstructure:"REDIS_URL"`
+	Version           string `mapstructure:"VERSION"`
+	Auth0Domain       string `mapstructure:"AUTH0_DOMAIN"`
+	Auth0ClientID     string `mapstructure:"AUTH0_CLIENT_ID"`
+	Auth0ClientSecret string `mapstructure:"AUTH0_CLIENT_SECRET"`
+	Auth0CallbackURL  string `mapstructure:"AUTH0_CALLBACK_URL"`
 }
 
 // Reads the configuration from the config file or environment variables.

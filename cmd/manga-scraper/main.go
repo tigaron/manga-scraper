@@ -81,5 +81,5 @@ func main() {
 
 	server := api.NewRESTServer(envConfig, dbClient, redisClient)
 
-	server.StartServer(":1323")
+	server.StartServer(envConfig.Port)
 }
