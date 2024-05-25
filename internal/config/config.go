@@ -8,6 +8,7 @@ type Config struct {
 	ENV               string `mapstructure:"ENVIRONMENT"`
 	Port              string `mapstructure:"HTTP_PORT"`
 	DBURL             string `mapstructure:"DATABASE_URL"`
+	RodURL            string `mapstructure:"ROD_BROWSER_URL"`
 	SentryDSN         string `mapstructure:"SENTRY_DSN"`
 	RedisURL          string `mapstructure:"REDIS_URL"`
 	Version           string `mapstructure:"VERSION"`

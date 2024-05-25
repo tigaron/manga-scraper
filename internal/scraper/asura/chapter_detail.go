@@ -12,13 +12,21 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeChapterDetail(chapterUrl string) (v1Model.ChapterDetail, error) {
-	debugURL, err := launcher.New().Leakless(true).Launch()
+func ScrapeChapterDetail(browserUrl, chapterUrl string) (v1Model.ChapterDetail, error) {
+	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return v1Model.ChapterDetail{}, err
 	}
 
-	browser := rod.New().ControlURL(debugURL)
+	l.Leakless(true)
+	l.Headless(true)
+
+	lC, err := l.Client()
+	if err != nil {
+		return v1Model.ChapterDetail{}, err
+	}
+
+	browser := rod.New().Client(lC)
 	err = browser.Connect()
 	if err != nil {
 		return v1Model.ChapterDetail{}, err

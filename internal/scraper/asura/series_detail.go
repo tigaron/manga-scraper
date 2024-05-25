@@ -12,13 +12,21 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeSeriesDetail(seriesUrl string) (v1Model.SeriesDetail, error) {
-	debugURL, err := launcher.New().Leakless(true).Launch()
+func ScrapeSeriesDetail(browserUrl, seriesUrl string) (v1Model.SeriesDetail, error) {
+	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return v1Model.SeriesDetail{}, err
 	}
 
-	browser := rod.New().ControlURL(debugURL)
+	l.Leakless(true)
+	l.Headless(true)
+
+	lC, err := l.Client()
+	if err != nil {
+		return v1Model.SeriesDetail{}, err
+	}
+
+	browser := rod.New().Client(lC)
 	err = browser.Connect()
 	if err != nil {
 		return v1Model.SeriesDetail{}, err
