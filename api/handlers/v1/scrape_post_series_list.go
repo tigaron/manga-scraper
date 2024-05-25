@@ -81,7 +81,7 @@ func (h *Handler) PostScrapeSeriesList(c echo.Context) error {
 
 	startTime := time.Now()
 
-	scrapeData, err := scraper.ScrapeSeriesList(req.Provider, provider.Scheme+provider.Host+provider.ListPath)
+	scrapeData, err := scraper.ScrapeSeriesList(h.config.RodURL, req.Provider, provider.Scheme+provider.Host+provider.ListPath)
 	if err != nil {
 		middlewares.SentryHandleInternalErrorWithData(c, span, err, "scraper.ScrapeSeriesList", req)
 		h.prisma.UpdateScrapeRequestUniqueV1(c.Request().Context(), receipt.ID, "failed", time.Since(startTime).Seconds(), err.Error())
