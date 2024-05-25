@@ -51,6 +51,7 @@ func (h *Handler) GetProvider(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 

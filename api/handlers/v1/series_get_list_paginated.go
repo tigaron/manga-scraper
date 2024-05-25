@@ -13,18 +13,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//	@Summary		Get paginated series list
-//	@Description	Get paginated series list
-//	@Tags			series
-//	@Produce		json
-//	@Param			provider_slug	path		string	true	"Provider slug"	example(asura)
-//	@Param			page			query		string	true	"Page"			example(10)
-//	@Param			size			query		string	true	"Size"			example(100)
-//	@Success		200				{object}	v1Response.Response
-//	@Failure		400				{object}	v1Response.Response
-//	@Failure		404				{object}	v1Response.Response
-//	@Failure		500				{object}	v1Response.Response
-//	@Router			/api/v1/series/{provider_slug} [get]
+// @Summary		Get paginated series list
+// @Description	Get paginated series list
+// @Tags			series
+// @Produce		json
+// @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
+// @Param			page			query		string	true	"Page"			example(10)
+// @Param			size			query		string	true	"Size"			example(100)
+// @Success		200				{object}	v1Response.Response
+// @Failure		400				{object}	v1Response.Response
+// @Failure		404				{object}	v1Response.Response
+// @Failure		500				{object}	v1Response.Response
+// @Router			/api/v1/series/{provider_slug} [get]
 func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetSeriesListPaginated")
 	span.Name = "v1.GetSeriesListPaginated"
@@ -76,6 +76,7 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 
@@ -85,6 +86,7 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find series",
 		})
 	}
 
@@ -93,6 +95,7 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
+			Detail:  fmt.Sprintf("Series with provider slug '%s' not found", providerSlug),
 		})
 	}
 

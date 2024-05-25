@@ -59,12 +59,14 @@ func (h *Handler) PutProvider(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
+			Detail:  "Provider not found",
 		})
 	} else if err != nil {
 		middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.UpdateProviderUniqueV1", req)
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to update provider",
 		})
 	}
 

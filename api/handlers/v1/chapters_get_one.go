@@ -12,17 +12,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//	@Summary		Get chapter by slug
-//	@Description	Get chapter by slug
-//	@Tags			chapters
-//	@Produce		json
-//	@Param			provider_slug	path		string	true	"Provider slug"	example(asura)
-//	@Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
-//	@Param			chapter_slug	path		string	true	"Chapter slug"	example(reincarnator-chapter-0)
-//	@Success		200				{object}	v1Response.Response
-//	@Failure		404				{object}	v1Response.Response
-//	@Failure		500				{object}	v1Response.Response
-//	@Router			/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug} [get]
+// @Summary		Get chapter by slug
+// @Description	Get chapter by slug
+// @Tags			chapters
+// @Produce		json
+// @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
+// @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
+// @Param			chapter_slug	path		string	true	"Chapter slug"	example(reincarnator-chapter-0)
+// @Success		200				{object}	v1Response.Response
+// @Failure		404				{object}	v1Response.Response
+// @Failure		500				{object}	v1Response.Response
+// @Router			/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug} [get]
 func (h *Handler) GetChapter(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapter")
 	span.Name = "v1.GetChapter"
@@ -55,6 +55,7 @@ func (h *Handler) GetChapter(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 
@@ -71,6 +72,7 @@ func (h *Handler) GetChapter(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find series",
 		})
 	}
 
@@ -80,6 +82,7 @@ func (h *Handler) GetChapter(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find chapter",
 		})
 	}
 

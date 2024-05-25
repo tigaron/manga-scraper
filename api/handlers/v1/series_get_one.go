@@ -12,16 +12,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//	@Summary		Get series by slug
-//	@Description	Get series by slug
-//	@Tags			series
-//	@Produce		json
-//	@Param			provider_slug	path		string	true	"Provider slug"	example(asura)
-//	@Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
-//	@Success		200				{object}	v1Response.Response
-//	@Failure		404				{object}	v1Response.Response
-//	@Failure		500				{object}	v1Response.Response
-//	@Router			/api/v1/series/{provider_slug}/{series_slug} [get]
+// @Summary		Get series by slug
+// @Description	Get series by slug
+// @Tags			series
+// @Produce		json
+// @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
+// @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
+// @Success		200				{object}	v1Response.Response
+// @Failure		404				{object}	v1Response.Response
+// @Failure		500				{object}	v1Response.Response
+// @Router			/api/v1/series/{provider_slug}/{series_slug} [get]
 func (h *Handler) GetSeries(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetSeries")
 	span.Name = "v1.GetSeries"
@@ -53,6 +53,7 @@ func (h *Handler) GetSeries(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 
@@ -69,6 +70,7 @@ func (h *Handler) GetSeries(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find series",
 		})
 	}
 

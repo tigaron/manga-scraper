@@ -67,6 +67,7 @@ func (h *Handler) PostScrapeChapterList(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 
@@ -83,6 +84,7 @@ func (h *Handler) PostScrapeChapterList(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find series",
 		})
 	}
 
@@ -92,6 +94,7 @@ func (h *Handler) PostScrapeChapterList(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to create scrape request",
 		})
 	}
 
@@ -104,6 +107,7 @@ func (h *Handler) PostScrapeChapterList(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to scrape chapter list",
 		})
 	}
 
@@ -113,6 +117,7 @@ func (h *Handler) PostScrapeChapterList(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to update scrape request",
 		})
 	}
 

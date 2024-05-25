@@ -38,6 +38,7 @@ func (h *Handler) GetProvidersList(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find providers",
 		})
 	}
 
@@ -46,6 +47,7 @@ func (h *Handler) GetProvidersList(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
+			Detail:  "No provider found",
 		})
 	}
 

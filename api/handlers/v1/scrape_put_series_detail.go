@@ -65,6 +65,7 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 
@@ -81,6 +82,7 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find series",
 		})
 	}
 
@@ -90,6 +92,7 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to create scrape request",
 		})
 	}
 
@@ -102,6 +105,7 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to scrape series detail",
 		})
 	}
 
@@ -111,6 +115,7 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to update scrape request",
 		})
 	}
 

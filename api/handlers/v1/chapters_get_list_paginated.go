@@ -13,19 +13,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//	@Summary		Get paginated chapter list
-//	@Description	Get paginated chapter list
-//	@Tags			chapters
-//	@Produce		json
-//	@Param			provider_slug	path		string	true	"Provider slug"	example(asura)
-//	@Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
-//	@Param			page			query		string	true	"Page"			example(10)
-//	@Param			size			query		string	true	"Size"			example(100)
-//	@Success		200				{object}	v1Response.Response
-//	@Failure		400				{object}	v1Response.Response
-//	@Failure		404				{object}	v1Response.Response
-//	@Failure		500				{object}	v1Response.Response
-//	@Router			/api/v1/chapters/{provider_slug}/{series_slug} [get]
+// @Summary		Get paginated chapter list
+// @Description	Get paginated chapter list
+// @Tags			chapters
+// @Produce		json
+// @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
+// @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
+// @Param			page			query		string	true	"Page"			example(10)
+// @Param			size			query		string	true	"Size"			example(100)
+// @Success		200				{object}	v1Response.Response
+// @Failure		400				{object}	v1Response.Response
+// @Failure		404				{object}	v1Response.Response
+// @Failure		500				{object}	v1Response.Response
+// @Router			/api/v1/chapters/{provider_slug}/{series_slug} [get]
 func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapterListPaginated")
 	span.Name = "v1.GetChapterListPaginated"
@@ -78,6 +78,7 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 
@@ -94,6 +95,7 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find series",
 		})
 	}
 
@@ -103,6 +105,7 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find chapters",
 		})
 	}
 
@@ -111,6 +114,7 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
+			Detail:  fmt.Sprintf("Chapters with provider slug '%s' and series slug '%s' not found", providerSlug, seriesSlug),
 		})
 	}
 

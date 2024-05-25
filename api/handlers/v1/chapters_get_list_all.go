@@ -12,16 +12,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-//	@Summary		Get all chapter list
-//	@Description	Get all chapter list
-//	@Tags			chapters
-//	@Produce		json
-//	@Param			provider_slug	path		string	true	"Provider slug"	example(asura)
-//	@Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
-//	@Success		200				{object}	v1Response.Response
-//	@Failure		404				{object}	v1Response.Response
-//	@Failure		500				{object}	v1Response.Response
-//	@Router			/api/v1/chapters/{provider_slug}/{series_slug}/all [get]
+// @Summary		Get all chapter list
+// @Description	Get all chapter list
+// @Tags			chapters
+// @Produce		json
+// @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
+// @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
+// @Success		200				{object}	v1Response.Response
+// @Failure		404				{object}	v1Response.Response
+// @Failure		500				{object}	v1Response.Response
+// @Router			/api/v1/chapters/{provider_slug}/{series_slug}/all [get]
 func (h *Handler) GetChapterListAll(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapterListAll")
 	span.Name = "v1.GetChapterListAll"
@@ -53,6 +53,7 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find provider",
 		})
 	}
 
@@ -69,6 +70,7 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find series",
 		})
 	}
 
@@ -78,6 +80,7 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to find chapters",
 		})
 	}
 
@@ -86,6 +89,7 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
+			Detail:  fmt.Sprintf("Chapters with provider slug '%s' and series slug '%s' not found", providerSlug, seriesSlug),
 		})
 	}
 

@@ -65,6 +65,7 @@ func (h *Handler) PostProvider(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
+			Detail:  "Failed to create provider",
 		})
 	}
 
