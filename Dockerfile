@@ -17,6 +17,9 @@ COPY ./ ./
 RUN go run github.com/steebchen/prisma-client-go generate
 # or, if you use go generate to run the generator, use the following line instead
 # RUN go generate ./...
+
+# Generate .env file
+RUN printenv > .env
  
 # build a fully standalone binary with zero dependencies
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o app ./cmd/manga-scraper/main.go
@@ -26,6 +29,9 @@ FROM scratch
 
 # Copy timezone data
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+
+# Copy .env file
+COPY --from=builder /workspace/.env /.env
  
 COPY --from=builder /workspace/app /app
  
