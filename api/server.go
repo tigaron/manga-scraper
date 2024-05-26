@@ -37,6 +37,8 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 
 	app.Use(middlewares.SentryMiddleware())
 
+	app.Use(middlewares.TimeoutMiddleware(30 * time.Second))
+
 	store, err := redis.NewSessionStore()
 	if err != nil {
 		app.Logger.Fatal(err)
