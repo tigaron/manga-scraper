@@ -58,7 +58,7 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 		return c.String(http.StatusOK, "OK")
 	})
 
-	app.GET("/swagger/*", echoSwagger.WrapHandler, middlewares.IsAdmin(config.AdminSub))
+	app.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	v1Api := app.Group("/api/v1")
 
