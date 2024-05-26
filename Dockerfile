@@ -1,4 +1,4 @@
-FROM golang:1.22.3-bullseye as builder
+FROM golang:1.22.3-alpine3.20 as builder
  
 WORKDIR /workspace
  
@@ -16,7 +16,7 @@ RUN go run github.com/steebchen/prisma-client-go generate
 # RUN go generate ./...
  
 # build a fully standalone binary with zero dependencies
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o app .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o app ./cmd/manga-scraper/main.go
  
 # use the scratch image for the smallest possible image size
 FROM scratch
