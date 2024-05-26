@@ -1,4 +1,7 @@
 FROM golang:1.22.3-alpine3.20 as builder
+
+# Install tzdata
+RUN apk add --no-cache tzdata
  
 WORKDIR /workspace
  
