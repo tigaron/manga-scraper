@@ -1,0 +1,1 @@
+web: manga-scraper
