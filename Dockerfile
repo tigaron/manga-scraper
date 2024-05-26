@@ -1,7 +1,7 @@
 FROM golang:1.22.3-alpine3.20 as builder
 
-# Install tzdata
-RUN apk add --no-cache tzdata
+# Install tzdata and ca-certificates
+RUN apk add --no-cache tzdata ca-certificates
  
 WORKDIR /workspace
  
@@ -29,6 +29,9 @@ FROM scratch
 
 # Copy timezone data
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+
+# Copy SSL certificates
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Copy .env file
 COPY --from=builder /workspace/.env /.env
