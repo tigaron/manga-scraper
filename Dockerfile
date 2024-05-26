@@ -20,6 +20,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflag
  
 # use the scratch image for the smallest possible image size
 FROM scratch
+
+# Copy timezone data
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
  
 COPY --from=builder /workspace/app /app
  
