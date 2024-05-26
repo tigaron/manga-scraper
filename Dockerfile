@@ -20,6 +20,6 @@ RUN go run github.com/steebchen/prisma-client-go generate
 # RUN go generate ./...
 
 # build the binary with all dependencies
-RUN go build -o /app ./cmd/manga-scraper/main.go
+RUN go build -o /manga-scraper ./cmd/manga-scraper/main.go
  
-CMD ["/app"]
+CMD ["/manga-scraper"]
