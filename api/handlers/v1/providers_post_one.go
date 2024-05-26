@@ -21,6 +21,7 @@ import (
 // @Param			body	body		v1Binding.PostProviderRequest	true	"Request body"
 // @Success		201		{object}	v1Response.Response
 // @Failure		400		{object}	v1Response.Response
+// @Failure		403		{object}	v1Response.Response
 // @Failure		409		{object}	v1Response.Response
 // @Failure		500		{object}	v1Response.Response
 // @Router			/api/v1/providers [post]

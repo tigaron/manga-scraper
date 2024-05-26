@@ -288,6 +288,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/v1Response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/v1Response.Response'
         "409":
           description: Conflict
           schema:
@@ -355,6 +359,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/v1Response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/v1Response.Response'
         "404":
           description: Not Found
           schema:
@@ -389,12 +397,20 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/v1Response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/v1Response.Response'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/v1Response.Response'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "503":
+          description: Service Unavailable
           schema:
             $ref: '#/definitions/v1Response.Response'
       summary: Create request to scrape chapter detail
@@ -423,12 +439,20 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/v1Response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/v1Response.Response'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/v1Response.Response'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "503":
+          description: Service Unavailable
           schema:
             $ref: '#/definitions/v1Response.Response'
       summary: Create request to scrape chapter list
@@ -457,12 +481,20 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/v1Response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/v1Response.Response'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/v1Response.Response'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "503":
+          description: Service Unavailable
           schema:
             $ref: '#/definitions/v1Response.Response'
       summary: Create request to scrape series detail
@@ -491,12 +523,20 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/v1Response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/v1Response.Response'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/v1Response.Response'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "503":
+          description: Service Unavailable
           schema:
             $ref: '#/definitions/v1Response.Response'
       summary: Create request to scrape series list
