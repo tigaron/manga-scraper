@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# apiUrl="https://manga-scraper.fourleaves.studio"
+# apiUrl="https://manga-scraper.hostinger.fourleaves.studio"
 apiUrl="http://localhost:1323"
 
 check_error() {
