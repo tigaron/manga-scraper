@@ -18,13 +18,15 @@ import (
 // @Tags			providers
 // @Accept			json
 // @Produce		json
-// @Param			provider_slug	path		string							true	"Provider slug" example(asura)
-// @Param			body			body		v1Binding.PutProviderRequest	true	"Request body"
-// @Success		200				{object}	v1Response.Response
-// @Failure		400				{object}	v1Response.Response
-// @Failure		403				{object}	v1Response.Response
-// @Failure		404				{object}	v1Response.Response
-// @Failure		500				{object}	v1Response.Response
+// @Param			provider_slug	path	string							true	"Provider slug"	example(asura)
+// @Param			body			body	v1Binding.PutProviderRequest	true	"Request body"
+// @Security		BearerAuth
+// @Success		200	{object}	v1Response.Response
+// @Failure		400	{object}	v1Response.Response
+// @Failure		401	{object}	v1Response.Response
+// @Failure		403	{object}	v1Response.Response
+// @Failure		404	{object}	v1Response.Response
+// @Failure		500	{object}	v1Response.Response
 // @Router			/api/v1/providers/{provider_slug} [put]
 func (h *Handler) PutProvider(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.PutProvider")

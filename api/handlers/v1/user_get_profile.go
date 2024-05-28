@@ -10,6 +10,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// @Summary		Get user profile
+// @Description	Get user profile
+// @Tags			users
+// @Produce		json
+// @Security		BearerAuth
+// @Success		200	{object}	v1Response.Response
+// @Failure		401	{object}	v1Response.Response
+// @Failure		500	{object}	v1Response.Response
+// @Router			/api/v1/users/profile [get]
 func (h *Handler) GetProfile(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetProfile")
 	span.Name = "v1.GetProfile"
@@ -26,11 +35,12 @@ func (h *Handler) GetProfile(c echo.Context) error {
 	}
 
 	profile := sess.Values["profile"]
+	accessToken := sess.Values["access_token"]
 
 	span.Status = sentry.SpanStatusOK
 	return c.JSON(http.StatusOK, v1Response.Response{
 		Error:   false,
 		Message: "OK",
-		Data:    profile,
+		Data:    map[string]interface{}{"profile": profile, "access_token": accessToken},
 	})
 }

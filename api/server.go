@@ -58,7 +58,7 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 		return c.String(http.StatusOK, "OK")
 	})
 
-	app.GET("/swagger/*", echoSwagger.WrapHandler)
+	app.GET("/swagger/*", echoSwagger.WrapHandler, middlewares.IsAuthenticated)
 
 	v1Api := app.Group("/api/v1")
 
@@ -111,9 +111,9 @@ func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
 	chapters.GET("/:provider_slug/:series_slug/all", s.v1.GetChapterListAll)
 	chapters.GET("/:provider_slug/:series_slug/:chapter_slug", s.v1.GetChapter)
 
-	user := v1Api.Group("/user")
-	user.GET("/profile", s.v1.GetProfile, middlewares.IsAuthenticated)
-	user.GET("/login", s.v1.GetLogin)
-	user.GET("/callback", s.v1.GetCallback)
-	user.GET("/logout", s.v1.GetLogout)
+	users := v1Api.Group("/users")
+	users.GET("/profile", s.v1.GetProfile, middlewares.IsAuthenticated)
+	users.GET("/login", s.v1.GetLogin)
+	users.GET("/callback", s.v1.GetCallback)
+	users.GET("/logout", s.v1.GetLogout)
 }

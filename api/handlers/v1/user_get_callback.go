@@ -79,5 +79,5 @@ func (h *Handler) GetCallback(c echo.Context) error {
 
 	// Redirect to logged in page.
 	span.Status = sentry.SpanStatusOK
-	return c.Redirect(http.StatusTemporaryRedirect, "/api/v1/user/profile")
+	return c.Redirect(http.StatusTemporaryRedirect, "/api/v1/users/profile")
 }

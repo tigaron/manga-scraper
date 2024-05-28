@@ -11,7 +11,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Handler for our logout.
 func (h *Handler) GetLogout(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetLogout")
 	span.Name = "v1.GetLogout"
@@ -54,7 +53,7 @@ func (h *Handler) GetLogout(c echo.Context) error {
 		scheme = "https"
 	}
 
-	returnTo, err := url.Parse(scheme + "://" + c.Request().Host + "/api/v1")
+	returnTo, err := url.Parse(scheme + "://" + c.Request().Host + "/swagger/index.html")
 	if err != nil {
 		middlewares.SentryHandleInternalError(c, span, err, "url.Parse")
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{

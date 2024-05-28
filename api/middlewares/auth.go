@@ -26,7 +26,11 @@ func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 
 		if sess.Values["profile"] == nil {
 			span.Status = sentry.SpanStatusUnauthenticated
-			return c.Redirect(http.StatusSeeOther, "/api/v1/user/login")
+			return c.JSON(http.StatusUnauthorized, v1Response.Response{
+				Error:   true,
+				Message: "Unauthorized",
+				Detail:  "Please log in at /api/v1/users/login",
+			})
 		}
 
 		span.Status = sentry.SpanStatusOK
@@ -52,7 +56,11 @@ func IsAdmin(adminSub string) echo.MiddlewareFunc {
 
 			if sess.Values["profile"] == nil {
 				span.Status = sentry.SpanStatusUnauthenticated
-				return c.Redirect(http.StatusSeeOther, "/api/v1/user/login")
+				return c.JSON(http.StatusUnauthorized, v1Response.Response{
+					Error:   true,
+					Message: "Unauthorized",
+					Detail:  "Please log in at /api/v1/users/login",
+				})
 			}
 
 			profile := sess.Values["profile"].(map[string]interface{})

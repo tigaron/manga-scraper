@@ -61,17 +61,22 @@ func init() {
 	}
 }
 
-// @title			Manga Scraper API
-// @version		1.0
-// @description	This is a Manga Scraper API server.
-// @termsOfService	https://manga-scraper.fourleaves.studio/terms
+//	@title			Manga Scraper API
+//	@version		1.0
+//	@description	This is a Manga Scraper API server.
+//	@termsOfService	https://manga-scraper.hostinger.fourleaves.studio/terms
 
-// @contact.name	API Support
-// @contact.url	https://manga-scraper.fourleaves.studio/support
-// @contact.email	admin@fourleaves.studio
+//	@contact.name	API Support
+//	@contact.url	https://manga-scraper.hostinger.fourleaves.studio/support
+//	@contact.email	admin@fourleaves.studio
 
-// @license.name	Apache 2.0
-// @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @securityDefinitions.apikey	BearerAuth
+// @in							header
+// @name						Authorization
+// @description			Only Admin can use this feature.<br />You can get access token from '/api/v1/users/profile'<br />Fill the value with "Bearer" followed by a space and Access Token
 func main() {
 	defer sentry.Flush(2 * time.Second)
 	defer func() {

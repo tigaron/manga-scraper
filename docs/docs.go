@@ -9,10 +9,10 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "https://manga-scraper.fourleaves.studio/terms",
+        "termsOfService": "https://manga-scraper.hostinger.fourleaves.studio/terms",
         "contact": {
             "name": "API Support",
-            "url": "https://manga-scraper.fourleaves.studio/support",
+            "url": "https://manga-scraper.hostinger.fourleaves.studio/support",
             "email": "admin@fourleaves.studio"
         },
         "license": {
@@ -236,6 +236,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create provider",
                 "consumes": [
                     "application/json"
@@ -267,6 +272,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/v1Response.Response"
                         }
@@ -334,6 +345,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update provider",
                 "consumes": [
                     "application/json"
@@ -377,6 +393,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1Response.Response"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -400,6 +422,11 @@ const docTemplate = `{
         },
         "/api/v1/scrape-requests/chapters/detail": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create request to scrape chapter detail",
                 "consumes": [
                     "application/json"
@@ -435,6 +462,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1Response.Response"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -464,6 +497,11 @@ const docTemplate = `{
         },
         "/api/v1/scrape-requests/chapters/list": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create request to scrape chapter list",
                 "consumes": [
                     "application/json"
@@ -499,6 +537,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1Response.Response"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -528,6 +572,11 @@ const docTemplate = `{
         },
         "/api/v1/scrape-requests/series/detail": {
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create request to scrape series detail",
                 "consumes": [
                     "application/json"
@@ -563,6 +612,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1Response.Response"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -592,6 +647,11 @@ const docTemplate = `{
         },
         "/api/v1/scrape-requests/series/list": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create request to scrape series list",
                 "consumes": [
                     "application/json"
@@ -623,6 +683,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/v1Response.Response"
                         }
@@ -809,6 +875,43 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/users/profile": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get user profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -961,6 +1064,14 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Only Admin can use this feature.\u003cbr /\u003eYou can get access token from '/api/v1/users/profile'\u003cbr /\u003eFill the value with \"Bearer\" followed by a space and Access Token",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
