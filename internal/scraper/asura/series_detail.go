@@ -68,13 +68,34 @@ func ScrapeSeriesDetail(browserUrl, seriesUrl string) (v1Model.SeriesDetail, err
 		return v1Model.SeriesDetail{}, err
 	}
 
-	for _, e := range elSP {
-		text, _ := e.Text()
-		if text == "&nbsp;" || text == "\u00a0" {
-			continue
+	if len(elSP) == 0 {
+		elD, err := elS.Element(`div[class^="contents"]`)
+		if err != nil {
+			return v1Model.SeriesDetail{}, err
 		}
 
-		synopsisArr = append(synopsisArr, text)
+		elDt, err := elD.Elements("div")
+		if err != nil {
+			return v1Model.SeriesDetail{}, err
+		}
+
+		for _, e := range elDt {
+			text, _ := e.Text()
+			if text == "&nbsp;" || text == "\u00a0" || text == "" {
+				continue
+			}
+
+			synopsisArr = append(synopsisArr, text)
+		}
+	} else {
+		for _, e := range elSP {
+			text, _ := e.Text()
+			if text == "&nbsp;" || text == "\u00a0" || text == "" {
+				continue
+			}
+
+			synopsisArr = append(synopsisArr, text)
+		}
 	}
 
 	synopsisRegex := regexp.MustCompile(`\n`)
@@ -82,17 +103,12 @@ func ScrapeSeriesDetail(browserUrl, seriesUrl string) (v1Model.SeriesDetail, err
 
 	var genreArr []string
 
-	elG, err := page.Element("span.mgen")
+	elG, err := page.Elements("span.mgen > a")
 	if err != nil {
 		return v1Model.SeriesDetail{}, err
 	}
 
-	elGA, err := elG.Elements("a")
-	if err != nil {
-		return v1Model.SeriesDetail{}, err
-	}
-
-	for _, e := range elGA {
+	for _, e := range elG {
 		genre, _ := e.Text()
 		genreArr = append(genreArr, genre)
 	}
