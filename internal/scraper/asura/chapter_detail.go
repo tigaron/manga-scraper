@@ -92,7 +92,10 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 	images := tsReader.Sources[0].Images
 	urlHost := strings.Split(chapterUrl, "/")[2]
 	for i := range images {
-		contentPaths = append(contentPaths, strings.Split(images[i], urlHost)[1])
+		imgSplit := strings.Split(images[i], urlHost)
+		if len(imgSplit) > 1 {
+			contentPaths = append(contentPaths, imgSplit[1])
+		}
 	}
 
 	contentPathsJson, err := json.Marshal(helper.RemoveDuplicate(contentPaths))
