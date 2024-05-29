@@ -104,7 +104,7 @@ func (h *Handler) PostScrapeChapterList(c echo.Context) error {
 
 	startTime := time.Now()
 
-	scrapeData, err := scraper.ScrapeChapterList(h.config.RodURL, req.Provider, provider.Scheme+provider.Host+series.SourcePath)
+	scrapeData, err := scraper.ScrapeChapterList(c.Request().Context(), h.config.RodURL, req.Provider, provider.Scheme+provider.Host+series.SourcePath)
 	if err != nil {
 		middlewares.SentryHandleInternalErrorWithData(c, span, err, "scraper.ScrapeChapterList", req)
 		h.prisma.UpdateScrapeRequestUniqueV1(c.Request().Context(), receipt.ID, "failed", time.Since(startTime).Seconds(), err.Error())

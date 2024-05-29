@@ -1,6 +1,8 @@
 package asura
 
 import (
+	"context"
+
 	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
 	"fourleaves.studio/manga-scraper/internal/scraper/helper"
 	"github.com/go-rod/rod"
@@ -8,7 +10,7 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeChapterList(browserUrl, seriesUrl string) ([]v1Model.ChapterList, error) {
+func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]v1Model.ChapterList, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return nil, err
@@ -30,10 +32,12 @@ func ScrapeChapterList(browserUrl, seriesUrl string) ([]v1Model.ChapterList, err
 
 	defer browser.MustClose()
 
-	page, err := browser.Page(proto.TargetCreateTarget{URL: seriesUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: seriesUrl})
 	if err != nil {
 		return nil, err
 	}
+
+	page := pg.Context(ctx)
 
 	var results []v1Model.ChapterList
 

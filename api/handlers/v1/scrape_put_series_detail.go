@@ -102,7 +102,7 @@ func (h *Handler) PutScrapeSeriesDetail(c echo.Context) error {
 
 	startTime := time.Now()
 
-	scrapeData, err := scraper.ScrapeSeriesDetail(h.config.RodURL, req.Provider, provider.Scheme+provider.Host+series.SourcePath)
+	scrapeData, err := scraper.ScrapeSeriesDetail(c.Request().Context(), h.config.RodURL, req.Provider, provider.Scheme+provider.Host+series.SourcePath)
 	if err != nil {
 		middlewares.SentryHandleInternalErrorWithData(c, span, err, "scraper.ScrapeSeriesDetail", req)
 		h.prisma.UpdateScrapeRequestUniqueV1(c.Request().Context(), receipt.ID, "failed", time.Since(startTime).Seconds(), err.Error())

@@ -1,6 +1,7 @@
 package asura
 
 import (
+	"context"
 	"encoding/json"
 	"regexp"
 	"strings"
@@ -12,7 +13,7 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeSeriesDetail(browserUrl, seriesUrl string) (v1Model.SeriesDetail, error) {
+func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Model.SeriesDetail, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return v1Model.SeriesDetail{}, err
@@ -34,10 +35,12 @@ func ScrapeSeriesDetail(browserUrl, seriesUrl string) (v1Model.SeriesDetail, err
 
 	defer browser.MustClose()
 
-	page, err := browser.Page(proto.TargetCreateTarget{URL: seriesUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: seriesUrl})
 	if err != nil {
 		return v1Model.SeriesDetail{}, err
 	}
+
+	page := pg.Context(ctx)
 
 	elTH, err := page.Element("div.thumb > img")
 	if err != nil {

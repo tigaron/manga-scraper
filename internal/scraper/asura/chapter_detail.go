@@ -1,6 +1,7 @@
 package asura
 
 import (
+	"context"
 	"encoding/json"
 	"regexp"
 	"strings"
@@ -12,7 +13,7 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeChapterDetail(browserUrl, chapterUrl string) (v1Model.ChapterDetail, error) {
+func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1Model.ChapterDetail, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return v1Model.ChapterDetail{}, err
@@ -34,10 +35,12 @@ func ScrapeChapterDetail(browserUrl, chapterUrl string) (v1Model.ChapterDetail, 
 
 	defer browser.MustClose()
 
-	page, err := browser.Page(proto.TargetCreateTarget{URL: chapterUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: chapterUrl})
 	if err != nil {
 		return v1Model.ChapterDetail{}, err
 	}
+
+	page := pg.Context(ctx)
 
 	elFT, err := page.Element("h1.entry-title")
 	if err != nil {
