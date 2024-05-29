@@ -69,5 +69,16 @@ func (c *RedisClient) SetChapterListAllV1(ctx context.Context, provider string, 
 }
 
 func (c *RedisClient) UnsetChapterListV1(ctx context.Context, provider string, series string) error {
-	return c.client.Del(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:*", provider, series)).Err()
+	keys, err := c.client.Keys(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:*", provider, series)).Result()
+	if err != nil {
+		return err
+	}
+
+	for _, key := range keys {
+		if err := c.client.Del(ctx, key).Err(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

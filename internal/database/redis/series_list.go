@@ -69,5 +69,16 @@ func (c *RedisClient) SetSeriesListAllV1(ctx context.Context, provider string, s
 }
 
 func (c *RedisClient) UnsetSeriesListV1(ctx context.Context, provider string) error {
-	return c.client.Del(ctx, fmt.Sprintf("v1:provider:%s:series_list:*", provider)).Err()
+	keys, err := c.client.Keys(ctx, fmt.Sprintf("v1:provider:%s:series_list:*", provider)).Result()
+	if err != nil {
+		return err
+	}
+
+	for _, key := range keys {
+		if err := c.client.Del(ctx, key).Err(); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
