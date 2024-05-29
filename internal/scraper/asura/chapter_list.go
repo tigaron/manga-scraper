@@ -2,6 +2,7 @@ package asura
 
 import (
 	"context"
+	"sync"
 
 	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
 	"fourleaves.studio/manga-scraper/internal/scraper/helper"
@@ -51,55 +52,84 @@ func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]v1M
 		return nil, err
 	}
 
-	var loopErr error
+	errCh := make(chan error, 1)
+
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	wg.Add(len(elAs))
 
 	for _, e := range elAs {
-		href, err := e.Attribute("href")
-		if err != nil {
-			loopErr = err
-			break
-		}
+		go func(e *rod.Element) {
+			defer wg.Done()
 
-		slug := helper.GetSlug(*href)
+			href, err := e.Attribute("href")
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		elT, err := e.Element("span.chapternum")
-		if err != nil {
-			loopErr = err
-			break
-		}
+			slug := helper.GetSlug(*href)
 
-		tT, err := elT.Text()
-		if err != nil {
-			loopErr = err
-			break
-		}
+			elT, err := e.Element("span.chapternum")
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		title := helper.GetChapterTitle(tT)
+			tT, err := elT.Text()
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		li, err := e.Parents("li")
-		if err != nil {
-			loopErr = err
-			break
-		}
+			title := helper.GetChapterTitle(tT)
 
-		dataNum, err := li.First().Attribute("data-num")
-		if err != nil {
-			loopErr = err
-			break
-		}
+			li, err := e.Parents("li")
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		chapterNumber := helper.GetChapterNumber(*dataNum)
+			dataNum, err := li.First().Attribute("data-num")
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		results = append(results, v1Model.ChapterList{
-			ShortTitle: title,
-			Slug:       slug,
-			Number:     chapterNumber,
-			Href:       *href,
-		})
+			chapterNumber := helper.GetChapterNumber(*dataNum)
+
+			mu.Lock()
+			results = append(results, v1Model.ChapterList{
+				ShortTitle: title,
+				Slug:       slug,
+				Number:     chapterNumber,
+				Href:       *href,
+			})
+			mu.Unlock()
+		}(e)
 	}
 
-	if loopErr != nil {
-		return nil, loopErr
+	wg.Wait()
+	close(errCh)
+
+	if err := <-errCh; err != nil {
+		return nil, err
 	}
 
 	return results, nil

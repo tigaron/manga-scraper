@@ -2,6 +2,7 @@ package asura
 
 import (
 	"context"
+	"sync"
 
 	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
 	"fourleaves.studio/manga-scraper/internal/scraper/helper"
@@ -51,40 +52,59 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]v1Mode
 		return nil, err
 	}
 
-	var loopErr error
+	errCh := make(chan error, 1)
+
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	wg.Add(len(elA))
 
 	for _, e := range elA {
-		title, err := e.Text()
-		if err != nil {
-			loopErr = err
-			break
-		}
+		go func(e *rod.Element) {
+			defer wg.Done()
+			title, err := e.Text()
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		postId, err := e.Attribute("rel")
-		if err != nil {
-			loopErr = err
-			break
-		}
+			postId, err := e.Attribute("rel")
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		sourcePath := "/?p=" + *postId
+			sourcePath := "/?p=" + *postId
 
-		href, err := e.Attribute("href")
-		if err != nil {
-			loopErr = err
-			break
-		}
+			href, err := e.Attribute("href")
+			if err != nil {
+				select {
+				case errCh <- err:
+				default:
+				}
+				return
+			}
 
-		slug := helper.GetSlug(*href)
+			slug := helper.GetSlug(*href)
 
-		results = append(results, v1Model.SeriesList{
-			Title:      title,
-			Slug:       slug,
-			SourcePath: sourcePath,
-		})
+			mu.Lock()
+			results = append(results, v1Model.SeriesList{
+				Title:      title,
+				Slug:       slug,
+				SourcePath: sourcePath,
+			})
+			mu.Unlock()
+		}(e)
 	}
 
-	if loopErr != nil {
-		return nil, loopErr
+	if err := <-errCh; err != nil {
+		return nil, err
 	}
 
 	return results, nil
