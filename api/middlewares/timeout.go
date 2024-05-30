@@ -9,8 +9,7 @@ import (
 
 func TimeoutMiddleware(timeout time.Duration) echo.MiddlewareFunc {
 	return middleware.TimeoutWithConfig(middleware.TimeoutConfig{
-		Skipper:      middleware.DefaultSkipper,
-		ErrorMessage: "Request timeout",
-		Timeout:      timeout,
+		Skipper: middleware.DefaultSkipper,
+		Timeout: timeout,
 	})
 }
