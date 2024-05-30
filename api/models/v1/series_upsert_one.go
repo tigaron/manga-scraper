@@ -22,5 +22,7 @@ func (p *DBService) UpsertSeriesRowV1(ctx context.Context, provider string, data
 		db.Series.SourcePath.Set(data.SourcePath),
 	).Exec(ctx)
 
+	_ = p.Redis.DeleteSeriesUniqueV1(ctx, provider, data.Slug)
+
 	return series, err
 }

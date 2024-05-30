@@ -23,5 +23,7 @@ func (p *DBService) UpdateDetailChapterRowV1(ctx context.Context, provider, seri
 		db.Chapter.PrevPath.Set(data.PrevPath),
 	).Exec(ctx)
 
+	_ = p.Redis.DeleteChapterUniqueV1(ctx, provider, series, chapter)
+
 	return res, err
 }

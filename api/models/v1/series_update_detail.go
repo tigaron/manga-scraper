@@ -18,5 +18,7 @@ func (p *DBService) UpdateDetailSeriesRowV1(ctx context.Context, provider string
 		db.Series.Genres.Set(data.Genres),
 	).Exec(ctx)
 
+	_ = p.Redis.DeleteSeriesUniqueV1(ctx, provider, series)
+
 	return res, err
 }

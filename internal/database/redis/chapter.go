@@ -8,6 +8,7 @@ import (
 	"time"
 
 	v1Response "fourleaves.studio/manga-scraper/api/renderings/v1"
+	db "fourleaves.studio/manga-scraper/internal/database/prisma"
 )
 
 func (c *RedisClient) GetChapterV1(ctx context.Context, provider string, series string, chapter string) (v1Response.ChapterData, error) {
@@ -41,4 +42,37 @@ func (c *RedisClient) SetChapterV1(ctx context.Context, provider string, series 
 
 func (c *RedisClient) UnsetChapterV1(ctx context.Context, provider string, series string, chapter string) error {
 	return c.client.Del(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter:%s", provider, series, chapter)).Err()
+}
+
+func (c *RedisClient) FindChapterUniqueV1(ctx context.Context, provider string, series string, chapter string) (*db.ChapterModel, error) {
+	cmd := c.client.Get(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s:chapter:%s", provider, series, chapter))
+
+	cmdb, err := cmd.Bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	b := bytes.NewReader(cmdb)
+
+	var res db.ChapterModel
+
+	if err := gob.NewDecoder(b).Decode(&res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+func (c *RedisClient) CreateChapterUniqueV1(ctx context.Context, provider string, series string, chapter string, ch *db.ChapterModel) error {
+	var b bytes.Buffer
+
+	if err := gob.NewEncoder(&b).Encode(*ch); err != nil {
+		return err
+	}
+
+	return c.client.Set(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s:chapter:%s", provider, series, chapter), b.Bytes(), 24*time.Hour).Err()
+}
+
+func (c *RedisClient) DeleteChapterUniqueV1(ctx context.Context, provider string, series string, chapter string) error {
+	return c.client.Del(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s:chapter:%s", provider, series, chapter)).Err()
 }

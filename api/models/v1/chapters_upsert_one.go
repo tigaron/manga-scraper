@@ -29,5 +29,7 @@ func (p *DBService) UpsertChaptersRowV1(ctx context.Context, provider string, se
 		db.Chapter.SourceHref.Set(data.Href),
 	).Exec(ctx)
 
+	_ = p.Redis.DeleteChapterUniqueV1(ctx, provider, series, data.Slug)
+
 	return chapter, err
 }

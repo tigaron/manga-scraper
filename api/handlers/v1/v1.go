@@ -18,7 +18,7 @@ type Handler struct {
 func NewV1Handler(config *config.Config, db *db.PrismaClient, redis *redis.RedisClient, auth *authenticator.Authenticator) *Handler {
 	return &Handler{
 		config: config,
-		prisma: v1Model.NewDBService(db),
+		prisma: v1Model.NewDBService(db, redis),
 		redis:  redis,
 		auth:   auth,
 	}
