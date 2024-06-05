@@ -238,7 +238,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Create provider",
@@ -347,7 +347,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Update provider",
@@ -424,7 +424,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Create request to scrape chapter detail",
@@ -499,7 +499,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Create request to scrape chapter list",
@@ -574,7 +574,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Create request to scrape series detail",
@@ -649,7 +649,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Create request to scrape series list",
@@ -880,7 +880,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Get user profile",
@@ -1067,11 +1067,11 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "BearerAuth": {
-            "description": "Only Admin can use this feature.\u003cbr /\u003eYou can get access token from '/api/v1/users/profile'\u003cbr /\u003eFill the value with \"Bearer\" followed by a space and Access Token",
+        "cookieAuth": {
+            "description": "Only Admin can use this feature. You can login at '/api/v1/users/login' and use 'session={cookie}' for the value.",
             "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
+            "name": "cookie",
+            "in": "session"
         }
     }
 }`

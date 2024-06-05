@@ -21,7 +21,7 @@ import (
 // @Accept			json
 // @Produce		json
 // @Param			body	body	v1Binding.PutScrapeSeriesDetail	true	"Request body"
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Success		200	{object}	v1Response.Response
 // @Failure		400	{object}	v1Response.Response
 // @Failure		401	{object}	v1Response.Response

@@ -73,10 +73,10 @@ func init() {
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @securityDefinitions.apikey	BearerAuth
-// @in							header
-// @name						Authorization
-// @description			Only Admin can use this feature.<br />You can get access token from '/api/v1/users/profile'<br />Fill the value with "Bearer" followed by a space and Access Token
+// @securityDefinitions.apikey cookieAuth
+// @in							session
+// @name						cookie
+// @description			Only Admin can use this feature. You can login at '/api/v1/users/login' and use 'session={cookie}' for the value.
 func main() {
 	defer sentry.Flush(2 * time.Second)
 	defer func() {

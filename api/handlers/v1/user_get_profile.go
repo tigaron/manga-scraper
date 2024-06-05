@@ -14,7 +14,7 @@ import (
 // @Description	Get user profile
 // @Tags			users
 // @Produce		json
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Success		200	{object}	v1Response.Response
 // @Failure		401	{object}	v1Response.Response
 // @Failure		500	{object}	v1Response.Response
@@ -35,12 +35,11 @@ func (h *Handler) GetProfile(c echo.Context) error {
 	}
 
 	profile := sess.Values["profile"]
-	accessToken := sess.Values["access_token"]
 
 	span.Status = sentry.SpanStatusOK
 	return c.JSON(http.StatusOK, v1Response.Response{
 		Error:   false,
 		Message: "OK",
-		Data:    map[string]interface{}{"profile": profile, "access_token": accessToken},
+		Data:    profile,
 	})
 }

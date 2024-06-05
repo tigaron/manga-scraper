@@ -305,7 +305,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Create provider
       tags:
       - providers
@@ -382,7 +382,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Update provider
       tags:
       - providers
@@ -430,7 +430,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Create request to scrape chapter detail
       tags:
       - scrape-requests
@@ -478,7 +478,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Create request to scrape chapter list
       tags:
       - scrape-requests
@@ -526,7 +526,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Create request to scrape series detail
       tags:
       - scrape-requests
@@ -574,7 +574,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Create request to scrape series list
       tags:
       - scrape-requests
@@ -703,16 +703,15 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Get user profile
       tags:
       - users
 securityDefinitions:
-  BearerAuth:
-    description: Only Admin can use this feature.<br />You can get access token from
-      '/api/v1/users/profile'<br />Fill the value with "Bearer" followed by a space
-      and Access Token
-    in: header
-    name: Authorization
+  cookieAuth:
+    description: Only Admin can use this feature. You can login at '/api/v1/users/login'
+      and use 'session={cookie}' for the value.
+    in: session
+    name: cookie
     type: apiKey
 swagger: "2.0"

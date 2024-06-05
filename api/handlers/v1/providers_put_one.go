@@ -20,7 +20,7 @@ import (
 // @Produce		json
 // @Param			provider_slug	path	string							true	"Provider slug"	example(asura)
 // @Param			body			body	v1Binding.PutProviderRequest	true	"Request body"
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Success		200	{object}	v1Response.Response
 // @Failure		400	{object}	v1Response.Response
 // @Failure		401	{object}	v1Response.Response
