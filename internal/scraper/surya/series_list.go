@@ -103,6 +103,9 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]v1Mode
 		}(e)
 	}
 
+	wg.Wait()
+	close(errCh)
+
 	if err := <-errCh; err != nil {
 		return nil, err
 	}
