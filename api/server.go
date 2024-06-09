@@ -46,6 +46,14 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 
 	app.Use(session.Middleware(store))
 
+	app.Use(
+		middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"*"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+			AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPost},
+		}),
+	)
+
 	app.Validator = &middlewares.CustomValidator{Validator: validator.New()}
 
 	server := &RESTServer{
