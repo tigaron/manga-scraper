@@ -103,12 +103,13 @@ func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
 
 	series := v1Api.Group("/series")
 	series.GET("/:provider_slug", s.v1.GetSeriesListPaginated)
-	series.GET("/:provider_slug/all", s.v1.GetSeriesListAll)
+	series.GET("/:provider_slug/_all", s.v1.GetSeriesListAll)
 	series.GET("/:provider_slug/:series_slug", s.v1.GetSeries)
 
 	chapters := v1Api.Group("/chapters")
 	chapters.GET("/:provider_slug/:series_slug", s.v1.GetChapterListPaginated)
-	chapters.GET("/:provider_slug/:series_slug/all", s.v1.GetChapterListAll)
+	chapters.GET("/:provider_slug/:series_slug/_list", s.v1.GetChapterList)
+	chapters.GET("/:provider_slug/:series_slug/_all", s.v1.GetChapterListAll)
 	chapters.GET("/:provider_slug/:series_slug/:chapter_slug", s.v1.GetChapter)
 
 	users := v1Api.Group("/users")

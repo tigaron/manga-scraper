@@ -96,7 +96,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/chapters/{provider_slug}/{series_slug}/all": {
+        "/api/v1/chapters/{provider_slug}/{series_slug}/_all": {
             "get": {
                 "description": "Get all chapter list",
                 "produces": [
@@ -106,6 +106,56 @@ const docTemplate = `{
                     "chapters"
                 ],
                 "summary": "Get all chapter list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator",
+                        "description": "Series slug",
+                        "name": "series_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1Response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chapters/{provider_slug}/{series_slug}/_list": {
+            "get": {
+                "description": "Get chapter list only",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chapters"
+                ],
+                "summary": "Get chapter list only",
                 "parameters": [
                     {
                         "type": "string",
@@ -784,7 +834,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/series/{provider_slug}/all": {
+        "/api/v1/series/{provider_slug}/_all": {
             "get": {
                 "description": "Get all series list",
                 "produces": [

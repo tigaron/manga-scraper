@@ -99,7 +99,25 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewSeriesListData(provider, series)
+	var prevPage, nextPage, total int
+
+	if req.Page >= 2 {
+		prevPage = req.Page - 1
+	}
+
+	if len(series) == req.Size {
+		nextPage = req.Page + 1
+	}
+
+	total = len(series)
+
+	paginationData := v1Response.PaginationData{
+		PrevPage: prevPage,
+		NextPage: nextPage,
+		Total:    total,
+	}
+
+	result := v1Response.NewSeriesListPaginatedData(provider, series, paginationData)
 
 	err = h.redis.SetSeriesListV1(c.Request().Context(), providerSlug, req.Page, req.Size, result)
 	if err != nil {

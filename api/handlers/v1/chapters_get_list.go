@@ -12,8 +12,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary		Get all chapter list
-// @Description	Get all chapter list
+// @Summary		Get chapter list only
+// @Description	Get chapter list only
 // @Tags			chapters
 // @Produce		json
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
@@ -21,16 +21,16 @@ import (
 // @Success		200				{object}	v1Response.Response
 // @Failure		404				{object}	v1Response.Response
 // @Failure		500				{object}	v1Response.Response
-// @Router			/api/v1/chapters/{provider_slug}/{series_slug}/_all [get]
-func (h *Handler) GetChapterListAll(c echo.Context) error {
-	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapterListAll")
-	span.Name = "v1.GetChapterListAll"
+// @Router			/api/v1/chapters/{provider_slug}/{series_slug}/_list [get]
+func (h *Handler) GetChapterList(c echo.Context) error {
+	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapterList")
+	span.Name = "v1.GetChapterList"
 	defer span.Finish()
 
 	providerSlug := c.Param("provider_slug")
 	seriesSlug := c.Param("series_slug")
 
-	cache, err := h.redis.GetChapterListAllV1(c.Request().Context(), providerSlug, seriesSlug)
+	cache, err := h.redis.GetChapterListOnlyV1(c.Request().Context(), providerSlug, seriesSlug)
 	if err == nil {
 		span.Status = sentry.SpanStatusOK
 		return c.JSON(http.StatusOK, v1Response.Response{
@@ -74,9 +74,9 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		})
 	}
 
-	chapterList, err := h.prisma.FindChaptersManyV1(c.Request().Context(), providerSlug, seriesSlug)
+	chapterList, err := h.prisma.FindChaptersListV1(c.Request().Context(), providerSlug, seriesSlug)
 	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChaptersManyV1")
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChaptersListV1")
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
@@ -93,9 +93,9 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewChapterListData(provider, series, chapterList)
+	result := v1Response.NewListAllChapterData(provider, series, chapterList)
 
-	err = h.redis.SetChapterListAllV1(c.Request().Context(), providerSlug, seriesSlug, result)
+	err = h.redis.SetChapterListOnlyV1(c.Request().Context(), providerSlug, seriesSlug, result)
 	if err != nil {
 		middlewares.SentryHandleInternalError(c, span, err, "redis.SetChapterListAllV1")
 	}

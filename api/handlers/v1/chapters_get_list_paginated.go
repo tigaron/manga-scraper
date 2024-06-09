@@ -118,7 +118,25 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewChapterListData(provider, series, chapterList)
+	var prevPage, nextPage, total int
+
+	if req.Page >= 2 {
+		prevPage = req.Page - 1
+	}
+
+	if len(chapterList) == req.Size {
+		nextPage = req.Page + 1
+	}
+
+	total = len(chapterList)
+
+	paginationData := v1Response.PaginationData{
+		PrevPage: prevPage,
+		NextPage: nextPage,
+		Total:    total,
+	}
+
+	result := v1Response.NewChapterListPaginatedData(provider, series, chapterList, paginationData)
 
 	err = h.redis.SetChapterListV1(c.Request().Context(), providerSlug, seriesSlug, req.Page, req.Size, result)
 	if err != nil {

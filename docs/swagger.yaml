@@ -171,6 +171,74 @@ paths:
       summary: Get paginated chapter list
       tags:
       - chapters
+  /api/v1/chapters/{provider_slug}/{series_slug}/_all:
+    get:
+      description: Get all chapter list
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get all chapter list
+      tags:
+      - chapters
+  /api/v1/chapters/{provider_slug}/{series_slug}/_list:
+    get:
+      description: Get chapter list only
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get chapter list only
+      tags:
+      - chapters
   /api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}:
     get:
       description: Get chapter by slug
@@ -209,40 +277,6 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       summary: Get chapter by slug
-      tags:
-      - chapters
-  /api/v1/chapters/{provider_slug}/{series_slug}/all:
-    get:
-      description: Get all chapter list
-      parameters:
-      - description: Provider slug
-        example: asura
-        in: path
-        name: provider_slug
-        required: true
-        type: string
-      - description: Series slug
-        example: reincarnator
-        in: path
-        name: series_slug
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-      summary: Get all chapter list
       tags:
       - chapters
   /api/v1/providers:
@@ -622,6 +656,34 @@ paths:
       summary: Get paginated series list
       tags:
       - series
+  /api/v1/series/{provider_slug}/_all:
+    get:
+      description: Get all series list
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get all series list
+      tags:
+      - series
   /api/v1/series/{provider_slug}/{series_slug}:
     get:
       description: Get series by slug
@@ -654,34 +716,6 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       summary: Get series by slug
-      tags:
-      - series
-  /api/v1/series/{provider_slug}/all:
-    get:
-      description: Get all series list
-      parameters:
-      - description: Provider slug
-        example: asura
-        in: path
-        name: provider_slug
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-      summary: Get all series list
       tags:
       - series
   /api/v1/users/profile:

@@ -20,7 +20,7 @@ import (
 // @Success		200				{object}	v1Response.Response
 // @Failure		404				{object}	v1Response.Response
 // @Failure		500				{object}	v1Response.Response
-// @Router			/api/v1/series/{provider_slug}/all [get]
+// @Router			/api/v1/series/{provider_slug}/_all [get]
 func (h *Handler) GetSeriesListAll(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetSeriesListAll")
 	span.Name = "v1.GetSeriesListAll"
