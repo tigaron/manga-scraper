@@ -613,6 +613,37 @@ paths:
       tags:
       - scrape-requests
   /api/v1/search:
+    get:
+      description: Get series search result
+      parameters:
+      - description: Query
+        example: high school
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      summary: Get series search result
+      tags:
+      - search
     put:
       description: Feed the open search engine
       produces:

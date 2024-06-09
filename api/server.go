@@ -119,5 +119,6 @@ func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
 	users.GET("/logout", s.v1.GetLogout)
 
 	search := v1Api.Group("/search")
+	search.GET("", s.v1.GetSearch)
 	search.PUT("", s.v1.PutSearch, middlewares.IsAdmin(s.config.AdminSub))
 }
