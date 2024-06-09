@@ -17,6 +17,7 @@ type Config struct {
 	Auth0ClientID     string `mapstructure:"AUTH0_CLIENT_ID"`
 	Auth0ClientSecret string `mapstructure:"AUTH0_CLIENT_SECRET"`
 	Auth0CallbackURL  string `mapstructure:"AUTH0_CALLBACK_URL"`
+	SearchURL         string `mapstructure:"OPENSEARCH_URL"`
 }
 
 // Reads the configuration from the config file or environment variables.

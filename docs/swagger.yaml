@@ -612,6 +612,37 @@ paths:
       summary: Create request to scrape series list
       tags:
       - scrape-requests
+  /api/v1/search:
+    put:
+      description: Feed the open search engine
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1Response.Response'
+      security:
+      - cookieAuth: []
+      summary: Feed the open search engine
+      tags:
+      - search
   /api/v1/series/{provider_slug}:
     get:
       description: Get paginated series list
