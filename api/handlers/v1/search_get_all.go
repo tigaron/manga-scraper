@@ -3,6 +3,7 @@ package v1Handler
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 
 	"fourleaves.studio/manga-scraper/api/middlewares"
 	v1Response "fourleaves.studio/manga-scraper/api/renderings/v1"
@@ -82,7 +83,8 @@ func (h *Handler) GetSearch(c echo.Context) error {
 		})
 	}
 
-	url := h.config.SearchURL + "_search" + "?q=" + q
+	encodedQ := url.QueryEscape(q)
+	url := h.config.SearchURL + "_search" + "?q=" + encodedQ
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
