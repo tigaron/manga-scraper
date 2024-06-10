@@ -14,6 +14,11 @@ type ListChapterData struct {
 	Number     float64 `json:"number"`
 }
 
+type ListChapterResult struct {
+	Series   SeriesData        `json:"series"`
+	Chapters []ListChapterData `json:"chapters"`
+}
+
 type ChapterData struct {
 	Provider    string     `json:"provider"`
 	Series      string     `json:"series"`
@@ -134,11 +139,14 @@ func NewListChapterData(provider *db.ProviderModel, series *db.SeriesModel, chap
 	}
 }
 
-func NewListAllChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapterList []db.ChapterModel) []ListChapterData {
+func NewListAllChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapterList []db.ChapterModel) ListChapterResult {
 	result := make([]ListChapterData, 0, len(chapterList))
 	for _, chapter := range chapterList {
 		result = append(result, NewListChapterData(provider, series, &chapter))
 	}
 
-	return result
+	return ListChapterResult{
+		Series:   NewSeriesData(provider, series),
+		Chapters: result,
+	}
 }

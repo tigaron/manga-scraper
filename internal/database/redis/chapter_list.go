@@ -68,26 +68,26 @@ func (c *RedisClient) SetChapterListAllV1(ctx context.Context, provider string, 
 	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:all", provider, series), b.Bytes(), 24*time.Hour).Err()
 }
 
-func (c *RedisClient) GetChapterListOnlyV1(ctx context.Context, provider string, series string) ([]v1Response.ListChapterData, error) {
+func (c *RedisClient) GetChapterListOnlyV1(ctx context.Context, provider string, series string) (v1Response.ListChapterResult, error) {
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:only", provider, series))
 
 	cmdb, err := cmd.Bytes()
 	if err != nil {
-		return nil, err
+		return v1Response.ListChapterResult{}, err
 	}
 
 	b := bytes.NewReader(cmdb)
 
-	var res []v1Response.ListChapterData
+	var res v1Response.ListChapterResult
 
 	if err := gob.NewDecoder(b).Decode(&res); err != nil {
-		return nil, err
+		return v1Response.ListChapterResult{}, err
 	}
 
 	return res, nil
 }
 
-func (c *RedisClient) SetChapterListOnlyV1(ctx context.Context, provider string, series string, ch []v1Response.ListChapterData) error {
+func (c *RedisClient) SetChapterListOnlyV1(ctx context.Context, provider string, series string, ch v1Response.ListChapterResult) error {
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(ch); err != nil {
