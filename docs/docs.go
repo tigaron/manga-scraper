@@ -26,6 +26,11 @@ const docTemplate = `{
     "paths": {
         "/api/v1/chapters/{provider_slug}/{series_slug}": {
             "get": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
                 "description": "Get paginated chapter list",
                 "produces": [
                     "application/json"
@@ -98,6 +103,11 @@ const docTemplate = `{
         },
         "/api/v1/chapters/{provider_slug}/{series_slug}/_all": {
             "get": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
                 "description": "Get all chapter list",
                 "produces": [
                     "application/json"
@@ -148,6 +158,11 @@ const docTemplate = `{
         },
         "/api/v1/chapters/{provider_slug}/{series_slug}/_list": {
             "get": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
                 "description": "Get chapter list only",
                 "produces": [
                     "application/json"
@@ -198,6 +213,11 @@ const docTemplate = `{
         },
         "/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}": {
             "get": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
                 "description": "Get chapter by slug",
                 "produces": [
                     "application/json"
@@ -474,7 +494,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Create request to scrape chapter detail",
@@ -549,7 +569,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Create request to scrape chapter list",
@@ -624,7 +644,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Create request to scrape series detail",
@@ -699,7 +719,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Create request to scrape series list",
@@ -1021,36 +1041,16 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/profile": {
+        "/health": {
             "get": {
-                "security": [
-                    {
-                        "cookieAuth": []
-                    }
-                ],
-                "description": "Get user profile",
+                "description": "Get health check",
                 "produces": [
                     "application/json"
                 ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Get user profile",
+                "summary": "Get health check",
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/v1Response.Response"
                         }
@@ -1212,11 +1212,10 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "cookieAuth": {
-            "description": "Only Admin can use this feature. You can login at '/api/v1/users/login' and use 'session={cookie}' for the value.",
+        "TokenAuth": {
             "type": "apiKey",
-            "name": "cookie",
-            "in": "session"
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

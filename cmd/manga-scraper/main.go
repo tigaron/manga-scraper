@@ -7,7 +7,6 @@ import (
 
 	"fourleaves.studio/manga-scraper/api"
 	_ "fourleaves.studio/manga-scraper/docs"
-	"fourleaves.studio/manga-scraper/internal/authenticator"
 	"fourleaves.studio/manga-scraper/internal/config"
 	db "fourleaves.studio/manga-scraper/internal/database/prisma"
 	"fourleaves.studio/manga-scraper/internal/database/redis"
@@ -73,10 +72,10 @@ func init() {
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @securityDefinitions.apikey cookieAuth
-// @in							session
-// @name						cookie
-// @description			Only Admin can use this feature. You can login at '/api/v1/users/login' and use 'session={cookie}' for the value.
+// @securitydefinitions.apikey	TokenAuth
+// @in							header
+// @name						Authorization
+// @tokenUrl					https://manga-reader.fourleaves.studio/sign-in
 func main() {
 	defer sentry.Flush(2 * time.Second)
 	defer func() {
@@ -85,12 +84,7 @@ func main() {
 		}
 	}()
 
-	auth, err := authenticator.New(envConfig)
-	if err != nil {
-		log.Fatal("[main] failed to initialize authenticator: ", err)
-	}
-
-	server := api.NewRESTServer(envConfig, dbClient, redisClient, auth)
+	server := api.NewRESTServer(envConfig, dbClient, redisClient)
 
 	server.StartServer(envConfig.Port)
 }

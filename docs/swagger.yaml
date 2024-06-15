@@ -168,6 +168,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/v1Response.Response'
+      security:
+      - TokenAuth: []
       summary: Get paginated chapter list
       tags:
       - chapters
@@ -202,6 +204,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/v1Response.Response'
+      security:
+      - TokenAuth: []
       summary: Get all chapter list
       tags:
       - chapters
@@ -236,6 +240,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/v1Response.Response'
+      security:
+      - TokenAuth: []
       summary: Get chapter list only
       tags:
       - chapters
@@ -276,6 +282,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/v1Response.Response'
+      security:
+      - TokenAuth: []
       summary: Get chapter by slug
       tags:
       - chapters
@@ -464,7 +472,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - cookieAuth: []
+      - TokenAuth: []
       summary: Create request to scrape chapter detail
       tags:
       - scrape-requests
@@ -512,7 +520,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - cookieAuth: []
+      - TokenAuth: []
       summary: Create request to scrape chapter list
       tags:
       - scrape-requests
@@ -560,7 +568,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - cookieAuth: []
+      - TokenAuth: []
       summary: Create request to scrape series detail
       tags:
       - scrape-requests
@@ -608,7 +616,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - cookieAuth: []
+      - TokenAuth: []
       summary: Create request to scrape series list
       tags:
       - scrape-requests
@@ -780,9 +788,9 @@ paths:
       summary: Get series by slug
       tags:
       - series
-  /api/v1/users/profile:
+  /health:
     get:
-      description: Get user profile
+      description: Get health check
       produces:
       - application/json
       responses:
@@ -790,24 +798,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/v1Response.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1Response.Response'
-      security:
-      - cookieAuth: []
-      summary: Get user profile
-      tags:
-      - users
+      summary: Get health check
 securityDefinitions:
-  cookieAuth:
-    description: Only Admin can use this feature. You can login at '/api/v1/users/login'
-      and use 'session={cookie}' for the value.
-    in: session
-    name: cookie
+  TokenAuth:
+    in: header
+    name: Authorization
     type: apiKey
 swagger: "2.0"

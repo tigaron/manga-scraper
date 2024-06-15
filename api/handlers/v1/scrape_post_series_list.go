@@ -19,18 +19,18 @@ import (
 
 // @Summary		Create request to scrape series list
 // @Description	Create request to scrape series list
+// @Security		TokenAuth
 // @Tags			scrape-requests
 // @Accept			json
 // @Produce		json
-// @Param			body	body	v1Binding.PostScrapeSeriesList	true	"Request body"
-// @Security		cookieAuth
-// @Success		201	{object}	v1Response.Response
-// @Failure		400	{object}	v1Response.Response
-// @Failure		401	{object}	v1Response.Response
-// @Failure		403	{object}	v1Response.Response
-// @Failure		404	{object}	v1Response.Response
-// @Failure		500	{object}	v1Response.Response
-// @Failure		503	{object}	v1Response.Response
+// @Param			body	body		v1Binding.PostScrapeSeriesList	true	"Request body"
+// @Success		201		{object}	v1Response.Response
+// @Failure		400		{object}	v1Response.Response
+// @Failure		401		{object}	v1Response.Response
+// @Failure		403		{object}	v1Response.Response
+// @Failure		404		{object}	v1Response.Response
+// @Failure		500		{object}	v1Response.Response
+// @Failure		503		{object}	v1Response.Response
 // @Router			/api/v1/scrape-requests/series/list [post]
 func (h *Handler) PostScrapeSeriesList(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.PostScrapeSeriesList")

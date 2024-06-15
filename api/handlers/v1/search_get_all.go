@@ -61,11 +61,11 @@ type SearchResult struct {
 // @Description	Get series search result
 // @Tags			search
 // @Produce		json
-// @Param			q			query		string	true	"Query"			example(high school)
-// @Success		200				{object}	v1Response.Response
-// @Failure		400				{object}	v1Response.Response
-// @Failure		404				{object}	v1Response.Response
-// @Failure		500				{object}	v1Response.Response
+// @Param			q	query		string	true	"Query"	example(high school)
+// @Success		200	{object}	v1Response.Response
+// @Failure		400	{object}	v1Response.Response
+// @Failure		404	{object}	v1Response.Response
+// @Failure		500	{object}	v1Response.Response
 // @Router			/api/v1/search [get]
 func (h *Handler) GetSearch(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetSearch")
