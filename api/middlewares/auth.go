@@ -55,3 +55,59 @@ func WithHeaderAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		return next(c)
 	}
 }
+
+func IsAdmin(adminSub string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			span := sentry.StartSpan(c.Request().Context(), "IsAdmin")
+			span.Name = "IsAdmin"
+			defer span.Finish()
+
+			authHeader := c.Request().Header.Get("Authorization")
+			sessionToken := strings.TrimPrefix(authHeader, "Bearer ")
+
+			c.Logger().Debugj(map[string]interface{}{
+				"_source":       "middlewares.IsAdmin",
+				"session_token": sessionToken,
+			})
+
+			claims, err := jwt.Verify(c.Request().Context(), &jwt.VerifyParams{
+				Token: sessionToken,
+			})
+			if err != nil {
+				span.Status = sentry.SpanStatusUnauthenticated
+				return c.JSON(http.StatusUnauthorized, v1Response.Response{
+					Error:   true,
+					Message: "Unauthorized",
+					Detail:  "Invalid session token",
+				})
+			}
+
+			profile, err := json.Marshal(claims)
+			if err != nil {
+				SentryHandleInternalError(c, span, err, "json.Marshal")
+				return c.JSON(http.StatusInternalServerError, v1Response.Response{
+					Error:   true,
+					Message: "Internal Server Error",
+				})
+			}
+
+			c.Logger().Debugj(map[string]interface{}{
+				"_source": "middlewares.IsAdmin",
+				"profile": string(profile),
+			})
+
+			if claims.Subject != adminSub {
+				span.Status = sentry.SpanStatusPermissionDenied
+				return c.JSON(http.StatusForbidden, v1Response.Response{
+					Error:   true,
+					Message: "Forbidden",
+					Detail:  "Admin role required",
+				})
+			}
+
+			span.Status = sentry.SpanStatusOK
+			return next(c)
+		}
+	}
+}

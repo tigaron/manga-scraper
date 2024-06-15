@@ -1,5 +1,5 @@
 definitions:
-  v1Binding.PostProviderRequest:
+  PostProviderRequest:
     properties:
       host:
         example: asuratoon.com
@@ -27,7 +27,7 @@ definitions:
     - scheme
     - slug
     type: object
-  v1Binding.PostScrapeChapterList:
+  PostScrapeChapterList:
     properties:
       provider:
         example: asura
@@ -39,7 +39,7 @@ definitions:
     - provider
     - series
     type: object
-  v1Binding.PostScrapeSeriesList:
+  PostScrapeSeriesList:
     properties:
       provider:
         example: asura
@@ -47,7 +47,7 @@ definitions:
     required:
     - provider
     type: object
-  v1Binding.PutProviderRequest:
+  PutProviderRequest:
     properties:
       host:
         example: asuratoon.com
@@ -71,7 +71,7 @@ definitions:
     - name
     - scheme
     type: object
-  v1Binding.PutScrapeChapterDetail:
+  PutScrapeChapterDetail:
     properties:
       chapter:
         example: reincarnator-chapter-27
@@ -87,7 +87,7 @@ definitions:
     - provider
     - series
     type: object
-  v1Binding.PutScrapeSeriesDetail:
+  PutScrapeSeriesDetail:
     properties:
       provider:
         example: asura
@@ -99,7 +99,7 @@ definitions:
     - provider
     - series
     type: object
-  v1Response.Response:
+  ResponseV1:
     properties:
       data: {}
       detail: {}
@@ -155,19 +155,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Get paginated chapter list
@@ -195,15 +195,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Get all chapter list
@@ -231,15 +231,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Get chapter list only
@@ -273,20 +273,62 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Get chapter by slug
       tags:
       - chapters
+  /api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}/_bc:
+    get:
+      description: Get chapter breadcrumbs
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      - description: Chapter slug
+        example: reincarnator-chapter-0
+        in: path
+        name: chapter_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseV1'
+      security:
+      - TokenAuth: []
+      summary: Get chapter breadcrumbs
+      tags:
+      - breadcrumbs
   /api/v1/providers:
     get:
       description: Get provider list
@@ -296,15 +338,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       summary: Get provider list
       tags:
       - providers
@@ -318,34 +360,34 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1Binding.PostProviderRequest'
+          $ref: '#/definitions/PostProviderRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Create provider
@@ -367,15 +409,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       summary: Get provider by slug
       tags:
       - providers
@@ -395,39 +437,71 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1Binding.PutProviderRequest'
+          $ref: '#/definitions/PutProviderRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Update provider
       tags:
       - providers
+  /api/v1/providers/{provider_slug}/_bc:
+    get:
+      description: Get provider breadcrumbs
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseV1'
+      summary: Get provider breadcrumbs
+      tags:
+      - breadcrumbs
   /api/v1/scrape-requests/chapters/detail:
     put:
       consumes:
@@ -439,38 +513,38 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1Binding.PutScrapeChapterDetail'
+          $ref: '#/definitions/PutScrapeChapterDetail'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Create request to scrape chapter detail
@@ -487,38 +561,38 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1Binding.PostScrapeChapterList'
+          $ref: '#/definitions/PostScrapeChapterList'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Create request to scrape chapter list
@@ -535,38 +609,38 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1Binding.PutScrapeSeriesDetail'
+          $ref: '#/definitions/PutScrapeSeriesDetail'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Create request to scrape series detail
@@ -583,38 +657,38 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/v1Binding.PostScrapeSeriesList'
+          $ref: '#/definitions/PostScrapeSeriesList'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Create request to scrape series list
@@ -636,19 +710,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       summary: Get series search result
       tags:
       - search
@@ -660,23 +734,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       security:
       - TokenAuth: []
       summary: Feed the open search engine
@@ -710,19 +784,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       summary: Get paginated series list
       tags:
       - series
@@ -742,15 +816,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       summary: Get all series list
       tags:
       - series
@@ -776,18 +850,52 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       summary: Get series by slug
       tags:
       - series
+  /api/v1/series/{provider_slug}/{series_slug}/_bc:
+    get:
+      description: Get series breadcrumbs
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseV1'
+      summary: Get series breadcrumbs
+      tags:
+      - breadcrumbs
   /health:
     get:
       description: Get health check
@@ -797,7 +905,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1Response.Response'
+            $ref: '#/definitions/ResponseV1'
       summary: Get health check
 securityDefinitions:
   TokenAuth:

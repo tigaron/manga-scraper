@@ -77,25 +77,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -138,19 +138,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -193,19 +193,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -256,19 +256,82 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}/_bc": {
+            "get": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
+                "description": "Get chapter breadcrumbs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "breadcrumbs"
+                ],
+                "summary": "Get chapter breadcrumbs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator",
+                        "description": "Series slug",
+                        "name": "series_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator-chapter-0",
+                        "description": "Chapter slug",
+                        "name": "chapter_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -288,19 +351,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -329,7 +392,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1Binding.PostProviderRequest"
+                            "$ref": "#/definitions/PostProviderRequest"
                         }
                     }
                 ],
@@ -337,37 +400,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -397,19 +460,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -446,7 +509,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1Binding.PutProviderRequest"
+                            "$ref": "#/definitions/PutProviderRequest"
                         }
                     }
                 ],
@@ -454,37 +517,85 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/providers/{provider_slug}/_bc": {
+            "get": {
+                "description": "Get provider breadcrumbs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "breadcrumbs"
+                ],
+                "summary": "Get provider breadcrumbs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -515,7 +626,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1Binding.PutScrapeChapterDetail"
+                            "$ref": "#/definitions/PutScrapeChapterDetail"
                         }
                     }
                 ],
@@ -523,43 +634,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -590,7 +701,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1Binding.PostScrapeChapterList"
+                            "$ref": "#/definitions/PostScrapeChapterList"
                         }
                     }
                 ],
@@ -598,43 +709,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -665,7 +776,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1Binding.PutScrapeSeriesDetail"
+                            "$ref": "#/definitions/PutScrapeSeriesDetail"
                         }
                     }
                 ],
@@ -673,43 +784,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -740,7 +851,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1Binding.PostScrapeSeriesList"
+                            "$ref": "#/definitions/PostScrapeSeriesList"
                         }
                     }
                 ],
@@ -748,43 +859,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -814,25 +925,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -855,31 +966,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -925,25 +1036,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -973,19 +1084,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -1023,19 +1134,69 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/series/{provider_slug}/{series_slug}/_bc": {
+            "get": {
+                "description": "Get series breadcrumbs",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "breadcrumbs"
+                ],
+                "summary": "Get series breadcrumbs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator",
+                        "description": "Series slug",
+                        "name": "series_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -1052,7 +1213,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1Response.Response"
+                            "$ref": "#/definitions/ResponseV1"
                         }
                     }
                 }
@@ -1060,7 +1221,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "v1Binding.PostProviderRequest": {
+        "PostProviderRequest": {
             "type": "object",
             "required": [
                 "host",
@@ -1097,7 +1258,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1Binding.PostScrapeChapterList": {
+        "PostScrapeChapterList": {
             "type": "object",
             "required": [
                 "provider",
@@ -1114,7 +1275,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1Binding.PostScrapeSeriesList": {
+        "PostScrapeSeriesList": {
             "type": "object",
             "required": [
                 "provider"
@@ -1126,7 +1287,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1Binding.PutProviderRequest": {
+        "PutProviderRequest": {
             "type": "object",
             "required": [
                 "host",
@@ -1158,7 +1319,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1Binding.PutScrapeChapterDetail": {
+        "PutScrapeChapterDetail": {
             "type": "object",
             "required": [
                 "chapter",
@@ -1180,7 +1341,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1Binding.PutScrapeSeriesDetail": {
+        "PutScrapeSeriesDetail": {
             "type": "object",
             "required": [
                 "provider",
@@ -1197,7 +1358,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1Response.Response": {
+        "ResponseV1": {
             "type": "object",
             "properties": {
                 "data": {},
