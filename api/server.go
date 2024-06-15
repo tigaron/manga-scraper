@@ -91,9 +91,9 @@ func (s *RESTServer) StartServer(port string) {
 func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
 	providers := v1Api.Group("/providers")
 	providers.GET("", s.v1.GetProvidersList)
-	providers.POST("", s.v1.PostProvider)
+	providers.POST("", s.v1.PostProvider, middlewares.WithHeaderAuth)
 	providers.GET("/:provider_slug", s.v1.GetProvider)
-	providers.PUT("/:provider_slug", s.v1.PutProvider)
+	providers.PUT("/:provider_slug", s.v1.PutProvider, middlewares.WithHeaderAuth)
 
 	scrapeRequests := v1Api.Group("/scrape-requests", middlewares.WithHeaderAuth)
 	scrapeRequests.POST("/series/list", s.v1.PostScrapeSeriesList)
@@ -114,5 +114,5 @@ func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
 
 	search := v1Api.Group("/search")
 	search.GET("", s.v1.GetSearch)
-	search.PUT("", s.v1.PutSearch)
+	search.PUT("", s.v1.PutSearch, middlewares.WithHeaderAuth)
 }

@@ -308,7 +308,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Create provider",
@@ -417,7 +417,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Update provider",
@@ -840,7 +840,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Feed the open search engine",

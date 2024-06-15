@@ -300,7 +300,7 @@
             "post": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Create provider",
@@ -409,7 +409,7 @@
             "put": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Update provider",
@@ -832,7 +832,7 @@
             "put": {
                 "security": [
                     {
-                        "cookieAuth": []
+                        "TokenAuth": []
                     }
                 ],
                 "description": "Feed the open search engine",

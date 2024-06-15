@@ -15,9 +15,9 @@ import (
 
 // @Summary		Feed the open search engine
 // @Description	Feed the open search engine
+// @Security		TokenAuth
 // @Tags			search
 // @Produce		json
-// @Security		cookieAuth
 // @Success		200	{object}	v1Response.Response
 // @Failure		401	{object}	v1Response.Response
 // @Failure		403	{object}	v1Response.Response

@@ -347,7 +347,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - cookieAuth: []
+      - TokenAuth: []
       summary: Create provider
       tags:
       - providers
@@ -424,7 +424,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - cookieAuth: []
+      - TokenAuth: []
       summary: Update provider
       tags:
       - providers
@@ -678,7 +678,7 @@ paths:
           schema:
             $ref: '#/definitions/v1Response.Response'
       security:
-      - cookieAuth: []
+      - TokenAuth: []
       summary: Feed the open search engine
       tags:
       - search
