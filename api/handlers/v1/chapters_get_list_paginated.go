@@ -15,7 +15,6 @@ import (
 
 // @Summary		Get paginated chapter list
 // @Description	Get paginated chapter list
-// @Security		TokenAuth
 // @Tags			chapters
 // @Produce		json
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)

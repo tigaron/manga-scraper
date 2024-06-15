@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# apiUrl="https://manga-scraper.hostinger.fourleaves.studio"
-apiUrl="http://localhost:1323"
+apiUrl="https://manga-scraper.hostinger.fourleaves.studio"
+SESSION="S2SB7ZOF2NA5GKE7DVNP4A4GW2HIXTS5L3B4EEP6CFQE6EGRBF5S74M3IXKHEVIKGVFLWSWBZSZQ75AK6X4FWANVRKTY6RHXY4TULSI"
+# apiUrl="http://localhost:1323"
 
 check_error() {
   local response="$1"
@@ -22,18 +23,18 @@ check_error_loop() {
   return 0
 }
 
-providersApi=$(curl -s "$apiUrl/api/v1/providers")
-check_error "$providersApi"
+# providersApi=$(curl -s "$apiUrl/api/v1/providers")
+# check_error "$providersApi"
 
-providers=$(echo "$providersApi" | jq -r '.data[].slug')
+# providers=$(echo "$providersApi" | jq -r '.data[].slug')
 
-for provider in $providers; do
-  mkdir -p "/tmp/$provider"
-  tmpFilePath="/tmp/$provider/seed-chapters-list-progress"
-  [ -f "$tmpFilePath" ] && rm "$tmpFilePath"
-  touch "$tmpFilePath"
-
-  page=5
+# for provider in $providers; do
+#   mkdir -p "/tmp/$provider"
+#   tmpFilePath="/tmp/$provider/seed-chapters-list-progress"
+#   [ -f "$tmpFilePath" ] && rm "$tmpFilePath"
+#   touch "$tmpFilePath"
+provider="surya"
+  page=18
   while true; do
     seriesApi=$(curl -s "$apiUrl/api/v1/series/$provider?page=$page&size=1")
     check_error "$seriesApi"
@@ -43,6 +44,7 @@ for provider in $providers; do
       echo "Scraping cahapter list of $s from $provider"
       curl -s -X POST "$apiUrl/api/v1/scrape-requests/chapters/list" \
         -H "Content-Type: application/json" \
+        -H "cookie: session=$SESSION" \
         -d @- <<EOF
 {
   "provider": "$provider",
@@ -70,6 +72,7 @@ EOF
           echo "Scraping $c from $s of $provider"
           curl -s -X PUT "$apiUrl/api/v1/scrape-requests/chapters/detail" \
             -H "Content-Type: application/json" \
+            -H "cookie: session=$SESSION" \
             -d @- <<EOF
 {
   "provider": "$provider",
@@ -87,4 +90,4 @@ EOF
 
     page=$((page + 1))
   done
-done
+# done

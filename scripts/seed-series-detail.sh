@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# apiUrl="https://manga-scraper.hostinger.fourleaves.studio"
-apiUrl="http://localhost:1323"
+apiUrl="https://manga-scraper.hostinger.fourleaves.studio"
+SESSION="OP3CLDB67K4TQR7XHYCNUXNZ2HWZOZO2K2PNPD7W5PUPKC266YDH46IEVE6IVMIGUWCW5OULWPYAZCOKXRHZIEPRNGY2JQX3355H3JI"
+# apiUrl="http://localhost:1323"
 
 check_error() {
   local response="$1"
@@ -12,12 +13,14 @@ check_error() {
   fi
 }
 
-providersApi=$(curl -s "$apiUrl/api/v1/providers")
-check_error "$providersApi"
+# providersApi=$(curl -s "$apiUrl/api/v1/providers")
+# check_error "$providersApi"
 
-providers=$(echo "$providersApi" | jq -r '.data[].slug')
+# providers=$(echo "$providersApi" | jq -r '.data[].slug')
 
-for provider in $providers; do
+provider="surya"
+
+# for provider in $providers; do
   page=1
   while true; do
     seriesApi=$(curl -s "$apiUrl/api/v1/series/$provider?page=$page&size=10")
@@ -28,6 +31,7 @@ for provider in $providers; do
       echo "Scraping $s from $provider"
       curl -s -X PUT "$apiUrl/api/v1/scrape-requests/series/detail" \
         -H "Content-Type: application/json" \
+        -H "cookie: session=$SESSION" \
         -d @- <<EOF
 {
   "provider": "$provider",
@@ -38,4 +42,4 @@ EOF
 
     page=$((page + 1))
   done
-done
+# done

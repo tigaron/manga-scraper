@@ -14,7 +14,6 @@ import (
 
 // @Summary		Get chapter breadcrumbs
 // @Description	Get chapter breadcrumbs
-// @Security		TokenAuth
 // @Tags			breadcrumbs
 // @Produce		json
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
