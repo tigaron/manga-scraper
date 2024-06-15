@@ -28,6 +28,11 @@ func SentryMiddleware() echo.MiddlewareFunc {
 }
 
 func SentryHandleInternalError(c echo.Context, span *sentry.Span, err error, transaction string) {
+	c.Logger().Debugj(map[string]interface{}{
+		"_source": transaction,
+		"error":   err.Error(),
+	})
+
 	span.Status = sentry.SpanStatusInternalError
 	sentry.CurrentHub().WithScope(func(scope *sentry.Scope) {
 		scope.SetRequest(c.Request())
@@ -39,6 +44,11 @@ func SentryHandleInternalError(c echo.Context, span *sentry.Span, err error, tra
 }
 
 func SentryHandleInternalErrorWithData(c echo.Context, span *sentry.Span, err error, transaction string, data interface{}) {
+	c.Logger().Debugj(map[string]interface{}{
+		"_source": transaction,
+		"error":   err.Error(),
+	})
+
 	sentry.CurrentHub().WithScope(func(scope *sentry.Scope) {
 		scope.SetRequest(c.Request())
 		scope.SetTag("handled", "true")

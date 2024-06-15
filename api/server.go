@@ -32,7 +32,13 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 	app := echo.New()
 	app.Use(middleware.Logger())
 	app.Use(middleware.Recover())
-	app.Logger.SetLevel(log.INFO)
+
+	switch config.ENV {
+	case "development":
+		app.Logger.SetLevel(log.DEBUG)
+	case "production":
+		app.Logger.SetLevel(log.INFO)
+	}
 
 	app.Use(middlewares.SentryMiddleware())
 

@@ -20,6 +20,7 @@ type SearchHitsSource struct {
 	Title    string   `json:"title"`
 	Synopsis string   `json:"synopsis"`
 	Genres   []string `json:"genres"`
+	CoverURL string   `json:"coverURL"`
 }
 
 type SearchHitsData struct {
@@ -55,6 +56,7 @@ type SearchResult struct {
 	Title    string   `json:"title"`
 	Synopsis string   `json:"synopsis"`
 	Genres   []string `json:"genres"`
+	CoverURL string   `json:"coverURL"`
 }
 
 // @Summary		Get series search result
@@ -62,10 +64,10 @@ type SearchResult struct {
 // @Tags			search
 // @Produce		json
 // @Param			q	query		string	true	"Query"	example(high school)
-// @Success		200	{object}	v1Response.Response
-// @Failure		400	{object}	v1Response.Response
-// @Failure		404	{object}	v1Response.Response
-// @Failure		500	{object}	v1Response.Response
+// @Success		200	{object}	ResponseV1
+// @Failure		400	{object}	ResponseV1
+// @Failure		404	{object}	ResponseV1
+// @Failure		500	{object}	ResponseV1
 // @Router			/api/v1/search [get]
 func (h *Handler) GetSearch(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetSearch")
@@ -82,6 +84,11 @@ func (h *Handler) GetSearch(c echo.Context) error {
 			Detail:  "Query is required",
 		})
 	}
+
+	c.Logger().Debugj(map[string]interface{}{
+		"_source": "v1.GetSearch",
+		"query":   q,
+	})
 
 	encodedQ := url.QueryEscape(q)
 	url := h.config.SearchURL + "_search" + "?q=" + encodedQ
@@ -136,6 +143,7 @@ func (h *Handler) GetSearch(c echo.Context) error {
 			Title:    hit.Source.Title,
 			Synopsis: hit.Source.Synopsis,
 			Genres:   hit.Source.Genres,
+			CoverURL: hit.Source.CoverURL,
 		})
 	}
 

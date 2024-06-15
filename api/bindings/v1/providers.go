@@ -7,7 +7,7 @@ type PostProviderRequest struct {
 	Host     string `json:"host" validate:"required" example:"asuratoon.com"`
 	ListPath string `json:"list_path" validate:"required" example:"/manga/list-mode/"`
 	IsActive bool   `json:"is_active" validate:"required" example:"true"`
-}
+} // @name PostProviderRequest
 
 type PutProviderRequest struct {
 	Name     string `json:"name" validate:"required" example:"Asura Scans"`
@@ -15,4 +15,4 @@ type PutProviderRequest struct {
 	Host     string `json:"host" validate:"required" example:"asuratoon.com"`
 	ListPath string `json:"list_path" validate:"required" example:"/manga/list-mode/"`
 	IsActive bool   `json:"is_active" validate:"required" example:"true"`
-}
+} // @name PutProviderRequest

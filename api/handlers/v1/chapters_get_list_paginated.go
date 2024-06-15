@@ -22,10 +22,10 @@ import (
 // @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
 // @Param			page			query		string	true	"Page"			example(10)
 // @Param			size			query		string	true	"Size"			example(100)
-// @Success		200				{object}	v1Response.Response
-// @Failure		400				{object}	v1Response.Response
-// @Failure		404				{object}	v1Response.Response
-// @Failure		500				{object}	v1Response.Response
+// @Success		200				{object}	ResponseV1
+// @Failure		400				{object}	ResponseV1
+// @Failure		404				{object}	ResponseV1
+// @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/chapters/{provider_slug}/{series_slug} [get]
 func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapterListPaginated")
@@ -55,6 +55,14 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 
 	providerSlug := c.Param("provider_slug")
 	seriesSlug := c.Param("series_slug")
+
+	c.Logger().Debugj(map[string]interface{}{
+		"_source":       "v1.GetChapterListPaginated",
+		"provider_slug": providerSlug,
+		"series_slug":   seriesSlug,
+		"page":          req.Page,
+		"size":          req.Size,
+	})
 
 	cache, err := h.redis.GetChapterListV1(c.Request().Context(), providerSlug, seriesSlug, req.Page, req.Size)
 	if err == nil {

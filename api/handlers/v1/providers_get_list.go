@@ -13,9 +13,9 @@ import (
 // @Description	Get provider list
 // @Tags			providers
 // @Produce		json
-// @Success		200	{object}	v1Response.Response
-// @Failure		404	{object}	v1Response.Response
-// @Failure		500	{object}	v1Response.Response
+// @Success		200	{object}	ResponseV1
+// @Failure		404	{object}	ResponseV1
+// @Failure		500	{object}	ResponseV1
 // @Router			/api/v1/providers [get]
 func (h *Handler) GetProvidersList(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetProvidersList")

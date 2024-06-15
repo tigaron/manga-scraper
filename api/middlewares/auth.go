@@ -17,7 +17,13 @@ func WithHeaderAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		span.Name = "WithHeaderAuth"
 		defer span.Finish()
 
-		sessionToken := strings.TrimPrefix(c.Request().Header.Get("Authorization"), "Bearer ")
+		authHeader := c.Request().Header.Get("Authorization")
+		sessionToken := strings.TrimPrefix(authHeader, "Bearer ")
+
+		c.Logger().Debugj(map[string]interface{}{
+			"_source":       "middlewares.WithHeaderAuth",
+			"session_token": sessionToken,
+		})
 
 		claims, err := jwt.Verify(c.Request().Context(), &jwt.VerifyParams{
 			Token: sessionToken,
@@ -40,7 +46,10 @@ func WithHeaderAuth(next echo.HandlerFunc) echo.HandlerFunc {
 			})
 		}
 
-		c.Logger().Debug("Profile: ", string(profile))
+		c.Logger().Debugj(map[string]interface{}{
+			"_source": "middlewares.WithHeaderAuth",
+			"profile": string(profile),
+		})
 
 		span.Status = sentry.SpanStatusOK
 		return next(c)

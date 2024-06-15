@@ -17,9 +17,9 @@ import (
 // @Tags			series
 // @Produce		json
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
-// @Success		200				{object}	v1Response.Response
-// @Failure		404				{object}	v1Response.Response
-// @Failure		500				{object}	v1Response.Response
+// @Success		200				{object}	ResponseV1
+// @Failure		404				{object}	ResponseV1
+// @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/series/{provider_slug}/_all [get]
 func (h *Handler) GetSeriesListAll(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetSeriesListAll")
@@ -27,6 +27,11 @@ func (h *Handler) GetSeriesListAll(c echo.Context) error {
 	defer span.Finish()
 
 	providerSlug := c.Param("provider_slug")
+
+	c.Logger().Debugj(map[string]interface{}{
+		"_source":       "v1.GetSeriesListAll",
+		"provider_slug": providerSlug,
+	})
 
 	cache, err := h.redis.GetSeriesListAllV1(c.Request().Context(), providerSlug)
 	if err == nil {

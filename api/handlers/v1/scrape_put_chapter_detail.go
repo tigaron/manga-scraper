@@ -21,14 +21,14 @@ import (
 // @Tags			scrape-requests
 // @Accept			json
 // @Produce		json
-// @Param			body	body		v1Binding.PutScrapeChapterDetail	true	"Request body"
-// @Success		200		{object}	v1Response.Response
-// @Failure		400		{object}	v1Response.Response
-// @Failure		401		{object}	v1Response.Response
-// @Failure		403		{object}	v1Response.Response
-// @Failure		404		{object}	v1Response.Response
-// @Failure		500		{object}	v1Response.Response
-// @Failure		503		{object}	v1Response.Response
+// @Param			body	body		PutScrapeChapterDetail	true	"Request body"
+// @Success		200		{object}	ResponseV1
+// @Failure		400		{object}	ResponseV1
+// @Failure		401		{object}	ResponseV1
+// @Failure		403		{object}	ResponseV1
+// @Failure		404		{object}	ResponseV1
+// @Failure		500		{object}	ResponseV1
+// @Failure		503		{object}	ResponseV1
 // @Router			/api/v1/scrape-requests/chapters/detail [put]
 func (h *Handler) PutScrapeChapterDetail(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.PutScrapeChapterDetail")
@@ -55,6 +55,13 @@ func (h *Handler) PutScrapeChapterDetail(c echo.Context) error {
 			Detail:  middlewares.FormatValidationError(err),
 		})
 	}
+
+	c.Logger().Debugj(map[string]interface{}{
+		"_source":  "v1.PutScrapeChapterDetail",
+		"provider": req.Provider,
+		"series":   req.Series,
+		"chapter":  req.Chapter,
+	})
 
 	provider, err := h.prisma.FindProviderUniqueV1(c.Request().Context(), req.Provider)
 	if errors.Is(err, db.ErrNotFound) {

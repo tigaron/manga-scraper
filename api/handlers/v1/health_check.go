@@ -10,7 +10,7 @@ import (
 // @Summary		Get health check
 // @Description	Get health check
 // @Produce		json
-// @Success		200	{object}	v1Response.Response
+// @Success		200	{object}	ResponseV1
 // @Router			/health [get]
 func (h *Handler) GetHealthCheck(c echo.Context) error {
 	return c.JSON(http.StatusOK, v1Response.Response{

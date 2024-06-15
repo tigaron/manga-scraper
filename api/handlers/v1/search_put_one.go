@@ -18,11 +18,11 @@ import (
 // @Security		TokenAuth
 // @Tags			search
 // @Produce		json
-// @Success		200	{object}	v1Response.Response
-// @Failure		401	{object}	v1Response.Response
-// @Failure		403	{object}	v1Response.Response
-// @Failure		404	{object}	v1Response.Response
-// @Failure		500	{object}	v1Response.Response
+// @Success		200	{object}	ResponseV1
+// @Failure		401	{object}	ResponseV1
+// @Failure		403	{object}	ResponseV1
+// @Failure		404	{object}	ResponseV1
+// @Failure		500	{object}	ResponseV1
 // @Router			/api/v1/search [put]
 func (h *Handler) PutSearch(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.PutSearch")

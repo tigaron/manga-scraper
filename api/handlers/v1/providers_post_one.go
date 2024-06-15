@@ -19,13 +19,13 @@ import (
 // @Tags			providers
 // @Accept			json
 // @Produce		json
-// @Param			body	body		v1Binding.PostProviderRequest	true	"Request body"
-// @Success		201		{object}	v1Response.Response
-// @Failure		400		{object}	v1Response.Response
-// @Failure		401		{object}	v1Response.Response
-// @Failure		403		{object}	v1Response.Response
-// @Failure		409		{object}	v1Response.Response
-// @Failure		500		{object}	v1Response.Response
+// @Param			body	body		PostProviderRequest	true	"Request body"
+// @Success		201		{object}	ResponseV1
+// @Failure		400		{object}	ResponseV1
+// @Failure		401		{object}	ResponseV1
+// @Failure		403		{object}	ResponseV1
+// @Failure		409		{object}	ResponseV1
+// @Failure		500		{object}	ResponseV1
 // @Router			/api/v1/providers [post]
 func (h *Handler) PostProvider(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.PostProvider")
@@ -52,6 +52,16 @@ func (h *Handler) PostProvider(c echo.Context) error {
 			Detail:  middlewares.FormatValidationError(err),
 		})
 	}
+
+	c.Logger().Debugj(map[string]interface{}{
+		"_source":   "v1.PostProvider",
+		"slug":      req.Slug,
+		"name":      req.Name,
+		"scheme":    req.Scheme,
+		"host":      req.Host,
+		"list_path": req.ListPath,
+		"is_active": req.IsActive,
+	})
 
 	provider, err := h.prisma.CreateProviderV1(c.Request().Context(), req)
 	if err != nil {

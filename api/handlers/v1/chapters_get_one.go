@@ -20,9 +20,9 @@ import (
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
 // @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
 // @Param			chapter_slug	path		string	true	"Chapter slug"	example(reincarnator-chapter-0)
-// @Success		200				{object}	v1Response.Response
-// @Failure		404				{object}	v1Response.Response
-// @Failure		500				{object}	v1Response.Response
+// @Success		200				{object}	ResponseV1
+// @Failure		404				{object}	ResponseV1
+// @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug} [get]
 func (h *Handler) GetChapter(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetChapter")
@@ -32,6 +32,13 @@ func (h *Handler) GetChapter(c echo.Context) error {
 	providerSlug := c.Param("provider_slug")
 	seriesSlug := c.Param("series_slug")
 	chapterSlug := c.Param("chapter_slug")
+
+	c.Logger().Debugj(map[string]interface{}{
+		"_source":       "v1.GetChapter",
+		"provider_slug": providerSlug,
+		"series_slug":   seriesSlug,
+		"chapter_slug":  chapterSlug,
+	})
 
 	cache, err := h.redis.GetChapterV1(c.Request().Context(), providerSlug, seriesSlug, chapterSlug)
 	if err == nil {

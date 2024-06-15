@@ -20,10 +20,10 @@ import (
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
 // @Param			page			query		string	true	"Page"			example(10)
 // @Param			size			query		string	true	"Size"			example(100)
-// @Success		200				{object}	v1Response.Response
-// @Failure		400				{object}	v1Response.Response
-// @Failure		404				{object}	v1Response.Response
-// @Failure		500				{object}	v1Response.Response
+// @Success		200				{object}	ResponseV1
+// @Failure		400				{object}	ResponseV1
+// @Failure		404				{object}	ResponseV1
+// @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/series/{provider_slug} [get]
 func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetSeriesListPaginated")
@@ -52,6 +52,13 @@ func (h *Handler) GetSeriesListPaginated(c echo.Context) error {
 	}
 
 	providerSlug := c.Param("provider_slug")
+
+	c.Logger().Debugj(map[string]interface{}{
+		"_source":  "v1.GetSeriesListPaginated",
+		"provider": providerSlug,
+		"page":     req.Page,
+		"size":     req.Size,
+	})
 
 	cache, err := h.redis.GetSeriesListV1(c.Request().Context(), providerSlug, req.Page, req.Size)
 	if err == nil {
