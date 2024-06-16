@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	v1Binding "fourleaves.studio/manga-scraper/api/bindings/v1"
@@ -131,7 +132,8 @@ func (h *Handler) PutScrapeChapterDetail(c echo.Context) error {
 	if chapter.SourcePath != "" {
 		reqURL = provider.Scheme + provider.Host + chapter.SourcePath
 	} else {
-		reqURL = chapter.SourceHref
+		hrefArr := strings.Split(chapter.SourceHref, "/")
+		reqURL = provider.Scheme + provider.Host + "/" + strings.Join(hrefArr[3:], "/")
 	}
 
 	scrapeData, err := scraper.ScrapeChapterDetail(c.Request().Context(), h.config.RodURL, req.Provider, reqURL)
