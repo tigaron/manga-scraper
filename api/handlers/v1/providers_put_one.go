@@ -19,7 +19,7 @@ import (
 // @Tags			providers
 // @Accept			json
 // @Produce		json
-// @Param			provider_slug	path		string							true	"Provider slug"	example(asura)
+// @Param			provider_slug	path		string				true	"Provider slug"	example(asura)
 // @Param			body			body		PutProviderRequest	true	"Request body"
 // @Success		200				{object}	ResponseV1
 // @Failure		400				{object}	ResponseV1

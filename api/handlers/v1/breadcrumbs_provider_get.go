@@ -16,11 +16,11 @@ import (
 // @Description	Get provider breadcrumbs
 // @Tags			breadcrumbs
 // @Produce		json
-// @Param			provider_slug	path		string	true	"Provider slug" example(asura)
-// @Success		200	{object}	ResponseV1
-// @Failure		400	{object}	ResponseV1
-// @Failure		404	{object}	ResponseV1
-// @Failure		500	{object}	ResponseV1
+// @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
+// @Success		200				{object}	ResponseV1
+// @Failure		400				{object}	ResponseV1
+// @Failure		404				{object}	ResponseV1
+// @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/providers/{provider_slug}/_bc [get]
 func (h *Handler) GetProviderBreadcrumbs(c echo.Context) error {
 	span := sentry.StartSpan(c.Request().Context(), "v1.GetBreadcrumbs")

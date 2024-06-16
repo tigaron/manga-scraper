@@ -31,7 +31,7 @@ func (h *Handler) GetSeries(c echo.Context) error {
 	seriesSlug := c.Param("series_slug")
 
 	c.Logger().Debugj(map[string]interface{}{
-		"_source":  "v1.GetSeriesListPaginated",
+		"_source":  "v1.GetSeries",
 		"provider": providerSlug,
 		"series":   seriesSlug,
 	})
