@@ -4,12 +4,17 @@ import (
 	"bytes"
 	"context"
 	"encoding/gob"
+	"fmt"
 	"time"
 
 	v1Response "fourleaves.studio/manga-scraper/api/renderings/v1"
 )
 
 func (c *RedisClient) GetProviderListV1(ctx context.Context) ([]v1Response.ProviderData, error) {
+	if c.environment == "development" {
+		return nil, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, "v1:provider_list")
 
 	cmdb, err := cmd.Bytes()
@@ -29,6 +34,10 @@ func (c *RedisClient) GetProviderListV1(ctx context.Context) ([]v1Response.Provi
 }
 
 func (c *RedisClient) SetProviderListV1(ctx context.Context, p []v1Response.ProviderData) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(p); err != nil {
@@ -39,5 +48,9 @@ func (c *RedisClient) SetProviderListV1(ctx context.Context, p []v1Response.Prov
 }
 
 func (c *RedisClient) UnsetProviderListV1(ctx context.Context) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	return c.client.Del(ctx, "v1:provider_list").Err()
 }

@@ -12,6 +12,10 @@ import (
 )
 
 func (c *RedisClient) GetChapterV1(ctx context.Context, provider string, series string, chapter string) (v1Response.ChapterData, error) {
+	if c.environment == "development" {
+		return v1Response.ChapterData{}, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter:%s", provider, series, chapter))
 
 	cmdb, err := cmd.Bytes()
@@ -31,6 +35,10 @@ func (c *RedisClient) GetChapterV1(ctx context.Context, provider string, series 
 }
 
 func (c *RedisClient) SetChapterV1(ctx context.Context, provider string, series string, chapter string, ch v1Response.ChapterData) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(ch); err != nil {
@@ -45,6 +53,10 @@ func (c *RedisClient) UnsetChapterV1(ctx context.Context, provider string, serie
 }
 
 func (c *RedisClient) FindChapterUniqueV1(ctx context.Context, provider string, series string, chapter string) (*db.ChapterModel, error) {
+	if c.environment == "development" {
+		return nil, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s:chapter:%s", provider, series, chapter))
 
 	cmdb, err := cmd.Bytes()
@@ -64,6 +76,10 @@ func (c *RedisClient) FindChapterUniqueV1(ctx context.Context, provider string, 
 }
 
 func (c *RedisClient) CreateChapterUniqueV1(ctx context.Context, provider string, series string, chapter string, ch *db.ChapterModel) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(*ch); err != nil {
@@ -74,5 +90,9 @@ func (c *RedisClient) CreateChapterUniqueV1(ctx context.Context, provider string
 }
 
 func (c *RedisClient) DeleteChapterUniqueV1(ctx context.Context, provider string, series string, chapter string) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	return c.client.Del(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s:chapter:%s", provider, series, chapter)).Err()
 }

@@ -11,6 +11,10 @@ import (
 )
 
 func (c *RedisClient) GetChapterListV1(ctx context.Context, provider string, series string, page int, limit int) (v1Response.PaginatedChapterListData, error) {
+	if c.environment == "development" {
+		return v1Response.PaginatedChapterListData{}, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:%d:%d", provider, series, page, limit))
 
 	cmdb, err := cmd.Bytes()
@@ -30,6 +34,10 @@ func (c *RedisClient) GetChapterListV1(ctx context.Context, provider string, ser
 }
 
 func (c *RedisClient) SetChapterListV1(ctx context.Context, provider string, series string, page int, limit int, ch v1Response.PaginatedChapterListData) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(ch); err != nil {
@@ -40,6 +48,10 @@ func (c *RedisClient) SetChapterListV1(ctx context.Context, provider string, ser
 }
 
 func (c *RedisClient) GetChapterListAllV1(ctx context.Context, provider string, series string) ([]v1Response.ChapterData, error) {
+	if c.environment == "development" {
+		return nil, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:all", provider, series))
 
 	cmdb, err := cmd.Bytes()
@@ -59,6 +71,10 @@ func (c *RedisClient) GetChapterListAllV1(ctx context.Context, provider string, 
 }
 
 func (c *RedisClient) SetChapterListAllV1(ctx context.Context, provider string, series string, ch []v1Response.ChapterData) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(ch); err != nil {
@@ -69,6 +85,10 @@ func (c *RedisClient) SetChapterListAllV1(ctx context.Context, provider string, 
 }
 
 func (c *RedisClient) GetChapterListOnlyV1(ctx context.Context, provider string, series string) (v1Response.ListChapterResult, error) {
+	if c.environment == "development" {
+		return v1Response.ListChapterResult{}, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:only", provider, series))
 
 	cmdb, err := cmd.Bytes()
@@ -88,6 +108,10 @@ func (c *RedisClient) GetChapterListOnlyV1(ctx context.Context, provider string,
 }
 
 func (c *RedisClient) SetChapterListOnlyV1(ctx context.Context, provider string, series string, ch v1Response.ListChapterResult) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(ch); err != nil {
@@ -98,6 +122,10 @@ func (c *RedisClient) SetChapterListOnlyV1(ctx context.Context, provider string,
 }
 
 func (c *RedisClient) UnsetChapterListV1(ctx context.Context, provider string, series string) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	keys, err := c.client.Keys(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter_list:*", provider, series)).Result()
 	if err != nil {
 		return err

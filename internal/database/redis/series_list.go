@@ -11,6 +11,10 @@ import (
 )
 
 func (c *RedisClient) GetSeriesListV1(ctx context.Context, provider string, page int, size int) (v1Response.PaginatedSeriesData, error) {
+	if c.environment == "development" {
+		return v1Response.PaginatedSeriesData{}, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series_list:%d:%d", provider, page, size))
 
 	cmdb, err := cmd.Bytes()
@@ -30,6 +34,10 @@ func (c *RedisClient) GetSeriesListV1(ctx context.Context, provider string, page
 }
 
 func (c *RedisClient) GetSeriesListAllV1(ctx context.Context, provider string) ([]v1Response.SeriesData, error) {
+	if c.environment == "development" {
+		return nil, fmt.Errorf("not available in development")
+	}
+
 	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series_list:all", provider))
 
 	cmdb, err := cmd.Bytes()
@@ -49,6 +57,10 @@ func (c *RedisClient) GetSeriesListAllV1(ctx context.Context, provider string) (
 }
 
 func (c *RedisClient) SetSeriesListV1(ctx context.Context, provider string, page int, size int, s v1Response.PaginatedSeriesData) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(s); err != nil {
@@ -59,6 +71,10 @@ func (c *RedisClient) SetSeriesListV1(ctx context.Context, provider string, page
 }
 
 func (c *RedisClient) SetSeriesListAllV1(ctx context.Context, provider string, s []v1Response.SeriesData) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	var b bytes.Buffer
 
 	if err := gob.NewEncoder(&b).Encode(s); err != nil {
@@ -69,6 +85,10 @@ func (c *RedisClient) SetSeriesListAllV1(ctx context.Context, provider string, s
 }
 
 func (c *RedisClient) UnsetSeriesListV1(ctx context.Context, provider string) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	keys, err := c.client.Keys(ctx, fmt.Sprintf("v1:provider:%s:series_list:*", provider)).Result()
 	if err != nil {
 		return err

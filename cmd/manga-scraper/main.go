@@ -54,7 +54,7 @@ func init() {
 		log.Fatal("[init] failed to connect to database: ", err)
 	}
 
-	redisClient, err = redis.NewClient(envConfig.RedisURL)
+	redisClient, err = redis.NewClient(envConfig.RedisURL, envConfig.ENV)
 	if err != nil {
 		log.Fatal("[init] failed to connect to redis: ", err)
 	}
