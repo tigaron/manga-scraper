@@ -28,9 +28,9 @@ model Series {
   slug          String
   title         String        @db.Text
   sourcePath    String        @db.Text
-  thumbnailUrl  String?       @db.Text
-  synopsis      String?       @db.Text
-  genres        Json?
+  thumbnailUrl  String        @db.Text
+  synopsis      String        @db.Text
+  genres        Json
   providerSlug  String
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -50,13 +50,13 @@ model Chapter {
   number       Float
   shortTitle   String   @db.Text
   sourceHref   String   @db.Text
-  fullTitle    String?  @db.Text
-  sourcePath   String?  @db.Text
-  nextSlug     String?  @db.Text
-  nextPath     String?  @db.Text
-  prevSlug     String?  @db.Text
-  prevPath     String?  @db.Text
-  contentPaths Json?
+  fullTitle    String   @db.Text
+  sourcePath   String   @db.Text
+  nextSlug     String   @db.Text
+  nextPath     String   @db.Text
+  prevSlug     String   @db.Text
+  prevPath     String   @db.Text
+  contentPaths Json
   providerSlug String
   seriesSlug   String
   createdAt    DateTime @default(now())
@@ -75,13 +75,13 @@ model ScrapeRequest {
   baseUrl           String              @db.Text
   requestPath       String              @db.Text
   provider          String              @db.Text
-  series            String?             @db.Text
-  chapter           String?             @db.Text
-  status            String?
-  retries           Int?                @default(0)
-  totalTime         Float?
-  error             Boolean?            @default(false)
-  message           String?             @db.Text
+  series            String              @db.Text
+  chapter           String              @db.Text
+  status            String
+  retries           Int
+  totalTime         Float
+  error             Boolean
+  message           String              @db.Text
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   seriesListData    SeriesListData[]
@@ -136,10 +136,10 @@ model ChapterDetailData {
   id           String        @id @default(uuid())
   fullTitle    String        @db.Text
   sourcePath   String        @db.Text
-  nextSlug     String?       @db.Text
-  nextPath     String?       @db.Text
-  prevSlug     String?       @db.Text
-  prevPath     String?       @db.Text
+  nextSlug     String        @db.Text
+  nextPath     String        @db.Text
+  prevSlug     String        @db.Text
+  prevPath     String        @db.Text
   contentPaths Json
   requestId    String
   createdAt    DateTime      @default(now())

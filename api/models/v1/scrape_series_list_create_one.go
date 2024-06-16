@@ -12,7 +12,13 @@ func (p *DBService) CreateSeriesListScrapeRequestV1(ctx context.Context, provide
 		db.ScrapeRequest.BaseURL.Set(provider.Scheme+provider.Host),
 		db.ScrapeRequest.RequestPath.Set(provider.ListPath),
 		db.ScrapeRequest.Provider.Set(provider.Slug),
+		db.ScrapeRequest.Series.Set(""),
+		db.ScrapeRequest.Chapter.Set(""),
 		db.ScrapeRequest.Status.Set("pending"),
+		db.ScrapeRequest.Retries.Set(0),
+		db.ScrapeRequest.TotalTime.Set(0),
+		db.ScrapeRequest.Error.Set(false),
+		db.ScrapeRequest.Message.Set(""),
 	).Exec(ctx)
 
 	return receipt, err

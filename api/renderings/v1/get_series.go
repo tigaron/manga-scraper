@@ -17,23 +17,8 @@ type SeriesData struct {
 }
 
 func NewSeriesData(provider *db.ProviderModel, series *db.SeriesModel) SeriesData {
-	thumbnailUrl, ok := series.ThumbnailURL()
-	if !ok {
-		thumbnailUrl = ""
-	}
-
-	synopsis, ok := series.Synopsis()
-	if !ok {
-		synopsis = ""
-	}
-
-	genresJson, ok := series.Genres()
-	if !ok {
-		genresJson = []byte(`[]`)
-	}
-
 	var genres []string
-	err := json.Unmarshal(genresJson, &genres)
+	err := json.Unmarshal(series.Genres, &genres)
 	if err != nil {
 		genres = []string{}
 	}
@@ -43,8 +28,8 @@ func NewSeriesData(provider *db.ProviderModel, series *db.SeriesModel) SeriesDat
 		Slug:      series.Slug,
 		Title:     series.Title,
 		SourceURL: provider.Scheme + provider.Host + series.SourcePath,
-		CoverURL:  thumbnailUrl,
-		Synopsis:  synopsis,
+		CoverURL:  series.ThumbnailURL,
+		Synopsis:  series.Synopsis,
 		Genres:    genres,
 	}
 }

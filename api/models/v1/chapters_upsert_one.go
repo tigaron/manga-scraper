@@ -18,6 +18,13 @@ func (p *DBService) UpsertChaptersRowV1(ctx context.Context, provider string, se
 		db.Chapter.Number.Set(data.Number),
 		db.Chapter.ShortTitle.Set(data.ShortTitle),
 		db.Chapter.SourceHref.Set(data.Href),
+		db.Chapter.FullTitle.Set(""),
+		db.Chapter.SourcePath.Set(""),
+		db.Chapter.NextSlug.Set(""),
+		db.Chapter.NextPath.Set(""),
+		db.Chapter.PrevSlug.Set(""),
+		db.Chapter.PrevPath.Set(""),
+		db.Chapter.ContentPaths.Set([]byte("[]")),
 		db.Chapter.Provider.Link(db.Provider.Slug.Equals(provider)),
 		db.Chapter.Series.Link(db.Series.SeriesUnique(
 			db.Series.ProviderSlug.Equals(provider),

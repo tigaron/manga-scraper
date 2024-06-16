@@ -16,6 +16,9 @@ func (p *DBService) UpsertSeriesRowV1(ctx context.Context, provider string, data
 		db.Series.Slug.Set(data.Slug),
 		db.Series.Title.Set(data.Title),
 		db.Series.SourcePath.Set(data.SourcePath),
+		db.Series.ThumbnailURL.Set(""),
+		db.Series.Synopsis.Set(""),
+		db.Series.Genres.Set([]byte("[]")),
 		db.Series.Provider.Link(db.Provider.Slug.Equals(provider)),
 	).Update(
 		db.Series.Title.Set(data.Title),

@@ -21,23 +21,8 @@ type SearchData struct {
 }
 
 func NewSeriesSearchData(provider *db.ProviderModel, series *db.SeriesModel) SeriesSearchData {
-	thumbnailUrl, ok := series.ThumbnailURL()
-	if !ok {
-		thumbnailUrl = ""
-	}
-
-	synopsis, ok := series.Synopsis()
-	if !ok {
-		synopsis = ""
-	}
-
-	genresJson, ok := series.Genres()
-	if !ok {
-		genresJson = []byte(`[]`)
-	}
-
 	var genres []string
-	err := json.Unmarshal(genresJson, &genres)
+	err := json.Unmarshal(series.Genres, &genres)
 	if err != nil {
 		genres = []string{}
 	}
@@ -46,9 +31,9 @@ func NewSeriesSearchData(provider *db.ProviderModel, series *db.SeriesModel) Ser
 		Slug: series.Slug,
 		Data: SearchData{
 			Title:         series.Title,
-			Synopsis:      synopsis,
+			Synopsis:      series.Synopsis,
 			Genres:        genres,
-			CoverURL:      thumbnailUrl,
+			CoverURL:      series.ThumbnailURL,
 			ChaptersCount: series.ChaptersCount,
 			LatestChapter: series.LatestChapter,
 		},

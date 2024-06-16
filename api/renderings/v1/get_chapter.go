@@ -26,43 +26,31 @@ type ChapterNav struct {
 }
 
 func NewChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapter *db.ChapterModel) ChapterData {
-	fullTitle, ok := chapter.FullTitle()
-	if !ok {
-		fullTitle = ""
-	}
-
 	var sourceURL string
 
-	sourcePath, ok := chapter.SourcePath()
-	if !ok {
-		sourceURL = ""
-	} else {
+	sourcePath := chapter.SourcePath
+	if sourcePath != "" {
 		sourceURL = provider.Scheme + provider.Host + sourcePath
 	}
 
 	var nextSlug, nextURL, prevSlug, prevURL string
 
-	if nextChapter, ok := chapter.NextSlug(); ok {
-		nextSlug = nextChapter
-		if nextPath, ok := chapter.NextPath(); ok && nextPath != "" {
-			nextURL = provider.Scheme + provider.Host + nextPath
+	if chapter.NextSlug != "" {
+		nextSlug = chapter.NextSlug
+		if chapter.NextPath != "" {
+			nextURL = provider.Scheme + provider.Host + chapter.NextPath
 		}
 	}
 
-	if prevChapter, ok := chapter.PrevSlug(); ok {
-		prevSlug = prevChapter
-		if prevPath, ok := chapter.PrevPath(); ok && prevPath != "" {
-			prevURL = provider.Scheme + provider.Host + prevPath
+	if chapter.PrevSlug != "" {
+		prevSlug = chapter.PrevSlug
+		if chapter.PrevPath != "" {
+			prevURL = provider.Scheme + provider.Host + chapter.PrevPath
 		}
-	}
-
-	contentPathsJSON, ok := chapter.ContentPaths()
-	if !ok {
-		contentPathsJSON = []byte(`[]`)
 	}
 
 	var contentPaths []string
-	err := json.Unmarshal([]byte(contentPathsJSON), &contentPaths)
+	err := json.Unmarshal(chapter.ContentPaths, &contentPaths)
 	if err != nil {
 		contentPaths = []string{}
 	}
@@ -76,7 +64,7 @@ func NewChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapter 
 		Provider:   series.ProviderSlug,
 		Series:     series.Slug,
 		Slug:       chapter.Slug,
-		FullTitle:  fullTitle,
+		FullTitle:  chapter.FullTitle,
 		ShortTitle: chapter.ShortTitle,
 		Number:     chapter.Number,
 		SourceURL:  sourceURL,

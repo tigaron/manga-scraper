@@ -128,11 +128,10 @@ func (h *Handler) PutScrapeChapterDetail(c echo.Context) error {
 
 	var reqURL string
 
-	sourcePath, ok := chapter.SourcePath()
-	if !ok {
-		reqURL = chapter.SourceHref
+	if chapter.SourcePath != "" {
+		reqURL = provider.Scheme + provider.Host + chapter.SourcePath
 	} else {
-		reqURL = provider.Scheme + provider.Host + sourcePath
+		reqURL = chapter.SourceHref
 	}
 
 	scrapeData, err := scraper.ScrapeChapterDetail(c.Request().Context(), h.config.RodURL, req.Provider, reqURL)
