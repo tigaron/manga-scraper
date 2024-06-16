@@ -21,6 +21,7 @@ type SearchHitsSource struct {
 	Synopsis      string   `json:"synopsis"`
 	Genres        []string `json:"genres"`
 	CoverURL      string   `json:"coverURL"`
+	Status        string   `json:"status"`
 	ChaptersCount int      `json:"chaptersCount"`
 	LatestChapter string   `json:"latestChapter"`
 }
@@ -59,6 +60,7 @@ type SearchResult struct {
 	Synopsis      string   `json:"synopsis"`
 	Genres        []string `json:"genres"`
 	CoverURL      string   `json:"coverURL"`
+	Status        string   `json:"status"`
 	ChaptersCount int      `json:"chaptersCount"`
 	LatestChapter string   `json:"latestChapter"`
 }
@@ -148,6 +150,7 @@ func (h *Handler) GetSearch(c echo.Context) error {
 			Synopsis:      hit.Source.Synopsis,
 			Genres:        hit.Source.Genres,
 			CoverURL:      hit.Source.CoverURL,
+			Status:        hit.Source.Status,
 			ChaptersCount: hit.Source.ChaptersCount,
 			LatestChapter: hit.Source.LatestChapter,
 		})

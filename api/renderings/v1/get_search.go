@@ -16,6 +16,7 @@ type SearchData struct {
 	Synopsis      string   `json:"synopsis"`
 	Genres        []string `json:"genres"`
 	CoverURL      string   `json:"coverURL"`
+	Status        string   `json:"status"`
 	ChaptersCount int      `json:"chaptersCount"`
 	LatestChapter string   `json:"latestChapter"`
 }
@@ -33,6 +34,7 @@ func NewSeriesSearchData(provider *db.ProviderModel, series *db.SeriesModel) Ser
 			Title:         series.Title,
 			Synopsis:      series.Synopsis,
 			Genres:        genres,
+			Status:        string(series.Status),
 			CoverURL:      series.ThumbnailURL,
 			ChaptersCount: series.ChaptersCount,
 			LatestChapter: series.LatestChapter,
