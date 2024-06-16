@@ -17,10 +17,12 @@ type SearchHitsTotal struct {
 }
 
 type SearchHitsSource struct {
-	Title    string   `json:"title"`
-	Synopsis string   `json:"synopsis"`
-	Genres   []string `json:"genres"`
-	CoverURL string   `json:"coverURL"`
+	Title         string   `json:"title"`
+	Synopsis      string   `json:"synopsis"`
+	Genres        []string `json:"genres"`
+	CoverURL      string   `json:"coverURL"`
+	ChaptersCount int      `json:"chaptersCount"`
+	LatestChapter string   `json:"latestChapter"`
 }
 
 type SearchHitsData struct {
@@ -51,12 +53,14 @@ type SearchResponse struct {
 }
 
 type SearchResult struct {
-	Provider string   `json:"provider"`
-	Slug     string   `json:"slug"`
-	Title    string   `json:"title"`
-	Synopsis string   `json:"synopsis"`
-	Genres   []string `json:"genres"`
-	CoverURL string   `json:"coverURL"`
+	Provider      string   `json:"provider"`
+	Slug          string   `json:"slug"`
+	Title         string   `json:"title"`
+	Synopsis      string   `json:"synopsis"`
+	Genres        []string `json:"genres"`
+	CoverURL      string   `json:"coverURL"`
+	ChaptersCount int      `json:"chaptersCount"`
+	LatestChapter string   `json:"latestChapter"`
 }
 
 // @Summary		Get series search result
@@ -138,12 +142,14 @@ func (h *Handler) GetSearch(c echo.Context) error {
 
 	for _, hit := range res.Hits.Hits {
 		result = append(result, SearchResult{
-			Provider: hit.Index,
-			Slug:     hit.ID,
-			Title:    hit.Source.Title,
-			Synopsis: hit.Source.Synopsis,
-			Genres:   hit.Source.Genres,
-			CoverURL: hit.Source.CoverURL,
+			Provider:      hit.Index,
+			Slug:          hit.ID,
+			Title:         hit.Source.Title,
+			Synopsis:      hit.Source.Synopsis,
+			Genres:        hit.Source.Genres,
+			CoverURL:      hit.Source.CoverURL,
+			ChaptersCount: hit.Source.ChaptersCount,
+			LatestChapter: hit.Source.LatestChapter,
 		})
 	}
 

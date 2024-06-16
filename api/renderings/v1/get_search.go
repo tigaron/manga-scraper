@@ -12,10 +12,12 @@ type SeriesSearchData struct {
 }
 
 type SearchData struct {
-	Title    string   `json:"title"`
-	Synopsis string   `json:"synopsis"`
-	Genres   []string `json:"genres"`
-	CoverURL string   `json:"coverURL"`
+	Title         string   `json:"title"`
+	Synopsis      string   `json:"synopsis"`
+	Genres        []string `json:"genres"`
+	CoverURL      string   `json:"coverURL"`
+	ChaptersCount int      `json:"chaptersCount"`
+	LatestChapter string   `json:"latestChapter"`
 }
 
 func NewSeriesSearchData(provider *db.ProviderModel, series *db.SeriesModel) SeriesSearchData {
@@ -43,10 +45,12 @@ func NewSeriesSearchData(provider *db.ProviderModel, series *db.SeriesModel) Ser
 	return SeriesSearchData{
 		Slug: series.Slug,
 		Data: SearchData{
-			Title:    series.Title,
-			Synopsis: synopsis,
-			Genres:   genres,
-			CoverURL: thumbnailUrl,
+			Title:         series.Title,
+			Synopsis:      synopsis,
+			Genres:        genres,
+			CoverURL:      thumbnailUrl,
+			ChaptersCount: series.ChaptersCount,
+			LatestChapter: series.LatestChapter,
 		},
 	}
 }
