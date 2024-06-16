@@ -49,6 +49,10 @@ func (c *RedisClient) SetProviderV1(ctx context.Context, provider string, p v1Re
 }
 
 func (c *RedisClient) UnsetProviderV1(ctx context.Context, provider string) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	return c.client.Del(ctx, fmt.Sprintf("v1:provider:%s", provider)).Err()
 }
 

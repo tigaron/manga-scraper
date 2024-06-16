@@ -49,6 +49,10 @@ func (c *RedisClient) SetChapterV1(ctx context.Context, provider string, series 
 }
 
 func (c *RedisClient) UnsetChapterV1(ctx context.Context, provider string, series string, chapter string) error {
+	if c.environment == "development" {
+		return nil
+	}
+
 	return c.client.Del(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter:%s", provider, series, chapter)).Err()
 }
 
