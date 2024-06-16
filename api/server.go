@@ -38,11 +38,10 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 		app.Logger.SetLevel(log.DEBUG)
 	case "production":
 		app.Logger.SetLevel(log.INFO)
+		app.Use(middlewares.TimeoutMiddleware(30 * time.Second))
 	}
 
 	app.Use(middlewares.SentryMiddleware())
-
-	app.Use(middlewares.TimeoutMiddleware(30 * time.Second))
 
 	clerk.SetKey(config.ClerkSecretKey)
 
