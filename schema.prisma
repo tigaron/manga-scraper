@@ -4,9 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Provider {
@@ -19,8 +18,8 @@ model Provider {
   isActive  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  series    Series[]
   chapters  Chapter[]
+  series    Series[]
 }
 
 model Series {
@@ -37,8 +36,8 @@ model Series {
   status        Series_status @default(ONGOING)
   chaptersCount Int           @default(0)
   latestChapter String        @default("")
-  provider      Provider      @relation(fields: [providerSlug], references: [slug], onDelete: Cascade)
   chapters      Chapter[]
+  provider      Provider      @relation(fields: [providerSlug], references: [slug], onDelete: Cascade)
 
   @@unique([providerSlug, slug], name: "seriesUnique")
   @@index([providerSlug], map: "providerIndex")
@@ -84,10 +83,10 @@ model ScrapeRequest {
   message           String              @db.Text
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
-  seriesListData    SeriesListData[]
-  seriesDetailData  SeriesDetailData[]
-  chapterListData   ChapterListData[]
   ChapterDetailData ChapterDetailData[]
+  chapterListData   ChapterListData[]
+  seriesDetailData  SeriesDetailData[]
+  seriesListData    SeriesListData[]
 
   @@index([type], map: "typeIndex")
 }
