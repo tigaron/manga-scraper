@@ -168,8 +168,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseV1'
-      security:
-      - TokenAuth: []
       summary: Get paginated chapter list
       tags:
       - chapters
@@ -204,8 +202,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseV1'
-      security:
-      - TokenAuth: []
       summary: Get all chapter list
       tags:
       - chapters
@@ -240,8 +236,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseV1'
-      security:
-      - TokenAuth: []
       summary: Get chapter list only
       tags:
       - chapters
@@ -282,8 +276,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseV1'
-      security:
-      - TokenAuth: []
       summary: Get chapter by slug
       tags:
       - chapters
@@ -324,8 +316,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ResponseV1'
-      security:
-      - TokenAuth: []
       summary: Get chapter breadcrumbs
       tags:
       - breadcrumbs
@@ -896,6 +886,94 @@ paths:
       summary: Get series breadcrumbs
       tags:
       - breadcrumbs
+  /api/v1/series/{provider_slug}/{series_slug}/_chc:
+    put:
+      description: Update series chapters count
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseV1'
+      security:
+      - TokenAuth: []
+      summary: Update series chapters count
+      tags:
+      - series
+  /api/v1/series/{provider_slug}/{series_slug}/_lch:
+    put:
+      description: Update series last chapter
+      parameters:
+      - description: Provider slug
+        example: asura
+        in: path
+        name: provider_slug
+        required: true
+        type: string
+      - description: Series slug
+        example: reincarnator
+        in: path
+        name: series_slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ResponseV1'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ResponseV1'
+      security:
+      - TokenAuth: []
+      summary: Update series last chapter
+      tags:
+      - series
   /health:
     get:
       description: Get health check

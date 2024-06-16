@@ -22,8 +22,11 @@ func (s *RESTServer) setupV1Router(v1Api *echo.Group) {
 	series := v1Api.Group("/series")
 	series.GET("/:provider_slug", s.v1.GetSeriesListPaginated)
 	series.GET("/:provider_slug/_all", s.v1.GetSeriesListAll)
+	series.PUT("/:provider_slug/_chc", s.v1.PutSeriesChaptersCount, middlewares.IsAdmin(s.config.AdminSub))
 	series.GET("/:provider_slug/:series_slug", s.v1.GetSeries)
 	series.GET("/:provider_slug/:series_slug/_bc", s.v1.GetSeriesBreadcrumbs)
+	series.PUT("/:provider_slug/:series_slug/_chc", s.v1.PutSeriesChaptersCount, middlewares.IsAdmin(s.config.AdminSub))
+	series.PUT("/:provider_slug/:series_slug/_lch", s.v1.PutSeriesLastChapter, middlewares.IsAdmin(s.config.AdminSub))
 
 	chapters := v1Api.Group("/chapters")
 	chapters.GET("/:provider_slug/:series_slug", s.v1.GetChapterListPaginated)

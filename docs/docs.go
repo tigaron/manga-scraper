@@ -26,11 +26,6 @@ const docTemplate = `{
     "paths": {
         "/api/v1/chapters/{provider_slug}/{series_slug}": {
             "get": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
                 "description": "Get paginated chapter list",
                 "produces": [
                     "application/json"
@@ -103,11 +98,6 @@ const docTemplate = `{
         },
         "/api/v1/chapters/{provider_slug}/{series_slug}/_all": {
             "get": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
                 "description": "Get all chapter list",
                 "produces": [
                     "application/json"
@@ -158,11 +148,6 @@ const docTemplate = `{
         },
         "/api/v1/chapters/{provider_slug}/{series_slug}/_list": {
             "get": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
                 "description": "Get chapter list only",
                 "produces": [
                     "application/json"
@@ -213,11 +198,6 @@ const docTemplate = `{
         },
         "/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}": {
             "get": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
                 "description": "Get chapter by slug",
                 "produces": [
                     "application/json"
@@ -276,11 +256,6 @@ const docTemplate = `{
         },
         "/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}/_bc": {
             "get": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
                 "description": "Get chapter breadcrumbs",
                 "produces": [
                     "application/json"
@@ -1183,6 +1158,140 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/series/{provider_slug}/{series_slug}/_chc": {
+            "put": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
+                "description": "Update series chapters count",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "series"
+                ],
+                "summary": "Update series chapters count",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator",
+                        "description": "Series slug",
+                        "name": "series_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/series/{provider_slug}/{series_slug}/_lch": {
+            "put": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
+                "description": "Update series last chapter",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "series"
+                ],
+                "summary": "Update series last chapter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator",
+                        "description": "Series slug",
+                        "name": "series_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/ResponseV1"
                         }
