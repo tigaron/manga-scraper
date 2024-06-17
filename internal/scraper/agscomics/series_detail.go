@@ -72,12 +72,12 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Mo
 	}
 
 	if len(elSP) == 0 {
-		elD, err := elS.Element(`div[class^="contents"]`)
+		elD, err := page.Element(`div.additional-content`)
 		if err != nil {
 			return v1Model.SeriesDetail{}, err
 		}
 
-		elDt, err := elD.Elements("div")
+		elDt, err := elD.Elements("p")
 		if err != nil {
 			return v1Model.SeriesDetail{}, err
 		}
