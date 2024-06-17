@@ -35,18 +35,21 @@ while true; do
   chapters=$(echo "$chaptersApi" | jq -r '.data.chapters[].slug')
   for c in $chapters; do
     echo "Scraping $c from $s of $provider"
-    curl -s -X PUT "$apiUrl/api/v1/scrape-requests/chapters/detail" \
-      -H "Content-Type: application/json" \
-      -d @- <<EOF
-{
-"provider": "$provider",
-"series": "$s",
-"chapter": "$c"
-}
-EOF
-
-    echo "$c from $s of $provider has been scraped"
+#     curl -s -X PUT "$apiUrl/api/v1/scrape-requests/chapters/detail" \
+#       -H "Content-Type: application/json" \
+#       -d @- <<EOF
+# {
+# "provider": "$provider",
+# "series": "$s",
+# "chapter": "$c"
+# }
+# EOF
+    curl -s -X PUT "$apiUrl/api/v1/scrape-requests/chapters/detail" -H "Content-Type: application/json" -d "{\"provider\": \"$provider\", \"series\": \"$s\", \"chapter\": \"$c\"}" > /dev/null 2>&1 &
+    sleep 10
+    # echo "$c from $s of $provider has been scraped"
   done
 
   pageS=$((pageS + 1))
 done
+
+exit 0
