@@ -12,6 +12,7 @@ type SeriesSearchData struct {
 }
 
 type SearchData struct {
+	Provider      string   `json:"provider"`
 	Title         string   `json:"title"`
 	Synopsis      string   `json:"synopsis"`
 	Genres        []string `json:"genres"`
@@ -31,6 +32,7 @@ func NewSeriesSearchData(provider *db.ProviderModel, series *db.SeriesModel) Ser
 	return SeriesSearchData{
 		Slug: series.Slug,
 		Data: SearchData{
+			Provider:      provider.Name,
 			Title:         series.Title,
 			Synopsis:      series.Synopsis,
 			Genres:        genres,

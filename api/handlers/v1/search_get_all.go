@@ -17,6 +17,7 @@ type SearchHitsTotal struct {
 }
 
 type SearchHitsSource struct {
+	Provider      string   `json:"provider"`
 	Title         string   `json:"title"`
 	Synopsis      string   `json:"synopsis"`
 	Genres        []string `json:"genres"`
@@ -144,7 +145,7 @@ func (h *Handler) GetSearch(c echo.Context) error {
 
 	for _, hit := range res.Hits.Hits {
 		result = append(result, SearchResult{
-			Provider:      hit.Index,
+			Provider:      hit.Source.Provider,
 			Slug:          hit.ID,
 			Title:         hit.Source.Title,
 			Synopsis:      hit.Source.Synopsis,
