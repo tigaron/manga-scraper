@@ -52,7 +52,7 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Mo
 		return v1Model.SeriesDetail{}, err
 	}
 
-	if !strings.Contains(*thumbnailUrl, "http") {
+	if !strings.HasPrefix(*thumbnailUrl, "http") {
 		thumbnailUrl, err = elTH.Attribute("data-src")
 		if err != nil {
 			return v1Model.SeriesDetail{}, err
