@@ -96,11 +96,19 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 	var contentPaths []string
 
 	images := tsReader.Sources[0].Images
-	urlHost := strings.Split(chapterUrl, "/")[2]
 	for i := range images {
-		imgSplit := strings.Split(images[i], urlHost)
-		if len(imgSplit) > 1 {
-			contentPaths = append(contentPaths, imgSplit[1])
+		if images[i] == "" {
+			continue
+		}
+
+		imgSplit := strings.Split(images[i], "/")
+		imgPath := strings.Join(imgSplit[3:], "/")
+
+		// only append if imgSplit has more than 3 elements, ex:
+		// https://i.imgur.com/5yKo93E.jpg
+		// https://asuratoon.com/wp-content/uploads/custom-upload/96904/92/00 kopya.jpg
+		if len(imgSplit) > 3 {
+			contentPaths = append(contentPaths, "/"+imgPath)
 		}
 	}
 

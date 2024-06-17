@@ -94,6 +94,7 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 		if images[i] == "" {
 			continue
 		}
+
 		imgSplit := strings.Split(images[i], "/")
 		imgPath := strings.Join(imgSplit[3:], "/")
 
