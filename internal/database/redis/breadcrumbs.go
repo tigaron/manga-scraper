@@ -44,7 +44,7 @@ func (c *RedisClient) SetChapterBreadcrumbsV1(ctx context.Context, provider stri
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter:%s:bc", provider, series, chapter), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s:chapter:%s:bc", provider, series, chapter), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) GetSeriesBreadcrumbsV1(ctx context.Context, provider string, series string) (v1Response.BreadcrumbsData, error) {
@@ -81,7 +81,7 @@ func (c *RedisClient) SetSeriesBreadcrumbsV1(ctx context.Context, provider strin
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s:bc", provider, series), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s:bc", provider, series), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) GetProviderBreadcrumbsV1(ctx context.Context, provider string) (v1Response.BreadcrumbsData, error) {
@@ -118,5 +118,5 @@ func (c *RedisClient) SetProviderBreadcrumbsV1(ctx context.Context, provider str
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:bc", provider), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:bc", provider), b.Bytes(), time.Hour).Err()
 }

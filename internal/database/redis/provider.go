@@ -45,7 +45,7 @@ func (c *RedisClient) SetProviderV1(ctx context.Context, provider string, p v1Re
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s", provider), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s", provider), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) UnsetProviderV1(ctx context.Context, provider string) error {
@@ -90,7 +90,7 @@ func (c *RedisClient) CreateProviderUniqueV1(ctx context.Context, provider *db.P
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:db:provider:%s", provider.Slug), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:db:provider:%s", provider.Slug), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) DeleteProviderUniqueV1(ctx context.Context, providerSlug string) error {
