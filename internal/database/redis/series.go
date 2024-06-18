@@ -45,7 +45,7 @@ func (c *RedisClient) SetSeriesV1(ctx context.Context, provider string, series s
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s", provider, series), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s", provider, series), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) UnsetSeriesV1(ctx context.Context, provider string, series string) error {
@@ -90,7 +90,7 @@ func (c *RedisClient) CreateSeriesUniqueV1(ctx context.Context, s *db.SeriesMode
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s", s.ProviderSlug, s.Slug), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s", s.ProviderSlug, s.Slug), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) DeleteSeriesUniqueV1(ctx context.Context, provider string, series string) error {

@@ -44,7 +44,7 @@ func (c *RedisClient) SetProviderListV1(ctx context.Context, p []v1Response.Prov
 		return err
 	}
 
-	return c.client.Set(ctx, "v1:provider_list", b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, "v1:provider_list", b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) UnsetProviderListV1(ctx context.Context) error {

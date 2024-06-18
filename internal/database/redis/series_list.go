@@ -67,7 +67,7 @@ func (c *RedisClient) SetSeriesListV1(ctx context.Context, provider string, page
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series_list:%d:%d", provider, page, size), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series_list:%d:%d", provider, page, size), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) SetSeriesListAllV1(ctx context.Context, provider string, s []v1Response.SeriesData) error {
@@ -81,7 +81,7 @@ func (c *RedisClient) SetSeriesListAllV1(ctx context.Context, provider string, s
 		return err
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series_list:all", provider), b.Bytes(), 24*time.Hour).Err()
+	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series_list:all", provider), b.Bytes(), time.Hour).Err()
 }
 
 func (c *RedisClient) UnsetSeriesListV1(ctx context.Context, provider string) error {
