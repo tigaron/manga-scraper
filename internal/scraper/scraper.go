@@ -10,6 +10,7 @@ import (
 	"fourleaves.studio/manga-scraper/internal/scraper/asura"
 	"fourleaves.studio/manga-scraper/internal/scraper/flame"
 	"fourleaves.studio/manga-scraper/internal/scraper/luminous"
+	"fourleaves.studio/manga-scraper/internal/scraper/mangagalaxy"
 	"fourleaves.studio/manga-scraper/internal/scraper/nightscans"
 	"fourleaves.studio/manga-scraper/internal/scraper/surya"
 )
@@ -30,6 +31,8 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, provider, url string) ([]
 		return agscomics.ScrapeSeriesList(ctx, browserUrl, url)
 	case "nightscans":
 		return nightscans.ScrapeSeriesList(ctx, browserUrl, url)
+	case "mangagalaxy":
+		return mangagalaxy.ScrapeSeriesList(ctx, browserUrl, url)
 	default:
 		return nil, fmt.Errorf("not implemented yet")
 	}
@@ -51,6 +54,8 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, provider, url string) (
 		return agscomics.ScrapeSeriesDetail(ctx, browserUrl, url)
 	case "nightscans":
 		return nightscans.ScrapeSeriesDetail(ctx, browserUrl, url)
+	case "mangagalaxy":
+		return mangagalaxy.ScrapeSeriesDetail(ctx, browserUrl, url)
 	default:
 		return v1Model.SeriesDetail{}, fmt.Errorf("not implemented yet")
 	}
@@ -72,6 +77,8 @@ func ScrapeChapterList(ctx context.Context, browserUrl, provider, url string) ([
 		return agscomics.ScrapeChapterList(ctx, browserUrl, url)
 	case "nightscans":
 		return nightscans.ScrapeChapterList(ctx, browserUrl, url)
+	case "mangagalaxy":
+		return mangagalaxy.ScrapeChapterList(ctx, browserUrl, url)
 	default:
 		return nil, fmt.Errorf("not implemented yet")
 	}
@@ -93,6 +100,8 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, provider, url string) 
 		return agscomics.ScrapeChapterDetail(ctx, browserUrl, url)
 	case "nightscans":
 		return nightscans.ScrapeChapterDetail(ctx, browserUrl, url)
+	case "mangagalaxy":
+		return mangagalaxy.ScrapeChapterDetail(ctx, browserUrl, url)
 	default:
 		return v1Model.ChapterDetail{}, fmt.Errorf("not implemented yet")
 	}
