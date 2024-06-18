@@ -6,8 +6,15 @@ import (
 	db "fourleaves.studio/manga-scraper/internal/database/prisma"
 )
 
-func (p *DBService) UpdateDetailChapterRowV1(ctx context.Context, provider, series, chapter string, data ChapterDetail) (*db.ChapterModel, error) {
-	res, err := p.DB.Chapter.FindUnique(
+func (p *DBService) UpdateDetailChapterRowV1(
+	ctx context.Context,
+	provider, series, chapter string,
+	data ChapterDetail,
+) (
+	result *db.ChapterModel,
+	err error,
+) {
+	result, err = p.DB.Chapter.FindUnique(
 		db.Chapter.ChapterUnique(
 			db.Chapter.ProviderSlug.Equals(provider),
 			db.Chapter.SeriesSlug.Equals(series),
@@ -23,7 +30,7 @@ func (p *DBService) UpdateDetailChapterRowV1(ctx context.Context, provider, seri
 		db.Chapter.PrevPath.Set(data.PrevPath),
 	).Exec(ctx)
 
-	_ = p.Redis.DeleteChapterUniqueV1(ctx, provider, series, chapter)
+	_ = p.Redis.DeleteAllChapterCacheV1(ctx, provider, series, chapter)
 
-	return res, err
+	return
 }
