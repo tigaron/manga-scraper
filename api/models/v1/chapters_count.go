@@ -6,7 +6,13 @@ import (
 	db "fourleaves.studio/manga-scraper/internal/database/prisma"
 )
 
-func (p *DBService) CountChaptersV1(ctx context.Context, provider string, series string) (int, error) {
+func (p *DBService) CountChaptersV1(
+	ctx context.Context,
+	provider, series string,
+) (
+	int,
+	error,
+) {
 	chapters, err := p.DB.Chapter.FindMany(
 		db.Chapter.ProviderSlug.Equals(provider),
 		db.Chapter.SeriesSlug.Equals(series),
