@@ -15,20 +15,23 @@ type ListChapterResult struct {
 	Chapters []ListChapterData `json:"chapters"`
 }
 
-func NewListChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapter *db.ChapterModel) ListChapterData {
+func NewListChapterData(provider string, series string, chapter db.ChapterModel) ListChapterData {
 	return ListChapterData{
-		Provider:   series.ProviderSlug,
-		Series:     series.Slug,
+		Provider:   provider,
+		Series:     series,
 		Slug:       chapter.Slug,
 		ShortTitle: chapter.ShortTitle,
 		Number:     chapter.Number,
 	}
 }
 
-func NewListAllChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapterList []db.ChapterModel) ListChapterResult {
+func NewListAllChapterData(series *db.SeriesModel) ListChapterResult {
+	provider := series.Provider()
+	chapterList := series.Chapters()
+
 	result := make([]ListChapterData, 0, len(chapterList))
 	for _, chapter := range chapterList {
-		result = append(result, NewListChapterData(provider, series, &chapter))
+		result = append(result, NewListChapterData(provider.Slug, series.Slug, chapter))
 	}
 
 	return ListChapterResult{

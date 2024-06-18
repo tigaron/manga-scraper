@@ -2,7 +2,6 @@ package v1Handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"fourleaves.studio/manga-scraper/api/middlewares"
@@ -33,7 +32,7 @@ func (h *Handler) GetChapter(c echo.Context) error {
 	chapterSlug := c.Param("chapter_slug")
 
 	c.Logger().Debugj(map[string]interface{}{
-		"_source":       "v1.GetChapter",
+		"_source":       "v1.handler.GetChapter",
 		"provider_slug": providerSlug,
 		"series_slug":   seriesSlug,
 		"chapter_slug":  chapterSlug,
@@ -49,55 +48,29 @@ func (h *Handler) GetChapter(c echo.Context) error {
 		})
 	}
 
-	provider, err := h.prisma.FindProviderUniqueV1(c.Request().Context(), providerSlug)
+	chapter, err := h.prisma.FindChapterUniqueWithRelV1(c.Request().Context(), providerSlug, seriesSlug, chapterSlug)
 	if errors.Is(err, db.ErrNotFound) {
 		span.Status = sentry.SpanStatusNotFound
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
-			Detail:  fmt.Sprintf("Provider with slug '%s' not found", providerSlug),
+			Detail:  "Chapter not found",
 		})
 	} else if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindProviderUniqueV1")
+		middlewares.SentryHandleInternalError(c, span, err, "v1.handler.GetChapter.prisma.FindChapterUniqueWithRelV1")
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
-			Detail:  "Failed to find provider",
 		})
 	}
 
-	series, err := h.prisma.FindSeriesUniqueV1(c.Request().Context(), providerSlug, seriesSlug)
-	if errors.Is(err, db.ErrNotFound) {
-		span.Status = sentry.SpanStatusNotFound
-		return c.JSON(http.StatusNotFound, v1Response.Response{
-			Error:   true,
-			Message: "Not found",
-			Detail:  fmt.Sprintf("Series with slug '%s' not found", seriesSlug),
-		})
-	} else if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindSeriesUniqueV1")
-		return c.JSON(http.StatusInternalServerError, v1Response.Response{
-			Error:   true,
-			Message: "Internal Server Error",
-			Detail:  "Failed to find series",
-		})
-	}
-
-	chapter, err := h.prisma.FindChapterUniqueV1(c.Request().Context(), providerSlug, seriesSlug, chapterSlug)
-	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChapterUniqueV1")
-		return c.JSON(http.StatusInternalServerError, v1Response.Response{
-			Error:   true,
-			Message: "Internal Server Error",
-			Detail:  "Failed to find chapter",
-		})
-	}
-
-	result := v1Response.NewChapterData(provider, series, chapter)
+	provider := chapter.Provider()
+	series := chapter.Series()
+	result := v1Response.NewChapterData(provider, series.Slug, chapter)
 
 	err = h.redis.SetChapterV1(c.Request().Context(), providerSlug, seriesSlug, chapterSlug, result)
 	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "redis.SetChapterV1")
+		middlewares.SentryHandleInternalError(c, span, err, "v1.handler.GetChapter.redis.SetChapterV1")
 	}
 
 	span.Status = sentry.SpanStatusOK
