@@ -19,6 +19,7 @@ import (
 // @Produce		json
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
 // @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
+// @Param			sort			query		string	false	"Sort order"	enum(asc, desc)	default(asc)
 // @Param			page			query		string	true	"Page"			example(10)
 // @Param			size			query		string	true	"Size"			example(100)
 // @Success		200				{object}	ResponseV1
@@ -59,11 +60,23 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		"_source":       "v1.GetChapterListPaginated",
 		"provider_slug": providerSlug,
 		"series_slug":   seriesSlug,
+		"sort":          req.Sort,
 		"page":          req.Page,
 		"size":          req.Size,
 	})
 
-	cache, err := h.redis.GetChapterListV1(c.Request().Context(), providerSlug, seriesSlug, req.Page, req.Size)
+	var order db.SortOrder
+
+	switch req.Sort {
+	case "asc":
+		order = db.ASC
+	case "desc":
+		order = db.DESC
+	default:
+		order = db.ASC
+	}
+
+	cache, err := h.redis.GetChaptersListPaginatedV1(c.Request().Context(), providerSlug, seriesSlug, req.Page, req.Size, order)
 	if err == nil {
 		span.Status = sentry.SpanStatusOK
 		return c.JSON(http.StatusOK, v1Response.Response{

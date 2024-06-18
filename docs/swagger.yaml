@@ -137,6 +137,11 @@ paths:
         name: series_slug
         required: true
         type: string
+      - default: asc
+        description: Sort order
+        in: query
+        name: sort
+        type: string
       - description: Page
         example: "10"
         in: query
@@ -187,6 +192,11 @@ paths:
         name: series_slug
         required: true
         type: string
+      - default: asc
+        description: Sort order
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
@@ -220,6 +230,11 @@ paths:
         in: path
         name: series_slug
         required: true
+        type: string
+      - default: asc
+        description: Sort order
+        in: query
+        name: sort
         type: string
       produces:
       - application/json
