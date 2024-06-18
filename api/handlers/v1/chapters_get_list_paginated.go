@@ -2,7 +2,6 @@ package v1Handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	v1Binding "fourleaves.studio/manga-scraper/api/bindings/v1"
@@ -86,43 +85,16 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		})
 	}
 
-	provider, err := h.prisma.FindProviderUniqueV1(c.Request().Context(), providerSlug)
+	series, err := h.prisma.FindChaptersListPaginatedV1(c.Request().Context(), providerSlug, seriesSlug, req, order)
 	if errors.Is(err, db.ErrNotFound) {
 		span.Status = sentry.SpanStatusNotFound
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
-			Detail:  fmt.Sprintf("Provider with slug '%s' not found", providerSlug),
+			Detail:  "Series not found",
 		})
 	} else if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindProviderUniqueV1")
-		return c.JSON(http.StatusInternalServerError, v1Response.Response{
-			Error:   true,
-			Message: "Internal Server Error",
-			Detail:  "Failed to find provider",
-		})
-	}
-
-	series, err := h.prisma.FindSeriesUniqueV1(c.Request().Context(), providerSlug, seriesSlug)
-	if errors.Is(err, db.ErrNotFound) {
-		span.Status = sentry.SpanStatusNotFound
-		return c.JSON(http.StatusNotFound, v1Response.Response{
-			Error:   true,
-			Message: "Not found",
-			Detail:  fmt.Sprintf("Series with slug '%s' not found", seriesSlug),
-		})
-	} else if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindSeriesUniqueV1")
-		return c.JSON(http.StatusInternalServerError, v1Response.Response{
-			Error:   true,
-			Message: "Internal Server Error",
-			Detail:  "Failed to find series",
-		})
-	}
-
-	chapterList, err := h.prisma.FindChaptersManyPaginatedV1(c.Request().Context(), providerSlug, seriesSlug, req)
-	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChaptersManyPaginatedV1")
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChaptersListPaginatedV1")
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
@@ -130,12 +102,14 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		})
 	}
 
+	chapterList := series.Chapters()
+
 	if len(chapterList) == 0 {
 		span.Status = sentry.SpanStatusNotFound
 		return c.JSON(http.StatusNotFound, v1Response.Response{
 			Error:   true,
 			Message: "Not found",
-			Detail:  fmt.Sprintf("Chapters with provider slug '%s' and series slug '%s' not found", providerSlug, seriesSlug),
+			Detail:  "No chapters found",
 		})
 	}
 
@@ -157,7 +131,7 @@ func (h *Handler) GetChapterListPaginated(c echo.Context) error {
 		Total:    total,
 	}
 
-	result := v1Response.NewChapterListPaginatedData(provider, series, chapterList, paginationData)
+	result := v1Response.NewChapterListPaginatedData(series, paginationData)
 
 	err = h.redis.SetChapterListV1(c.Request().Context(), providerSlug, seriesSlug, req.Page, req.Size, result)
 	if err != nil {

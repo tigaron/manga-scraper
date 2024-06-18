@@ -25,7 +25,7 @@ type ChapterNav struct {
 	PrevURL  string `json:"prevURL"`
 }
 
-func NewChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapter *db.ChapterModel) ChapterData {
+func NewChapterData(provider *db.ProviderModel, series string, chapter *db.ChapterModel) ChapterData {
 	var sourceURL string
 
 	sourcePath := chapter.SourcePath
@@ -61,8 +61,8 @@ func NewChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapter 
 	}
 
 	return ChapterData{
-		Provider:   series.ProviderSlug,
-		Series:     series.Slug,
+		Provider:   provider.Slug,
+		Series:     series,
 		Slug:       chapter.Slug,
 		FullTitle:  chapter.FullTitle,
 		ShortTitle: chapter.ShortTitle,
@@ -78,10 +78,13 @@ func NewChapterData(provider *db.ProviderModel, series *db.SeriesModel, chapter 
 	}
 }
 
-func NewChapterListData(provider *db.ProviderModel, series *db.SeriesModel, chapterList []db.ChapterModel) []ChapterData {
+func NewChapterListData(series *db.SeriesModel) []ChapterData {
+	provider := series.Provider()
+	chapterList := series.Chapters()
+
 	result := make([]ChapterData, 0, len(chapterList))
 	for _, chapter := range chapterList {
-		result = append(result, NewChapterData(provider, series, &chapter))
+		result = append(result, NewChapterData(provider, series.Slug, &chapter))
 	}
 
 	return result

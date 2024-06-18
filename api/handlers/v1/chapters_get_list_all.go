@@ -1,7 +1,6 @@
 package v1Handler
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -60,49 +59,17 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		})
 	}
 
-	provider, err := h.prisma.FindProviderUniqueV1(c.Request().Context(), providerSlug)
-	if errors.Is(err, db.ErrNotFound) {
-		span.Status = sentry.SpanStatusNotFound
-		return c.JSON(http.StatusNotFound, v1Response.Response{
-			Error:   true,
-			Message: "Not found",
-			Detail:  fmt.Sprintf("Provider with slug '%s' not found", providerSlug),
-		})
-	} else if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindProviderUniqueV1")
-		return c.JSON(http.StatusInternalServerError, v1Response.Response{
-			Error:   true,
-			Message: "Internal Server Error",
-			Detail:  "Failed to find provider",
-		})
-	}
-
-	series, err := h.prisma.FindSeriesUniqueV1(c.Request().Context(), providerSlug, seriesSlug)
-	if errors.Is(err, db.ErrNotFound) {
-		span.Status = sentry.SpanStatusNotFound
-		return c.JSON(http.StatusNotFound, v1Response.Response{
-			Error:   true,
-			Message: "Not found",
-			Detail:  fmt.Sprintf("Series with slug '%s' not found", seriesSlug),
-		})
-	} else if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindSeriesUniqueV1")
-		return c.JSON(http.StatusInternalServerError, v1Response.Response{
-			Error:   true,
-			Message: "Internal Server Error",
-			Detail:  "Failed to find series",
-		})
-	}
-
-	chapterList, err := h.prisma.FindChaptersManyV1(c.Request().Context(), providerSlug, seriesSlug)
+	series, err := h.prisma.FindChaptersListAllV1(c.Request().Context(), providerSlug, seriesSlug, order)
 	if err != nil {
-		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChaptersManyV1")
+		middlewares.SentryHandleInternalError(c, span, err, "prisma.FindChaptersListAllV1")
 		return c.JSON(http.StatusInternalServerError, v1Response.Response{
 			Error:   true,
 			Message: "Internal Server Error",
 			Detail:  "Failed to find chapters",
 		})
 	}
+
+	chapterList := series.Chapters()
 
 	if len(chapterList) == 0 {
 		span.Status = sentry.SpanStatusNotFound
@@ -113,7 +80,7 @@ func (h *Handler) GetChapterListAll(c echo.Context) error {
 		})
 	}
 
-	result := v1Response.NewChapterListData(provider, series, chapterList)
+	result := v1Response.NewChapterListData(series)
 
 	err = h.redis.SetChapterListAllV1(c.Request().Context(), providerSlug, seriesSlug, result)
 	if err != nil {
