@@ -14,7 +14,7 @@ func (p *DBService) CreateProviderV1(ctx context.Context, req v1Binding.PostProv
 		db.Provider.Scheme.Set(req.Scheme),
 		db.Provider.Host.Set(req.Host),
 		db.Provider.ListPath.Set(req.ListPath),
-		db.Provider.IsActive.Set(req.IsActive),
+		db.Provider.IsActive.Set(*req.IsActive),
 	).Exec(ctx)
 
 	return provider, err
