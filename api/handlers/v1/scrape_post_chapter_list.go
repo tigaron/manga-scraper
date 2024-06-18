@@ -146,13 +146,13 @@ func (h *Handler) PostScrapeChapterList(c echo.Context) error {
 				middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.CreateChapterListRowV1", req)
 			}
 
-			upsertChapter, err := h.prisma.UpsertChaptersRowV1(c.Request().Context(), req.Provider, req.Series, ch)
+			upsertChapter, err := h.prisma.UpsertChapterRowV1(c.Request().Context(), req.Provider, req.Series, ch)
 			if err != nil {
 				middlewares.SentryHandleInternalErrorWithData(c, span, err, "prisma.UpsertSeriesRowV1", req)
 			}
 
 			mu.Lock()
-			result = append(result, v1Response.NewChapterData(provider, series, upsertChapter))
+			result = append(result, v1Response.NewChapterData(provider, series.Slug, upsertChapter))
 			mu.Unlock()
 
 			err = h.redis.UnsetChapterV1(c.Request().Context(), req.Provider, req.Series, ch.Slug)
