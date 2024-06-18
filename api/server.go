@@ -36,6 +36,7 @@ func NewRESTServer(config *config.Config, db *db.PrismaClient, redis *redis.Redi
 	switch config.ENV {
 	case "development":
 		app.Logger.SetLevel(log.DEBUG)
+		app.Use(middlewares.TimeoutMiddleware(2 * time.Minute))
 	case "production":
 		app.Logger.SetLevel(log.INFO)
 		app.Use(middlewares.TimeoutMiddleware(30 * time.Second))
