@@ -6,7 +6,7 @@ type PostProviderRequest struct {
 	Scheme   string `json:"scheme" validate:"required" example:"https://"`
 	Host     string `json:"host" validate:"required" example:"asuratoon.com"`
 	ListPath string `json:"list_path" validate:"required" example:"/manga/list-mode/"`
-	IsActive bool   `json:"is_active" validate:"required" example:"true"`
+	IsActive *bool  `json:"is_active" validate:"required" example:"true"`
 } // @name PostProviderRequest
 
 type PutProviderRequest struct {
@@ -14,5 +14,5 @@ type PutProviderRequest struct {
 	Scheme   string `json:"scheme" validate:"required" example:"https://"`
 	Host     string `json:"host" validate:"required" example:"asuratoon.com"`
 	ListPath string `json:"list_path" validate:"required" example:"/manga/list-mode/"`
-	IsActive bool   `json:"is_active" validate:"required" example:"true"`
+	IsActive *bool  `json:"is_active" validate:"required" example:"true"`
 } // @name PutProviderRequest

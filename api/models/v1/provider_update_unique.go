@@ -15,7 +15,7 @@ func (p *DBService) UpdateProviderUniqueV1(ctx context.Context, providerSlug str
 		db.Provider.Scheme.Set(req.Scheme),
 		db.Provider.Host.Set(req.Host),
 		db.Provider.ListPath.Set(req.ListPath),
-		db.Provider.IsActive.Set(req.IsActive),
+		db.Provider.IsActive.Set(*req.IsActive),
 	).Exec(ctx)
 
 	_ = p.Redis.DeleteProviderUniqueV1(ctx, providerSlug)
