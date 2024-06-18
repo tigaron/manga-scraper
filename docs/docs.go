@@ -53,6 +53,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "default": "asc",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "example": "10",
                         "description": "Page",
                         "name": "page",
@@ -122,6 +129,13 @@ const docTemplate = `{
                         "name": "series_slug",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "asc",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -172,6 +186,13 @@ const docTemplate = `{
                         "name": "series_slug",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "asc",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
                     }
                 ],
                 "responses": {
