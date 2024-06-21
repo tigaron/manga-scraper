@@ -1,18 +1,12 @@
-FROM golang:1.22.3-alpine3.20 as builder
+FROM golang:1.22.3-bookworm AS builder
 
-# Install tzdata and ca-certificates
-RUN apk add --no-cache tzdata ca-certificates
+WORKDIR /build/
 
-WORKDIR /workspace
-
-# add go modules lockfiles
-COPY go.mod go.sum ./
+COPY . .
 RUN go mod download
 
-# prefetch the binaries, so that they will be cached and not downloaded on each change
 RUN go run github.com/steebchen/prisma-client-go prefetch
 
-# Set environment variables
 ENV ENVIRONMENT {$ENVIRONMENT}
 ENV HTTP_PORT {$HTTP_PORT}
 ENV DATABASE_URL {$DATABASE_URL}
@@ -27,30 +21,28 @@ ENV KAFKA_URL {$KAFKA_URL}
 ENV KAFKA_USERNAME {$KAFKA_USERNAME}
 ENV KAFKA_PASSWORD {$KAFKA_PASSWORD}
 
-# Generate .env file
 RUN printenv > .env
 
 COPY ./ ./
-# generate the Prisma Client Go client
+
 RUN go run github.com/steebchen/prisma-client-go generate
-# or, if you use go generate to run the generator, use the following line instead
-# RUN go generate ./...
  
-# build a fully standalone binary with zero dependencies
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o app ./cmd/manga-scraper/main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags "-extldflags -static" \
+  fourleaves.studio/manga-scraper/cmd/manga-scraper
 
-# use the scratch image for the smallest possible image size
-FROM scratch
+FROM debian:12.5-slim
+RUN set -x && \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy timezone data
-COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+WORKDIR /api/
+ENV PATH=/api/bin/:$PATH
 
-# Copy SSL certificates
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /build/.env .
+COPY --from=builder /build/manga-scraper ./bin/manga-scraper
 
-# Copy .env file
-COPY --from=builder /workspace/.env /.env
+EXPOSE 5000
 
-COPY --from=builder /workspace/app /app
-
-ENTRYPOINT ["/app"]
+CMD ["manga-scraper]
