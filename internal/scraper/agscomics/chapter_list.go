@@ -4,14 +4,14 @@ import (
 	"context"
 	"sync"
 
-	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
+	"fourleaves.studio/manga-scraper/internal"
 	"fourleaves.studio/manga-scraper/internal/scraper/helper"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]v1Model.ChapterList, error) {
+func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]internal.ChapterListResult, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]v1M
 
 	page := pg.Context(ctx)
 
-	var results []v1Model.ChapterList
+	var results []internal.ChapterListResult
 
 	elC, err := page.Element("div.eplister")
 	if err != nil {
@@ -115,7 +115,7 @@ func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]v1M
 			chapterNumber := helper.GetChapterNumber(*dataNum)
 
 			mu.Lock()
-			results = append(results, v1Model.ChapterList{
+			results = append(results, internal.ChapterListResult{
 				ShortTitle: title,
 				Slug:       slug,
 				Number:     chapterNumber,
