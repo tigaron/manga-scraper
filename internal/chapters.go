@@ -1,0 +1,111 @@
+package internal
+
+type Chapter struct {
+	Provider    string     `json:"provider"`
+	Series      string     `json:"series"`
+	Slug        string     `json:"slug"`
+	Number      float64    `json:"number"`
+	FullTitle   string     `json:"fullTitle"`
+	ShortTitle  string     `json:"shortTitle"`
+	SourceURL   string     `json:"sourceURL"`
+	ChapterNav  ChapterNav `json:"chapterNav"`
+	ContentURLs []string   `json:"contentURLs"`
+}
+
+type ChapterNav struct {
+	NextSlug string `json:"nextSlug"`
+	NextURL  string `json:"nextURL"`
+	PrevSlug string `json:"prevSlug"`
+	PrevURL  string `json:"prevURL"`
+}
+
+type Breadcrumb struct {
+	Slug  string `json:"slug"`
+	Title string `json:"title"`
+}
+
+type ChapterBC struct {
+	Provider Breadcrumb `json:"provider"`
+	Series   Breadcrumb `json:"series"`
+	Chapter  Breadcrumb `json:"chapter"`
+}
+
+type CreateInitChapterParams struct {
+	Provider   string
+	Series     string
+	Slug       string
+	Number     float64
+	ShortTitle string
+	SourceHref string
+}
+
+type FindChapterParams struct {
+	Provider string
+	Series   string
+	Slug     string
+	Order    SortOrder
+	Page     int
+	Size     int
+	Cursor   string
+}
+
+type UpdateInitChapterParams struct {
+	Provider     string
+	Series       string
+	Slug         string
+	FullTitle    string
+	SourcePath   string
+	ContentPaths []byte
+	NextSlug     string
+	NextPath     string
+	PrevSlug     string
+	PrevPath     string
+}
+
+func (c *CreateInitChapterParams) Validate() error {
+	if c.Provider == "" {
+		return NewErrorf(ErrInvalidInput, "provider is required")
+	}
+
+	if c.Series == "" {
+		return NewErrorf(ErrInvalidInput, "series is required")
+	}
+
+	if c.Slug == "" {
+		return NewErrorf(ErrInvalidInput, "slug is required")
+	}
+
+	if c.ShortTitle == "" {
+		return NewErrorf(ErrInvalidInput, "shortTitle is required")
+	}
+
+	if c.SourceHref == "" {
+		return NewErrorf(ErrInvalidInput, "sourceHref is required")
+	}
+
+	return nil
+}
+
+func (u *UpdateInitChapterParams) Validate() error {
+	if u.Provider == "" {
+		return NewErrorf(ErrInvalidInput, "provider is required")
+	}
+
+	if u.Series == "" {
+		return NewErrorf(ErrInvalidInput, "series is required")
+	}
+
+	if u.Slug == "" {
+		return NewErrorf(ErrInvalidInput, "slug is required")
+	}
+
+	if u.FullTitle == "" {
+		return NewErrorf(ErrInvalidInput, "fullTitle is required")
+	}
+
+	if u.SourcePath == "" {
+		return NewErrorf(ErrInvalidInput, "sourcePath is required")
+	}
+
+	return nil
+}

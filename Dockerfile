@@ -23,6 +23,9 @@ ENV REDIS_URL {$REDIS_URL}
 ENV VERSION {$VERSION}
 ENV OPENSEARCH_URL {$OPENSEARCH_URL}
 ENV CLERK_SECRET_KEY {$CLERK_SECRET_KEY}
+ENV KAFKA_URL {$KAFKA_URL}
+ENV KAFKA_USERNAME {$KAFKA_USERNAME}
+ENV KAFKA_PASSWORD {$KAFKA_PASSWORD}
 
 # Generate .env file
 RUN printenv > .env
@@ -34,7 +37,7 @@ RUN go run github.com/steebchen/prisma-client-go generate
 # RUN go generate ./...
  
 # build a fully standalone binary with zero dependencies
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o app ./cmd/manga-scraper/main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o app ./cmd/manga-scraper/main.go
 
 # use the scratch image for the smallest possible image size
 FROM scratch

@@ -6,17 +6,17 @@ import (
 	"regexp"
 	"strings"
 
-	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
+	"fourleaves.studio/manga-scraper/internal"
 	"fourleaves.studio/manga-scraper/internal/scraper/helper"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1Model.ChapterDetail, error) {
+func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (internal.ChapterDetailResult, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	l.Leakless(true)
@@ -24,32 +24,32 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 
 	lC, err := l.Client()
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	browser := rod.New().Client(lC)
 	err = browser.Connect()
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	defer browser.MustClose()
 
 	pg, err := browser.Page(proto.TargetCreateTarget{URL: chapterUrl})
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	page := pg.Context(ctx)
 
 	elFT, err := page.Element("h1.entry-title")
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	tFT, err := elFT.Text()
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	fullTitle := strings.TrimSpace(tFT)
@@ -57,12 +57,12 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 	// disabled due to postId is not working
 	// elHR, err := page.Element("link[rel='shortlink']")
 	// if err != nil {
-	// 	return v1Model.ChapterDetail{}, err
+	// 	return internal.ChapterDetailResult{}, err
 	// }
 
 	// href, err := elHR.Attribute("href")
 	// if err != nil {
-	// 	return v1Model.ChapterDetail{}, err
+	// 	return internal.ChapterDetailResult{}, err
 	// }
 
 	// postId := helper.GetPostId(*href)
@@ -75,22 +75,22 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 
 	elTS, err := page.ElementR("script", "ts_reader.run")
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	tTS, err := elTS.Text()
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
-	var tsReader v1Model.TSReaderScript
+	var tsReader internal.TSReaderScript
 
 	scriptRegex := regexp.MustCompile(`^\s*ts_reader.run\((.*)\);`)
 	script := scriptRegex.FindStringSubmatch(tTS)[1]
 
 	err = json.Unmarshal([]byte(script), &tsReader)
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	var contentPaths []string
@@ -114,7 +114,7 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 
 	contentPathsJson, err := json.Marshal(helper.RemoveDuplicate(contentPaths))
 	if err != nil {
-		return v1Model.ChapterDetail{}, err
+		return internal.ChapterDetailResult{}, err
 	}
 
 	nextHref := tsReader.NextURL
@@ -128,17 +128,17 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 	if nextHref != "" {
 		err := page.Navigate(nextHref)
 		if err != nil {
-			return v1Model.ChapterDetail{}, err
+			return internal.ChapterDetailResult{}, err
 		}
 
 		elHRN, err := page.Element("link[rel='shortlink']")
 		if err != nil {
-			return v1Model.ChapterDetail{}, err
+			return internal.ChapterDetailResult{}, err
 		}
 
 		hrefN, err := elHRN.Attribute("href")
 		if err != nil {
-			return v1Model.ChapterDetail{}, err
+			return internal.ChapterDetailResult{}, err
 		}
 
 		postIdN := helper.GetPostId(*hrefN)
@@ -152,17 +152,17 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 	if prevHref != "" {
 		err := page.Navigate(prevHref)
 		if err != nil {
-			return v1Model.ChapterDetail{}, err
+			return internal.ChapterDetailResult{}, err
 		}
 
 		elHRP, err := page.Element("link[rel='shortlink']")
 		if err != nil {
-			return v1Model.ChapterDetail{}, err
+			return internal.ChapterDetailResult{}, err
 		}
 
 		hrefP, err := elHRP.Attribute("href")
 		if err != nil {
-			return v1Model.ChapterDetail{}, err
+			return internal.ChapterDetailResult{}, err
 		}
 
 		postIdP := helper.GetPostId(*hrefP)
@@ -171,7 +171,7 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string) (v1
 		prevPath = ""
 	}
 
-	result := v1Model.ChapterDetail{
+	result := internal.ChapterDetailResult{
 		FullTitle:    fullTitle,
 		SourcePath:   sourcePath,
 		ContentPaths: contentPathsJson,

@@ -2,21 +2,25 @@
 package main
 
 import (
+	"crypto/tls"
 	"log"
+	"net/http"
 	"time"
 
-	"fourleaves.studio/manga-scraper/api"
 	_ "fourleaves.studio/manga-scraper/docs"
 	"fourleaves.studio/manga-scraper/internal/config"
-	db "fourleaves.studio/manga-scraper/internal/database/prisma"
-	"fourleaves.studio/manga-scraper/internal/database/redis"
+	"fourleaves.studio/manga-scraper/internal/database/prisma"
+	server "fourleaves.studio/manga-scraper/internal/rest"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/getsentry/sentry-go"
+	"github.com/opensearch-project/opensearch-go/v2"
 )
 
 var (
 	envConfig   *config.Config
-	dbClient    *db.PrismaClient
-	redisClient *redis.RedisClient
+	dbClient    *prisma.PrismaClient
+	esClient    *opensearch.Client
+	kafkaClient *kafka.Producer
 )
 
 func init() {
@@ -49,42 +53,51 @@ func init() {
 		log.Fatal("[init] failed to initialize sentry: ", err)
 	}
 
-	dbClient = db.NewClient(db.WithDatasourceURL(envConfig.DBURL))
+	dbClient = prisma.NewClient(prisma.WithDatasourceURL(envConfig.DBURL))
 	if err := dbClient.Connect(); err != nil {
 		log.Fatal("[init] failed to connect to database: ", err)
 	}
 
-	redisClient, err = redis.NewClient(envConfig.RedisURL, envConfig.ENV)
+	esClient, err = opensearch.NewClient(opensearch.Config{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+		Addresses: []string{envConfig.SearchURL},
+	})
 	if err != nil {
-		log.Fatal("[init] failed to connect to redis: ", err)
+		log.Fatal("[init] failed to create elasticsearch client: ", err)
 	}
+
+	kafkaClient, err = kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": envConfig.KafkaURL,
+		"sasl.mechanism":    "SCRAM-SHA-256",
+		"security.protocol": "SASL_SSL",
+		"sasl.username":     envConfig.KafkaUsername,
+		"sasl.password":     envConfig.KafkaPassword,
+	})
 }
 
-//	@title			Manga Scraper API
-//	@version		1.0
-//	@description	This is a Manga Scraper API server.
-//	@termsOfService	https://manga-scraper.hostinger.fourleaves.studio/terms
-
-//	@contact.name	API Support
-//	@contact.url	https://manga-scraper.hostinger.fourleaves.studio/support
-//	@contact.email	admin@fourleaves.studio
-
-//	@license.name	Apache 2.0
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-
+// @title						Manga Scraper API
+// @version					1.0
+// @description				This is a Manga Scraper API server.
+// @termsOfService				https://manga-scraper.hostinger.fourleaves.studio/terms
+// @contact.name				API Support
+// @contact.url				https://manga-scraper.hostinger.fourleaves.studio/support
+// @contact.email				admin@fourleaves.studio
+// @license.name				Apache 2.0
+// @license.url				http://www.apache.org/licenses/LICENSE-2.0.html
 // @securitydefinitions.apikey	TokenAuth
 // @in							header
 // @name						Authorization
 // @tokenUrl					https://manga-reader.fourleaves.studio/sign-in
 func main() {
-	defer sentry.Flush(2 * time.Second)
-	defer func() {
-		if err := dbClient.Disconnect(); err != nil {
-			log.Fatal("[main] failed to disconnect from database: ", err)
-		}
-	}()
+	srv := server.NewRESTServer(envConfig, dbClient, esClient, kafkaClient)
+	errC, err := srv.StartServer()
+	if err != nil {
+		log.Fatal("[main] couldn't run: ", err)
+	}
 
-	server := api.NewRESTServer(envConfig, dbClient, redisClient)
-
-	server.StartServer(envConfig.Port)
+	if err := <-errC; err != nil {
+		log.Fatal("[main] error while running: ", err)
+	}
 }

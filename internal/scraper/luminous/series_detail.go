@@ -6,17 +6,17 @@ import (
 	"regexp"
 	"strings"
 
-	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
+	"fourleaves.studio/manga-scraper/internal"
 	"fourleaves.studio/manga-scraper/internal/scraper/helper"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Model.SeriesDetail, error) {
+func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (internal.SeriesDetailResult, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	l.Leakless(true)
@@ -24,38 +24,38 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Mo
 
 	lC, err := l.Client()
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	browser := rod.New().Client(lC)
 	err = browser.Connect()
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	defer browser.MustClose()
 
 	pg, err := browser.Page(proto.TargetCreateTarget{URL: seriesUrl})
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	page := pg.Context(ctx)
 
 	elTH, err := page.Element("div.thumb > img")
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	thumbnailUrl, err := elTH.Attribute("src")
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	if !strings.HasPrefix(*thumbnailUrl, "http") {
 		thumbnailUrl, err = elTH.Attribute("data-src")
 		if err != nil {
-			return v1Model.SeriesDetail{}, err
+			return internal.SeriesDetailResult{}, err
 		}
 	}
 
@@ -63,23 +63,23 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Mo
 
 	elS, err := page.Element("div.entry-content")
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	elSP, err := elS.Elements("p")
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	if len(elSP) == 0 {
 		elD, err := elS.Element(`div[class^="contents"]`)
 		if err != nil {
-			return v1Model.SeriesDetail{}, err
+			return internal.SeriesDetailResult{}, err
 		}
 
 		elDt, err := elD.Elements("div")
 		if err != nil {
-			return v1Model.SeriesDetail{}, err
+			return internal.SeriesDetailResult{}, err
 		}
 
 		for _, e := range elDt {
@@ -108,7 +108,7 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Mo
 
 	elG, err := page.Elements("span.mgen > a")
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
 	for _, e := range elG {
@@ -118,10 +118,10 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (v1Mo
 
 	genres, err := json.Marshal(helper.RemoveDuplicate(genreArr))
 	if err != nil {
-		return v1Model.SeriesDetail{}, err
+		return internal.SeriesDetailResult{}, err
 	}
 
-	result := v1Model.SeriesDetail{
+	result := internal.SeriesDetailResult{
 		ThumbnailURL: *thumbnailUrl,
 		Synopsis:     synopsis,
 		Genres:       genres,

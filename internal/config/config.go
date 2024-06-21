@@ -15,6 +15,9 @@ type Config struct {
 	Version        string `mapstructure:"VERSION"`
 	SearchURL      string `mapstructure:"OPENSEARCH_URL"`
 	ClerkSecretKey string `mapstructure:"CLERK_SECRET_KEY"`
+	KafkaURL       string `mapstructure:"KAFKA_URL"`
+	KafkaUsername  string `mapstructure:"KAFKA_USERNAME"`
+	KafkaPassword  string `mapstructure:"KAFKA_PASSWORD"`
 }
 
 // Reads the configuration from the config file or environment variables.
