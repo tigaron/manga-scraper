@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="graph" width="2400" height="2010"><script type="application/json"><![CDATA[{
+  "name": "RESTful API",
+  "description": "Component diagram for the REST Server",
+  "elements": [
+    {
+      "id": "17b272a",
+      "tags": "Element,Component",
+      "technology": "Go Package"
+    },
+    {
+      "id": "17hwqi9",
+      "tags": "Element,Component",
+      "technology": "Go Package"
+    },
+    {
+      "id": "17ryc8f",
+      "tags": "Element,Component",
+      "technology": "Go Package"
+    },
+    {
+      "id": "1bpgygw",
+      "tags": "Element,Component",
+      "technology": "Go Package"
+    },
+    {
+      "id": "1ivx951",
+      "tags": "Element,Database,Container",
+      "technology": "Redis 6.x"
+    },
+    {
+      "id": "a3t9vg",
+      "tags": "Element,Database,Container",
+      "technology": "MySQL 8.x"
+    },
+    {
+      "id": "dfjrsk",
+      "tags": "Element,Database,Container",
+      "technology": "Kafka 2.x"
+    },
+    {
+      "id": "f5cvo9",
+      "tags": "Element,Database,Container",
+      "technology": "OpenSearch 2.x"
+    },
+    {
+      "id": "lpcqob",
+      "tags": "Element,Component",
+      "technology": "Go Package"
+    },
+    {
+      "id": "qvcdiu",
+      "tags": "Element,Component",
+      "technology": "Go Package"
+    }
+  ],
+  "layout": {
+    "17b272a": {
+      "x": 1080,
+      "y": 880
+    },
+    "17hwqi9": {
+      "x": 1080,
+      "y": 400
+    },
+    "17ryc8f": {
+      "x": 850,
+      "y": 1360
+    },
+    "1bpgygw": {
+      "x": 400,
+      "y": 1360
+    },
+    "1ivx951": {
+      "x": 850,
+      "y": 1840
+    },
+    "a3t9vg": {
+      "x": 400,
+      "y": 1840
+    },
+    "dfjrsk": {
+      "x": 1300,
+      "y": 1840
+    },
+    "f5cvo9": {
+      "x": 1750,
+      "y": 1840
+    },
+    "lpcqob": {
+      "x": 1300,
+      "y": 1360
+    },
+    "qvcdiu": {
+      "x": 1750,
+      "y": 1360
+    },
+    "e-15sxr5d": [
+      {
+        "x": 400.5,
+        "y": 1122,
+        "label": true
+      }
+    ],
+    "e-186xrg2": [
+      {
+        "x": 851.5,
+        "y": 1122,
+        "label": true
+      }
+    ],
+    "e-1clbioy": [
+      {
+        "x": 1302.5,
+        "y": 1122,
+        "label": true
+      }
+    ],
+    "e-1i1399o": [
+      {
+        "x": 1302.5,
+        "y": 1603,
+        "label": true
+      }
+    ],
+    "e-1jzuoky": [
+      {
+        "x": 851.5,
+        "y": 1603,
+        "label": true
+      }
+    ],
+    "e-1lxqrp7": [
+      {
+        "x": 1753.5,
+        "y": 1603,
+        "label": true
+      }
+    ],
+    "e-4l9xci": [
+      {
+        "x": 1753.5,
+        "y": 1122,
+        "label": true
+      }
+    ],
+    "e-kdyyw0": [
+      {
+        "x": 400.5,
+        "y": 1603,
+        "label": true
+      }
+    ],
+    "e-z89sjx": [
+      {
+        "x": 1077,
+        "y": 641,
+        "label": true
+      }
+    ]
+  }
+}]]></script>
+<defs>
+	<marker id="arrow" viewBox="0 0 5 5" refX="4" refY="2.5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth">
+		<path fill="#aaa" stroke-width="1" stroke="none" d="M0,0 L5,2.5 L0,5 Z" class="arrowHead"></path>
+	</marker>
+	<g id="icon-circle" transform="translate(0,-12)" class="icon">
+		<circle cx="7" cy="7" r="7"></circle>
+	</g>
+	<g id="icon-cube" transform="translate(0, -14)" class="icon">
+		<path d="M 5 0 h 10 v 10 l -5 5 h -10 v -10 l 5 -5 M 0 5 h 10 v 10 M 15 0 l -5 5"></path>
+	</g>
+	<filter id="shadow">
+		<feDropShadow dx="3" dy="3" stdDeviation="5" flood-color="#00000030" flood-opacity="1"></feDropShadow>
+	</filter>
+</defs><g class="zoom" transform="scale(1)"><g class="groups"></g><g class="edges"><g class="edge" id="15sxr5d" data-from="17b272a" data-to="1bpgygw"><rect x="364.3134994506836" y="1103.5" rx="0" ry="0" width="72.37300109863281" height="37" fill="none" stroke="none"></rect><text x="0" y="1103.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="400.5" dy="24px" font-size="22px" font-weight="normal">Uses</tspan></text><path marker-end="url(#arrow)" class="edge" d="M930,933.4216335540839 L436.6865005493164,1109.1123868536652 M400.46113445378154,1140.5 L400.3151260504202,1210" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-2bg0ub8" cx="400.5" cy="1122" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="186xrg2" data-from="17b272a" data-to="17ryc8f"><rect x="815.3134994506836" y="1103.5" rx="0" ry="0" width="72.37300109863281" height="37" fill="none" stroke="none"></rect><text x="0" y="1103.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="851.5" dy="24px" font-size="22px" font-weight="normal">Uses</tspan></text><path marker-end="url(#arrow)" class="edge" d="M938.3677685950413,1030 L868.9679752066115,1103.5 M851.3834033613446,1140.5 L850.9453781512605,1210" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-44pujdm" cx="851.5" cy="1122" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="1clbioy" data-from="17b272a" data-to="lpcqob"><rect x="1202.701774597168" y="1103.5" rx="0" ry="0" width="199.59645080566406" height="37" fill="none" stroke="none"></rect><text x="0" y="1103.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="1302.5" dy="24px" font-size="22px" font-weight="normal">Produce events to</tspan></text><path marker-end="url(#arrow)" class="edge" d="M1217.9132231404958,1030 L1285.4907024793388,1103.5 M1302.3056722689075,1140.5 L1301.5756302521008,1210" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-3hmqww0" cx="1302.5" cy="1122" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="1i1399o" data-from="lpcqob" data-to="dfjrsk"><rect x="1266.3134994506836" y="1584.5" rx="0" ry="0" width="72.37300109863281" height="37" fill="none" stroke="none"></rect><text x="0" y="1584.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="1302.5" dy="24px" font-size="22px" font-weight="normal">Uses</tspan></text><path marker-end="url(#arrow)" class="edge" d="M1301.5432098765432,1510 L1302.309670781893,1584.5 M1302.304852320675,1621.5 L1301.5822655078566,1690.0012298551922" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-4ggyw6g" cx="1302.5" cy="1603" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="1jzuoky" data-from="17ryc8f" data-to="1ivx951"><rect x="815.3134994506836" y="1584.5" rx="0" ry="0" width="72.37300109863281" height="37" fill="none" stroke="none"></rect><text x="0" y="1584.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="851.5" dy="24px" font-size="22px" font-weight="normal">Uses</tspan></text><path marker-end="url(#arrow)" class="edge" d="M850.925925925926,1510 L851.3858024691358,1584.5 M851.382911392405,1621.5 L850.9493642864263,1690.0004427446331" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-3imqcbn" cx="851.5" cy="1603" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="1lxqrp7" data-from="qvcdiu" data-to="f5cvo9"><rect x="1717.3134994506836" y="1584.5" rx="0" ry="0" width="72.37300109863281" height="37" fill="none" stroke="none"></rect><text x="0" y="1584.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="1753.5" dy="24px" font-size="22px" font-weight="normal">Uses</tspan></text><path marker-end="url(#arrow)" class="edge" d="M1752.1604938271605,1510 L1753.2335390946503,1584.5 M1753.2267932489451,1621.5 L1752.2151542746872,1690.0024105426064" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-26c7ei1" cx="1753.5" cy="1603" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="4l9xci" data-from="17b272a" data-to="qvcdiu"><rect x="1645.6998291015625" y="1103.5" rx="0" ry="0" width="215.600341796875" height="37" fill="none" stroke="none"></rect><text x="0" y="1103.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="1753.5" dy="24px" font-size="22px" font-weight="normal">Reads records from</tspan></text><path marker-end="url(#arrow)" class="edge" d="M1230,933.8975501113586 L1702.0134297520663,1103.5 M1753.2279411764705,1140.5 L1752.2058823529412,1210" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-1kpxu62" cx="1753.5" cy="1122" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="kdyyw0" data-from="1bpgygw" data-to="a3t9vg"><rect x="364.3134994506836" y="1584.5" rx="0" ry="0" width="72.37300109863281" height="37" fill="none" stroke="none"></rect><text x="0" y="1584.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="400.5" dy="24px" font-size="22px" font-weight="normal">Uses</tspan></text><path marker-end="url(#arrow)" class="edge" d="M400.30864197530866,1510 L400.4619341563786,1584.5 M400.460970464135,1621.5 L400.31645559241844,1690.0000491936685" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-2spksuw" cx="400.5" cy="1603" r="7" fill="none" class="v-dot"></circle></g><g class="edge" id="z89sjx" data-from="17hwqi9" data-to="17b272a"><rect x="1040.8134994506836" y="622.5" rx="0" ry="0" width="72.37300109863281" height="37" fill="none" stroke="none"></rect><text x="0" y="622.5" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" font-size="22" fill="#999" data-field="label"><tspan x="1077" dy="24px" font-size="22px" font-weight="normal">Uses</tspan></text><path marker-end="url(#arrow)" class="edge" d="M1078.1327800829877,550 L1077.2302904564315,622.5 M1077.2322175732218,659.5 L1078.1171548117154,730" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round" stroke-dasharray="8"></path><circle id="v-17j71" cx="1077" cy="641" r="7" fill="none" class="v-dot"></circle></g></g><g class="nodes"><g class="node" id="17b272a" transform="translate(1080,880)"><rect rx="3" ry="3" x="-150" y="-150" width="300" height="300" class="nodeBorder" fill="#85bbf0" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></rect><g transform="translate(0,-70)"><text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">internal.service</tspan></text><text x="0" y="48" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" font-size="16.5">[Component: Go Package]</text><text x="0" y="68" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">interacts with all</tspan><tspan x="0" dy="24px" font-size="22px" font-weight="normal">datastores</tspan></text></g></g><g class="node" id="17hwqi9" transform="translate(1080,400)"><rect rx="3" ry="3" x="-150" y="-150" width="300" height="300" class="nodeBorder" fill="#85bbf0" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></rect><g transform="translate(0,-58)"><text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">internal.rest</tspan></text><text x="0" y="48" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" font-size="16.5">[Component: Go Package]</text><text x="0" y="68" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">defines HTTP handlers</tspan></text></g></g><g class="node" id="17ryc8f" transform="translate(850,1360)"><rect rx="3" ry="3" x="-150" y="-150" width="300" height="300" class="nodeBorder" fill="#85bbf0" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></rect><g transform="translate(0,-58)"><text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">internal.database.redis</tspan></text><text x="0" y="48" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" font-size="16.5">[Component: Go Package]</text><text x="0" y="68" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">interacts with Redis</tspan></text></g></g><g class="node" id="1bpgygw" transform="translate(400,1360)"><rect rx="3" ry="3" x="-150" y="-150" width="300" height="300" class="nodeBorder" fill="#85bbf0" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></rect><g transform="translate(0,-58)"><text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">internal.database.prisma</tspan></text><text x="0" y="48" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" font-size="16.5">[Component: Go Package]</text><text x="0" y="68" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">interacts with MySQL</tspan></text></g></g><g class="node" id="1ivx951" transform="translate(850,1840)" label-offset-y="44.21052631578947"><path d="M 0,22.105263157894736 a150,22.105263157894736 0,0,0 300 0 a 150,22.105263157894736 0,0,0 -300 0 l 0,255.78947368421052 a 150,22.105263157894736 0,0,0 300 0 l 0,-255.78947368421052" transform="translate(-150,-150)" class="nodeBorder" fill="#438dd5" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></path><g transform="translate(0,-92.10526315789474)"><text x="0" y="44.21052631578947" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">Redis</tspan></text><text x="0" y="92.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" font-size="16.5">[Container: Redis 6.x]</text><text x="0" y="112.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">Stores cached Manga</tspan><tspan x="0" dy="24px" font-size="22px" font-weight="normal">records</tspan></text></g></g><g class="node" id="a3t9vg" transform="translate(400,1840)" label-offset-y="44.21052631578947"><path d="M 0,22.105263157894736 a150,22.105263157894736 0,0,0 300 0 a 150,22.105263157894736 0,0,0 -300 0 l 0,255.78947368421052 a 150,22.105263157894736 0,0,0 300 0 l 0,-255.78947368421052" transform="translate(-150,-150)" class="nodeBorder" fill="#438dd5" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></path><g transform="translate(0,-80.10526315789474)"><text x="0" y="44.21052631578947" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">MySQL</tspan></text><text x="0" y="92.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" font-size="16.5">[Container: MySQL 8.x]</text><text x="0" y="112.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">Stores Manga records</tspan></text></g></g><g class="node" id="dfjrsk" transform="translate(1300,1840)" label-offset-y="44.21052631578947"><path d="M 0,22.105263157894736 a150,22.105263157894736 0,0,0 300 0 a 150,22.105263157894736 0,0,0 -300 0 l 0,255.78947368421052 a 150,22.105263157894736 0,0,0 300 0 l 0,-255.78947368421052" transform="translate(-150,-150)" class="nodeBorder" fill="#438dd5" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></path><g transform="translate(0,-92.10526315789474)"><text x="0" y="44.21052631578947" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">Kafka</tspan></text><text x="0" y="92.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" font-size="16.5">[Container: Kafka 2.x]</text><text x="0" y="112.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">Streams Scrape Request</tspan><tspan x="0" dy="24px" font-size="22px" font-weight="normal">events</tspan></text></g></g><g class="node" id="f5cvo9" transform="translate(1750,1840)" label-offset-y="44.21052631578947"><path d="M 0,22.105263157894736 a150,22.105263157894736 0,0,0 300 0 a 150,22.105263157894736 0,0,0 -300 0 l 0,255.78947368421052 a 150,22.105263157894736 0,0,0 300 0 l 0,-255.78947368421052" transform="translate(-150,-150)" class="nodeBorder" fill="#438dd5" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></path><g transform="translate(0,-92.10526315789474)"><text x="0" y="44.21052631578947" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">ElasticSearch</tspan></text><text x="0" y="92.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" font-size="16.5">[Container: OpenSearch 2.x]</text><text x="0" y="112.21052631578948" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#ffffff" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">Stores searchable Manga</tspan><tspan x="0" dy="24px" font-size="22px" font-weight="normal">records</tspan></text></g></g><g class="node" id="lpcqob" transform="translate(1300,1360)"><rect rx="3" ry="3" x="-150" y="-150" width="300" height="300" class="nodeBorder" fill="#85bbf0" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></rect><g transform="translate(0,-58)"><text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">internal.kafka</tspan></text><text x="0" y="48" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" font-size="16.5">[Component: Go Package]</text><text x="0" y="68" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">interacts with Kafka</tspan></text></g></g><g class="node" id="qvcdiu" transform="translate(1750,1360)"><rect rx="3" ry="3" x="-150" y="-150" width="300" height="300" class="nodeBorder" fill="#85bbf0" stroke="#999" filter="url(#shadow)" stroke-width="4.3" opacity="0.9"></rect><g transform="translate(0,-70)"><text x="0" y="0" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="name"><tspan x="0" dy="24px" font-size="22px" font-weight="bold">internal.elasticsearch</tspan></text><text x="0" y="48" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" font-size="16.5">[Component: Go Package]</text><text x="0" y="68" text-anchor="middle" font-family="Arial, sans-serif" stroke="none" fill="#000000" data-field="description"><tspan x="0" dy="24px" font-size="22px" font-weight="normal">interacts with</tspan><tspan x="0" dy="24px" font-size="22px" font-weight="normal">ElasticSearch</tspan></text></g></g></g></g></svg>

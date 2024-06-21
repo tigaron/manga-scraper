@@ -1,3 +1,7 @@
 # Manga Scraper API
 
-![Manga Scraper DB Core Diagram](docs/manga-scraper-db-core-diagram.svg)
+## System Design
+![RESTful API](docs/diagrams/Containers.svg)
+
+## RESTful API
+![RESTful API](docs/diagrams/RESTful_API.svg)
