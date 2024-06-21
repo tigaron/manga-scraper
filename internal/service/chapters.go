@@ -13,6 +13,7 @@ type ChapterRepository interface {
 	FindLatest(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error)
 	Count(ctx context.Context, params internal.FindChapterParams) (int, error)
 	FindAll(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error)
+	FindListWithRel(ctx context.Context, params internal.FindChapterParams) (internal.ChapterList, error)
 	FindPaginated(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error)
 	UpdateInit(ctx context.Context, params internal.UpdateInitChapterParams) (internal.Chapter, error)
 	Delete(ctx context.Context, params internal.FindChapterParams) error
@@ -96,6 +97,17 @@ func (s *ChapterService) FindAll(ctx context.Context, params internal.FindChapte
 	}
 
 	return chapters, nil
+}
+
+func (s *ChapterService) FindListWithRel(ctx context.Context, params internal.FindChapterParams) (internal.ChapterList, error) {
+	defer newSentrySpan(ctx, "ChapterService.FindListWithRel").Finish()
+
+	chapterList, err := s.repo.FindListWithRel(ctx, params)
+	if err != nil {
+		return internal.ChapterList{}, internal.WrapErrorf(err, internal.ErrUnknown, "repo.FindListWithRel")
+	}
+
+	return chapterList, nil
 }
 
 func (s *ChapterService) FindPaginated(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error) {

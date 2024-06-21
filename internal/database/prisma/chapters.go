@@ -53,7 +53,7 @@ func (c *ChapterModel) toChapter() internal.Chapter {
 		FullTitle:  c.FullTitle,
 		ShortTitle: c.ShortTitle,
 		SourceURL:  sourceURL,
-		ChapterNav: internal.ChapterNav{
+		ChapterNav: &internal.ChapterNav{
 			NextSlug: nextSlug,
 			NextURL:  nextURL,
 			PrevSlug: prevSlug,
@@ -125,7 +125,7 @@ func (s *SeriesModel) toChapterList() []internal.Chapter {
 			FullTitle:  chaptersList[i].FullTitle,
 			ShortTitle: chaptersList[i].ShortTitle,
 			SourceURL:  sourceURL,
-			ChapterNav: internal.ChapterNav{
+			ChapterNav: &internal.ChapterNav{
 				NextSlug: nextSlug,
 				NextURL:  nextURL,
 				PrevSlug: prevSlug,
@@ -134,6 +134,37 @@ func (s *SeriesModel) toChapterList() []internal.Chapter {
 			ContentURLs: newContentURLsFromSlice(contentPaths, provider.Scheme+provider.Host),
 		})
 	}
+
+	return result
+}
+
+func (s *SeriesModel) toChapterListWithRel() internal.ChapterList {
+	series := s.toSeries()
+
+	result := internal.ChapterList{
+		Series: series,
+	}
+
+	provider := s.Provider()
+	chaptersList := s.Chapters()
+
+	if len(chaptersList) == 0 {
+		return result
+	}
+
+	chapters := make([]internal.Chapter, 0, len(chaptersList))
+
+	for i := range chaptersList {
+		chapters = append(chapters, internal.Chapter{
+			Provider:   provider.Slug,
+			Series:     s.Slug,
+			Slug:       chaptersList[i].Slug,
+			Number:     chaptersList[i].Number,
+			ShortTitle: chaptersList[i].ShortTitle,
+		})
+	}
+
+	result.Chapters = chapters
 
 	return result
 }
@@ -304,6 +335,37 @@ func (c *ChapterRepo) FindAll(ctx context.Context, params internal.FindChapterPa
 	if len(result) == 0 {
 		return nil, internal.WrapErrorf(err, internal.ErrNotFound, "no chapters found")
 	}
+
+	return result, nil
+}
+
+func (c *ChapterRepo) FindListWithRel(ctx context.Context, params internal.FindChapterParams) (internal.ChapterList, error) {
+	defer newSentrySpan(ctx, "ChapterRepo.FindListWithRel").Finish()
+
+	series, err := c.q.Series.FindUnique(
+		Series.SeriesUnique(
+			Series.ProviderSlug.Equals(params.Provider),
+			Series.Slug.Equals(params.Series),
+		),
+	).With(
+		Series.Provider.Fetch(),
+		Series.Chapters.Fetch().Select(
+			Chapter.Slug.Field(),
+			Chapter.ShortTitle.Field(),
+			Chapter.Number.Field(),
+		).OrderBy(
+			Chapter.Number.Order(newSortOrder(params.Order)),
+		),
+	).Exec(ctx)
+	if err != nil {
+		if IsErrNotFound(err) {
+			return internal.ChapterList{}, internal.WrapErrorf(err, internal.ErrNotFound, "series not found")
+		}
+
+		return internal.ChapterList{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to find series")
+	}
+
+	result := series.toChapterListWithRel()
 
 	return result, nil
 }
