@@ -152,63 +152,6 @@
                 }
             }
         },
-        "/api/v1/chapters/{provider_slug}/{series_slug}/_list": {
-            "get": {
-                "description": "Get chapter list only",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "chapters"
-                ],
-                "summary": "Get chapter list only",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "asura",
-                        "description": "Provider slug",
-                        "name": "provider_slug",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "reincarnator",
-                        "description": "Series slug",
-                        "name": "series_slug",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "asc",
-                        "description": "Sort order",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}": {
             "get": {
                 "description": "Get chapter by slug",
@@ -274,7 +217,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "breadcrumbs"
+                    "chapters"
                 ],
                 "summary": "Get chapter breadcrumbs",
                 "parameters": [
@@ -380,7 +323,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/PostProviderRequest"
+                            "$ref": "#/definitions/CreateProviderRequest"
                         }
                     }
                 ],
@@ -497,7 +440,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/PutProviderRequest"
+                            "$ref": "#/definitions/UpdateProviderRequest"
                         }
                     }
                 ],
@@ -548,7 +491,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "breadcrumbs"
+                    "providers"
                 ],
                 "summary": "Get provider breadcrumbs",
                 "parameters": [
@@ -568,12 +511,6 @@
                             "$ref": "#/definitions/ResponseV1"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
@@ -589,14 +526,14 @@
                 }
             }
         },
-        "/api/v1/scrape-requests/chapters/detail": {
-            "put": {
+        "/api/v1/scrapers": {
+            "post": {
                 "security": [
                     {
                         "TokenAuth": []
                     }
                 ],
-                "description": "Create request to scrape chapter detail",
+                "description": "Create scrape request",
                 "consumes": [
                     "application/json"
                 ],
@@ -604,9 +541,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "scrape-requests"
+                    "scrapers"
                 ],
-                "summary": "Create request to scrape chapter detail",
+                "summary": "Create scrape request",
                 "parameters": [
                     {
                         "description": "Request body",
@@ -614,7 +551,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/PutScrapeChapterDetail"
+                            "$ref": "#/definitions/CreateScrapeRequest"
                         }
                     }
                 ],
@@ -654,118 +591,33 @@
                         "schema": {
                             "$ref": "#/definitions/ResponseV1"
                         }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
                     }
                 }
             }
         },
-        "/api/v1/scrape-requests/chapters/list": {
-            "post": {
+        "/api/v1/scrapers/{id}": {
+            "get": {
                 "security": [
                     {
                         "TokenAuth": []
                     }
                 ],
-                "description": "Create request to scrape chapter list",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Get scrape request by ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "scrape-requests"
+                    "scrapers"
                 ],
-                "summary": "Create request to scrape chapter list",
+                "summary": "Get scrape request by ID",
                 "parameters": [
                     {
-                        "description": "Request body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/PostScrapeChapterList"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/scrape-requests/series/detail": {
-            "put": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
-                "description": "Create request to scrape series detail",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "scrape-requests"
-                ],
-                "summary": "Create request to scrape series detail",
-                "parameters": [
-                    {
-                        "description": "Request body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/PutScrapeSeriesDetail"
-                        }
+                        "type": "string",
+                        "example": "550e8400-e29b-41d4-a716-446655440000",
+                        "description": "Request ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -775,12 +627,6 @@
                             "$ref": "#/definitions/ResponseV1"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
@@ -804,105 +650,24 @@
                         "schema": {
                             "$ref": "#/definitions/ResponseV1"
                         }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
                     }
                 }
             }
         },
-        "/api/v1/scrape-requests/series/list": {
-            "post": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
-                "description": "Create request to scrape series list",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "scrape-requests"
-                ],
-                "summary": "Create request to scrape series list",
-                "parameters": [
-                    {
-                        "description": "Request body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/PostScrapeSeriesList"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/search": {
+        "/api/v1/series": {
             "get": {
                 "description": "Get series search result",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "search"
+                    "series"
                 ],
                 "summary": "Get series search result",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "high school",
+                        "example": "warrior high school",
                         "description": "Query",
                         "name": "q",
                         "in": "query",
@@ -918,53 +683,6 @@
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
-                "description": "Feed the open search engine",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "search"
-                ],
-                "summary": "Feed the open search engine",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/ResponseV1"
                         }
@@ -1046,6 +764,53 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "TokenAuth": []
+                    }
+                ],
+                "description": "Feed the open search engine",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "series"
+                ],
+                "summary": "Feed the open search engine",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/series/{provider_slug}/_all": {
@@ -1066,6 +831,13 @@
                         "name": "provider_slug",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "asc",
+                        "description": "Sort order",
+                        "name": "sort",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1147,7 +919,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "breadcrumbs"
+                    "series"
                 ],
                 "summary": "Get series breadcrumbs",
                 "parameters": [
@@ -1190,140 +962,6 @@
                 }
             }
         },
-        "/api/v1/series/{provider_slug}/{series_slug}/_chc": {
-            "put": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
-                "description": "Update series chapters count",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "series"
-                ],
-                "summary": "Update series chapters count",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "asura",
-                        "description": "Provider slug",
-                        "name": "provider_slug",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "reincarnator",
-                        "description": "Series slug",
-                        "name": "series_slug",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/series/{provider_slug}/{series_slug}/_lch": {
-            "put": {
-                "security": [
-                    {
-                        "TokenAuth": []
-                    }
-                ],
-                "description": "Update series last chapter",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "series"
-                ],
-                "summary": "Update series last chapter",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "asura",
-                        "description": "Provider slug",
-                        "name": "provider_slug",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "reincarnator",
-                        "description": "Series slug",
-                        "name": "series_slug",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ResponseV1"
-                        }
-                    }
-                }
-            }
-        },
         "/health": {
             "get": {
                 "description": "Get health check",
@@ -1343,7 +981,7 @@
         }
     },
     "definitions": {
-        "PostProviderRequest": {
+        "CreateProviderRequest": {
             "type": "object",
             "required": [
                 "host",
@@ -1380,36 +1018,71 @@
                 }
             }
         },
-        "PostScrapeChapterList": {
+        "CreateScrapeRequest": {
             "type": "object",
             "required": [
+                "baseURL",
                 "provider",
-                "series"
+                "requestPath",
+                "status",
+                "type"
             ],
             "properties": {
+                "baseURL": {
+                    "type": "string",
+                    "example": "https://asuratoon.com"
+                },
+                "chapter": {
+                    "type": "string",
+                    "example": "reincarnator-chapter-1"
+                },
                 "provider": {
                     "type": "string",
                     "example": "asura"
                 },
+                "requestPath": {
+                    "type": "string",
+                    "example": "/manga/list-mode/"
+                },
                 "series": {
                     "type": "string",
                     "example": "reincarnator"
-                }
-            }
-        },
-        "PostScrapeSeriesList": {
-            "type": "object",
-            "required": [
-                "provider"
-            ],
-            "properties": {
-                "provider": {
+                },
+                "status": {
                     "type": "string",
-                    "example": "asura"
+                    "enum": [
+                        "PENDING",
+                        "COMPLETED",
+                        "FAILED"
+                    ],
+                    "example": "PENDING"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "SERIES_LIST",
+                        "SERIES_DETAIL",
+                        "CHAPTER_LIST",
+                        "CHAPTER_DETAIL"
+                    ],
+                    "example": "CHAPTER_DETAIL"
                 }
             }
         },
-        "PutProviderRequest": {
+        "ResponseV1": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "detail": {},
+                "error": {
+                    "type": "boolean"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateProviderRequest": {
             "type": "object",
             "required": [
                 "host",
@@ -1438,58 +1111,6 @@
                 "scheme": {
                     "type": "string",
                     "example": "https://"
-                }
-            }
-        },
-        "PutScrapeChapterDetail": {
-            "type": "object",
-            "required": [
-                "chapter",
-                "provider",
-                "series"
-            ],
-            "properties": {
-                "chapter": {
-                    "type": "string",
-                    "example": "reincarnator-chapter-27"
-                },
-                "provider": {
-                    "type": "string",
-                    "example": "asura"
-                },
-                "series": {
-                    "type": "string",
-                    "example": "reincarnator"
-                }
-            }
-        },
-        "PutScrapeSeriesDetail": {
-            "type": "object",
-            "required": [
-                "provider",
-                "series"
-            ],
-            "properties": {
-                "provider": {
-                    "type": "string",
-                    "example": "asura"
-                },
-                "series": {
-                    "type": "string",
-                    "example": "reincarnator"
-                }
-            }
-        },
-        "ResponseV1": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "detail": {},
-                "error": {
-                    "type": "boolean"
-                },
-                "message": {
-                    "type": "string"
                 }
             }
         }

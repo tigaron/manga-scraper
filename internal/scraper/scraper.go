@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
+	"fourleaves.studio/manga-scraper/internal"
 	"fourleaves.studio/manga-scraper/internal/scraper/agscomics"
 	"fourleaves.studio/manga-scraper/internal/scraper/anigliscans"
 	"fourleaves.studio/manga-scraper/internal/scraper/asura"
@@ -15,7 +15,7 @@ import (
 	"fourleaves.studio/manga-scraper/internal/scraper/surya"
 )
 
-func ScrapeSeriesList(ctx context.Context, browserUrl, provider, url string) ([]v1Model.SeriesList, error) {
+func ScrapeSeriesList(ctx context.Context, browserUrl, provider, url string) ([]internal.SeriesListResult, error) {
 	switch provider {
 	case "asura":
 		return asura.ScrapeSeriesList(ctx, browserUrl, url)
@@ -38,7 +38,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, provider, url string) ([]
 	}
 }
 
-func ScrapeSeriesDetail(ctx context.Context, browserUrl, provider, url string) (v1Model.SeriesDetail, error) {
+func ScrapeSeriesDetail(ctx context.Context, browserUrl, provider, url string) (internal.SeriesDetailResult, error) {
 	switch provider {
 	case "asura":
 		return asura.ScrapeSeriesDetail(ctx, browserUrl, url)
@@ -57,11 +57,11 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, provider, url string) (
 	case "mangagalaxy":
 		return mangagalaxy.ScrapeSeriesDetail(ctx, browserUrl, url)
 	default:
-		return v1Model.SeriesDetail{}, fmt.Errorf("not implemented yet")
+		return internal.SeriesDetailResult{}, fmt.Errorf("not implemented yet")
 	}
 }
 
-func ScrapeChapterList(ctx context.Context, browserUrl, provider, url string) ([]v1Model.ChapterList, error) {
+func ScrapeChapterList(ctx context.Context, browserUrl, provider, url string) ([]internal.ChapterListResult, error) {
 	switch provider {
 	case "asura":
 		return asura.ScrapeChapterList(ctx, browserUrl, url)
@@ -84,7 +84,7 @@ func ScrapeChapterList(ctx context.Context, browserUrl, provider, url string) ([
 	}
 }
 
-func ScrapeChapterDetail(ctx context.Context, browserUrl, provider, url string) (v1Model.ChapterDetail, error) {
+func ScrapeChapterDetail(ctx context.Context, browserUrl, provider, url string) (internal.ChapterDetailResult, error) {
 	switch provider {
 	case "asura":
 		return asura.ScrapeChapterDetail(ctx, browserUrl, url)
@@ -103,6 +103,6 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, provider, url string) 
 	case "mangagalaxy":
 		return mangagalaxy.ScrapeChapterDetail(ctx, browserUrl, url)
 	default:
-		return v1Model.ChapterDetail{}, fmt.Errorf("not implemented yet")
+		return internal.ChapterDetailResult{}, fmt.Errorf("not implemented yet")
 	}
 }

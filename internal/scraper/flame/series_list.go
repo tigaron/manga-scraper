@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	v1Model "fourleaves.studio/manga-scraper/api/models/v1"
+	"fourleaves.studio/manga-scraper/internal"
 	"fourleaves.studio/manga-scraper/internal/scraper/helper"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
@@ -12,7 +12,7 @@ import (
 )
 
 // TODO: exclude novel
-func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]v1Model.SeriesList, error) {
+func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]internal.SeriesListResult, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]v1Mode
 
 	page := pg.Context(ctx)
 
-	var results []v1Model.SeriesList
+	var results []internal.SeriesListResult
 
 	el, err := page.Element("div.soralist")
 	if err != nil {
@@ -95,7 +95,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]v1Mode
 			slug := helper.GetSlug(*href)
 
 			mu.Lock()
-			results = append(results, v1Model.SeriesList{
+			results = append(results, internal.SeriesListResult{
 				Title:      title,
 				Slug:       slug,
 				SourcePath: sourcePath,

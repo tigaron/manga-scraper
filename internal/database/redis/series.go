@@ -1,102 +1,303 @@
 package redis
 
 import (
-	"bytes"
 	"context"
-	"encoding/gob"
 	"fmt"
 	"time"
 
-	v1Response "fourleaves.studio/manga-scraper/api/renderings/v1"
-	db "fourleaves.studio/manga-scraper/internal/database/prisma"
+	"fourleaves.studio/manga-scraper/internal"
+	"github.com/labstack/echo/v4"
+	"github.com/redis/go-redis/v9"
 )
 
-func (c *RedisClient) GetSeriesV1(ctx context.Context, provider string, series string) (v1Response.SeriesData, error) {
-	if c.environment == "development" {
-		return v1Response.SeriesData{}, fmt.Errorf("not available in development")
+type SeriesStore interface {
+	CreateInit(ctx context.Context, params internal.CreateInitSeriesParams) (internal.Series, error)
+	Find(ctx context.Context, params internal.FindSeriesParams) (internal.Series, error)
+	FindBC(ctx context.Context, params internal.FindSeriesParams) (internal.SeriesBC, error)
+	FindAll(ctx context.Context, params internal.FindSeriesParams) ([]internal.Series, error)
+	FindPaginated(ctx context.Context, params internal.FindSeriesParams) ([]internal.Series, error)
+	UpdateInit(ctx context.Context, params internal.UpdateInitSeriesParams) (internal.Series, error)
+	UpdateLatest(ctx context.Context, params internal.UpdateLatestSeriesParams) (internal.Series, error)
+	Delete(ctx context.Context, params internal.FindSeriesParams) error
+}
+
+type SeriesCache struct {
+	client     *redis.Client
+	store      SeriesStore
+	expiration time.Duration
+	logger     echo.Logger
+}
+
+func NewSeriesCache(redisURL string, store SeriesStore, expiration time.Duration, logger echo.Logger) *SeriesCache {
+	opts, _ := redis.ParseURL(redisURL)
+	return &SeriesCache{
+		client:     redis.NewClient(opts),
+		store:      store,
+		expiration: expiration,
+		logger:     logger,
 	}
+}
 
-	cmd := c.client.Get(ctx, fmt.Sprintf("v1:provider:%s:series:%s", provider, series))
+func (s *SeriesCache) CreateInit(ctx context.Context, params internal.CreateInitSeriesParams) (internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesCache.CreateInit").Finish()
 
-	cmdb, err := cmd.Bytes()
+	series, err := s.store.CreateInit(ctx, params)
 	if err != nil {
-		return v1Response.SeriesData{}, err
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.CreateInit")
 	}
 
-	b := bytes.NewReader(cmdb)
+	cacheKey := fmt.Sprintf("v1:series:%s", series.Slug)
 
-	var res v1Response.SeriesData
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.CreateInit",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   series,
+	})
 
-	if err := gob.NewDecoder(b).Decode(&res); err != nil {
-		return v1Response.SeriesData{}, err
-	}
-
-	return res, nil
-}
-
-func (c *RedisClient) SetSeriesV1(ctx context.Context, provider string, series string, s v1Response.SeriesData) error {
-	if c.environment == "development" {
-		return nil
-	}
-
-	var b bytes.Buffer
-
-	if err := gob.NewEncoder(&b).Encode(s); err != nil {
-		return err
-	}
-
-	return c.client.Set(ctx, fmt.Sprintf("v1:provider:%s:series:%s", provider, series), b.Bytes(), time.Hour).Err()
-}
-
-func (c *RedisClient) UnsetSeriesV1(ctx context.Context, provider string, series string) error {
-	if c.environment == "development" {
-		return nil
-	}
-
-	return c.client.Del(ctx, fmt.Sprintf("v1:provider:%s:series:%s", provider, series)).Err()
-}
-
-func (c *RedisClient) FindSeriesUniqueV1(ctx context.Context, provider string, series string) (*db.SeriesModel, error) {
-	if c.environment == "development" {
-		return nil, fmt.Errorf("not available in development")
-	}
-
-	cmd := c.client.Get(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s", provider, series))
-
-	cmdb, err := cmd.Bytes()
+	err = s.setSeries(ctx, cacheKey, series)
 	if err != nil {
-		return nil, err
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "setSeries")
 	}
 
-	b := bytes.NewReader(cmdb)
-
-	var res db.SeriesModel
-
-	if err := gob.NewDecoder(b).Decode(&res); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return series, nil
 }
 
-func (c *RedisClient) CreateSeriesUniqueV1(ctx context.Context, s *db.SeriesModel) error {
-	if c.environment == "development" {
-		return nil
+func (s *SeriesCache) Find(ctx context.Context, params internal.FindSeriesParams) (internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesCache.Find").Finish()
+
+	cacheKey := fmt.Sprintf("v1:series:%s", params.Slug)
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.Find",
+		"_msg":    "get cache",
+		"key":     cacheKey,
+	})
+
+	series, err := s.getSeries(ctx, cacheKey)
+	if err == nil {
+		return series, nil
 	}
 
-	var b bytes.Buffer
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.Find",
+		"_msg":    "cache miss",
+		"key":     cacheKey,
+	})
 
-	if err := gob.NewEncoder(&b).Encode(*s); err != nil {
-		return err
+	series, err = s.store.Find(ctx, params)
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.Find")
 	}
 
-	return c.client.Set(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s", s.ProviderSlug, s.Slug), b.Bytes(), time.Hour).Err()
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.Find",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   series,
+	})
+
+	err = s.setSeries(ctx, cacheKey, series)
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "setSeries")
+	}
+
+	return series, nil
 }
 
-func (c *RedisClient) DeleteSeriesUniqueV1(ctx context.Context, provider string, series string) error {
-	if c.environment == "development" {
-		return nil
+func (s *SeriesCache) FindBC(ctx context.Context, params internal.FindSeriesParams) (internal.SeriesBC, error) {
+	defer newSentrySpan(ctx, "SeriesCache.FindBC").Finish()
+
+	cacheKey := fmt.Sprintf("v1:series:%s:_bc", params.Slug)
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindBC",
+		"_msg":    "get cache",
+		"key":     cacheKey,
+	})
+
+	series, err := s.getSeriesBC(ctx, cacheKey)
+	if err == nil {
+		return series, nil
 	}
 
-	return c.client.Del(ctx, fmt.Sprintf("v1:db:provider:%s:series:%s", provider, series)).Err()
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindBC",
+		"_msg":    "cache miss",
+		"key":     cacheKey,
+	})
+
+	series, err = s.store.FindBC(ctx, params)
+	if err != nil {
+		return internal.SeriesBC{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.FindBC")
+	}
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindBC",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   series,
+	})
+
+	err = s.setSeriesBC(ctx, cacheKey, series)
+	if err != nil {
+		return internal.SeriesBC{}, internal.WrapErrorf(err, internal.ErrUnknown, "setSeriesBC")
+	}
+
+	return series, nil
+}
+
+func (s *SeriesCache) FindAll(ctx context.Context, params internal.FindSeriesParams) ([]internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesCache.FindAll").Finish()
+
+	cacheKey := fmt.Sprintf("v1:series:%s:_list:%s:all", params.Provider, params.Order)
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindAll",
+		"_msg":    "get cache",
+		"key":     cacheKey,
+	})
+
+	data, err := s.getManySeries(ctx, cacheKey)
+	if err == nil {
+		return data, nil
+	}
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindAll",
+		"_msg":    "cache miss",
+		"key":     cacheKey,
+	})
+
+	series, err := s.store.FindAll(ctx, params)
+	if err != nil {
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "store.FindAll")
+	}
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindAll",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   series,
+	})
+
+	err = s.setManySeries(ctx, cacheKey, series)
+	if err != nil {
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "setManySeries")
+	}
+
+	return series, nil
+}
+
+func (s *SeriesCache) FindPaginated(ctx context.Context, params internal.FindSeriesParams) ([]internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesCache.FindPaginated").Finish()
+
+	cacheKey := fmt.Sprintf("v1:series:%s:_list:%s:page:%d:size:%d", params.Provider, params.Order, params.Page, params.Size)
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindPaginated",
+		"_msg":    "get cache",
+		"key":     cacheKey,
+	})
+
+	data, err := s.getManySeries(ctx, cacheKey)
+	if err == nil {
+		return data, nil
+	}
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindPaginated",
+		"_msg":    "cache miss",
+		"key":     cacheKey,
+	})
+
+	series, err := s.store.FindPaginated(ctx, params)
+	if err != nil {
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "store.FindPaginated")
+	}
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.FindPaginated",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   series,
+	})
+
+	err = s.setManySeries(ctx, cacheKey, series)
+	if err != nil {
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "setManySeries")
+	}
+
+	return series, nil
+}
+
+func (s *SeriesCache) UpdateInit(ctx context.Context, params internal.UpdateInitSeriesParams) (internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesCache.UpdateInit").Finish()
+
+	series, err := s.store.UpdateInit(ctx, params)
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.UpdateInit")
+	}
+
+	cacheKey := fmt.Sprintf("v1:series:%s", series.Slug)
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.UpdateInit",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   series,
+	})
+
+	err = s.setSeries(ctx, cacheKey, series)
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "setSeries")
+	}
+
+	_ = s.deleteManySeries(ctx, fmt.Sprintf("v1:series:%s:_list:*", series.Provider))
+
+	return series, nil
+}
+
+func (s *SeriesCache) UpdateLatest(ctx context.Context, params internal.UpdateLatestSeriesParams) (internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesCache.UpdateLatest").Finish()
+
+	series, err := s.store.UpdateLatest(ctx, params)
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.UpdateLatest")
+	}
+
+	cacheKey := fmt.Sprintf("v1:series:%s", series.Slug)
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.UpdateLatest",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   series,
+	})
+
+	err = s.setSeries(ctx, cacheKey, series)
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "setSeries")
+	}
+
+	_ = s.deleteManySeries(ctx, fmt.Sprintf("v1:series:%s:_list:*", series.Provider))
+
+	return series, nil
+}
+
+func (s *SeriesCache) Delete(ctx context.Context, params internal.FindSeriesParams) error {
+	defer newSentrySpan(ctx, "SeriesCache.Delete").Finish()
+
+	cacheKey := fmt.Sprintf("v1:series:%s", params.Slug)
+
+	s.logger.Debugj(map[string]interface{}{
+		"_source": "SeriesCache.Delete",
+		"_msg":    "delete cache",
+		"key":     cacheKey,
+	})
+
+	_ = s.deleteSeries(ctx, cacheKey)
+	_ = s.deleteManySeries(ctx, fmt.Sprintf("v1:series:%s:_list:*", params.Provider))
+
+	return s.store.Delete(ctx, params)
 }
