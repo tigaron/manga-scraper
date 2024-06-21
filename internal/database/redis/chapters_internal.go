@@ -115,6 +115,34 @@ func (c *ChapterCache) deleteChapter(ctx context.Context, key string) error {
 	return c.client.Del(ctx, key).Err()
 }
 
+func (c *ChapterCache) getChapterList(ctx context.Context, key string) (internal.ChapterList, error) {
+	defer newSentrySpan(ctx, "ChapterCache.getChapterList").Finish()
+
+	data, err := c.client.Get(ctx, key).Bytes()
+	if err != nil {
+		return internal.ChapterList{}, err
+	}
+
+	var chapterList internal.ChapterList
+	if err := gob.NewDecoder(bytes.NewReader(data)).Decode(&chapterList); err != nil {
+		return internal.ChapterList{}, err
+	}
+
+	return chapterList, nil
+}
+
+func (c *ChapterCache) setChapterList(ctx context.Context, key string, value internal.ChapterList) error {
+	defer newSentrySpan(ctx, "ChapterCache.setChapterList").Finish()
+
+	var b bytes.Buffer
+
+	if err := gob.NewEncoder(&b).Encode(value); err != nil {
+		return err
+	}
+
+	return c.client.Set(ctx, key, b.Bytes(), c.expiration).Err()
+}
+
 func (c *ChapterCache) deleteManyChapters(ctx context.Context, key string) error {
 	defer newSentrySpan(ctx, "ChapterCache.deleteManyChapters").Finish()
 

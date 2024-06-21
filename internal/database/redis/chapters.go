@@ -17,6 +17,7 @@ type ChapterStore interface {
 	FindLatest(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error)
 	Count(ctx context.Context, params internal.FindChapterParams) (int, error)
 	FindAll(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error)
+	FindListWithRel(ctx context.Context, params internal.FindChapterParams) (internal.ChapterList, error)
 	FindPaginated(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error)
 	UpdateInit(ctx context.Context, params internal.UpdateInitChapterParams) (internal.Chapter, error)
 	Delete(ctx context.Context, params internal.FindChapterParams) error
@@ -272,6 +273,48 @@ func (c *ChapterCache) FindAll(ctx context.Context, params internal.FindChapterP
 	}
 
 	return chapters, nil
+}
+
+func (c *ChapterCache) FindListWithRel(ctx context.Context, params internal.FindChapterParams) (internal.ChapterList, error) {
+	defer newSentrySpan(ctx, "ChapterCache.FindListWithRel").Finish()
+
+	cacheKey := fmt.Sprintf("v1:chapters:%s:%s:_list:%s:_rel", params.Provider, params.Series, params.Order)
+
+	c.logger.Debugj(map[string]interface{}{
+		"_source": "ChapterCache.FindListWithRel",
+		"_msg":    "get cache",
+		"key":     cacheKey,
+	})
+
+	data, err := c.getChapterList(ctx, cacheKey)
+	if err == nil {
+		return data, nil
+	}
+
+	c.logger.Debugj(map[string]interface{}{
+		"_source": "ChapterCache.FindListWithRel",
+		"_msg":    "cache miss",
+		"key":     cacheKey,
+	})
+
+	chapterList, err := c.store.FindListWithRel(ctx, params)
+	if err != nil {
+		return internal.ChapterList{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.FindListWithRel")
+	}
+
+	c.logger.Debugj(map[string]interface{}{
+		"_source": "ChapterCache.FindListWithRel",
+		"_msg":    "set cache",
+		"key":     cacheKey,
+		"value":   chapterList,
+	})
+
+	err = c.setChapterList(ctx, cacheKey, chapterList)
+	if err != nil {
+		return internal.ChapterList{}, internal.WrapErrorf(err, internal.ErrUnknown, "setChapterList")
+	}
+
+	return chapterList, nil
 }
 
 func (c *ChapterCache) FindPaginated(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error) {

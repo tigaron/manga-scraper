@@ -13,12 +13,12 @@ import (
 // @Security		TokenAuth
 // @Tags			scrapers
 // @Produce		json
-// @Param			id	path		string	true	"Request ID" example(550e8400-e29b-41d4-a716-446655440000)
-// @Success		200				{object}	ResponseV1
-// @Failure		401		{object}	ResponseV1
-// @Failure		403		{object}	ResponseV1
-// @Failure		404				{object}	ResponseV1
-// @Failure		500				{object}	ResponseV1
+// @Param			id	path		string	true	"Request ID"	example(550e8400-e29b-41d4-a716-446655440000)
+// @Success		200	{object}	ResponseV1
+// @Failure		401	{object}	ResponseV1
+// @Failure		403	{object}	ResponseV1
+// @Failure		404	{object}	ResponseV1
+// @Failure		500	{object}	ResponseV1
 // @Router			/api/v1/scrapers/{id} [get]
 func (h *ScraperHandler) Find(c echo.Context) error {
 	span := newSentrySpan(c.Request().Context(), "v1.Find")
