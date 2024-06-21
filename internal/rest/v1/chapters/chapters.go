@@ -15,6 +15,7 @@ type ChapterService interface {
 	FindLatest(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error)
 	Count(ctx context.Context, params internal.FindChapterParams) (int, error)
 	FindAll(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error)
+	FindListWithRel(ctx context.Context, params internal.FindChapterParams) (internal.ChapterList, error)
 	FindPaginated(ctx context.Context, params internal.FindChapterParams) ([]internal.Chapter, error)
 	UpdateInit(ctx context.Context, params internal.UpdateInitChapterParams) (internal.Chapter, error)
 	Delete(ctx context.Context, params internal.FindChapterParams) error
@@ -33,8 +34,8 @@ func NewChapterHandler(svc ChapterService) *ChapterHandler {
 func (h *ChapterHandler) Register(g *echo.Group) {
 	g.GET("/:provider_slug/:series_slug", h.FindPaginated)
 	g.GET("/:provider_slug/:series_slug/_all", h.FindAll)
+	g.GET("/:provider_slug/:series_slug/_list", h.FindListWithRel)
 	g.GET("/:provider_slug/:series_slug/:chapter_slug", h.Find)
-	// g.GET("/:provider_slug/:series_slug/_list", s.v1.GetChapterList)
 	g.GET("/:provider_slug/:series_slug/:chapter_slug/_bc", h.FindBC)
 }
 

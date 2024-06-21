@@ -771,7 +771,7 @@ func TestChapterRepo_UpdateInit(t *testing.T) {
 		ShortTitle: expModel.ShortTitle,
 		FullTitle:  updatedModel.FullTitle,
 		SourceURL:  providerModel.Scheme + providerModel.Host + updatedModel.SourcePath,
-		ChapterNav: internal.ChapterNav{
+		ChapterNav: &internal.ChapterNav{
 			NextSlug: updatedModel.NextSlug,
 			NextURL:  providerModel.Scheme + providerModel.Host + updatedModel.NextPath,
 			PrevSlug: updatedModel.PrevSlug,

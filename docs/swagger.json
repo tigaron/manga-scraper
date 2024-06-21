@@ -152,6 +152,56 @@
                 }
             }
         },
+        "/api/v1/chapters/{provider_slug}/{series_slug}/_list": {
+            "get": {
+                "description": "Get chapter list with series",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chapters"
+                ],
+                "summary": "Get chapter list with series",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "asura",
+                        "description": "Provider slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "reincarnator",
+                        "description": "Series slug",
+                        "name": "series_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ResponseV1"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/chapters/{provider_slug}/{series_slug}/{chapter_slug}": {
             "get": {
                 "description": "Get chapter by slug",

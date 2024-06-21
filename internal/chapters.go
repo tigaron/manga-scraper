@@ -1,22 +1,27 @@
 package internal
 
 type Chapter struct {
-	Provider    string     `json:"provider"`
-	Series      string     `json:"series"`
-	Slug        string     `json:"slug"`
-	Number      float64    `json:"number"`
-	FullTitle   string     `json:"fullTitle"`
-	ShortTitle  string     `json:"shortTitle"`
-	SourceURL   string     `json:"sourceURL"`
-	ChapterNav  ChapterNav `json:"chapterNav"`
-	ContentURLs []string   `json:"contentURLs"`
+	Provider    string      `json:"provider"`
+	Series      string      `json:"series"`
+	Slug        string      `json:"slug"`
+	Number      float64     `json:"number"`
+	FullTitle   string      `json:"fullTitle,omitempty"`
+	ShortTitle  string      `json:"shortTitle"`
+	SourceURL   string      `json:"sourceURL,omitempty"`
+	ChapterNav  *ChapterNav `json:"chapterNav,omitempty"`
+	ContentURLs []string    `json:"contentURLs,omitempty"`
+}
+
+type ChapterList struct {
+	Series   Series    `json:"series"`
+	Chapters []Chapter `json:"chapters"`
 }
 
 type ChapterNav struct {
-	NextSlug string `json:"nextSlug"`
-	NextURL  string `json:"nextURL"`
-	PrevSlug string `json:"prevSlug"`
-	PrevURL  string `json:"prevURL"`
+	NextSlug string `json:"nextSlug,omitempty"`
+	NextURL  string `json:"nextURL,omitempty"`
+	PrevSlug string `json:"prevSlug,omitempty"`
+	PrevURL  string `json:"prevURL,omitempty"`
 }
 
 type Breadcrumb struct {
