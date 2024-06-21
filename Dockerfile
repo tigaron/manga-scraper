@@ -28,7 +28,7 @@ COPY ./ ./
 RUN go run github.com/steebchen/prisma-client-go generate
  
 RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags "-extldflags -static" \
-  fourleaves.studio/manga-scraper/cmd/manga-scraper
+  fourleaves.studio/manga-scraper/cmd/rest-server
 
 FROM debian:12.5-slim
 RUN set -x && \
@@ -41,8 +41,8 @@ WORKDIR /api/
 ENV PATH=/api/bin/:$PATH
 
 COPY --from=builder /build/.env .
-COPY --from=builder /build/manga-scraper ./bin/manga-scraper
+COPY --from=builder /build/rest-server ./bin/rest-server
 
 EXPOSE 5000
 
-CMD ["manga-scraper]
+CMD ["rest-server"]
