@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'cmd/**'
+      - 'docs/**'
+      - '!docs/diagrams/**'
+      - '!internal/**'
+      - '!internal/doc/**'
+      - '!migrations/**'
+      - '!scripts/**'
 
 jobs:
   deploy:
