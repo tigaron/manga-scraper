@@ -34,7 +34,7 @@ func NewSeriesHandler(svc SeriesService) *SeriesHandler {
 
 func (h *SeriesHandler) Register(g *echo.Group, mid *middlewares.Middleware) {
 	g.GET("", h.Search)
-	g.PUT("/:provider_slug", h.Index)
+	g.PUT("/:provider_slug", h.Index, mid.IsAdmin)
 	g.GET("/:provider_slug", h.FindPaginated)
 	g.GET("/:provider_slug/_all", h.FindAll)
 	g.GET("/:provider_slug/_bc", h.FindBC)
