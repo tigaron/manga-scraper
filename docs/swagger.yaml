@@ -649,6 +649,12 @@ paths:
       - series
     put:
       description: Feed the open search engine
+      parameters:
+      - description: Provider Slug
+        in: path
+        name: provider_slug
+        required: true
+        type: string
       produces:
       - application/json
       responses:

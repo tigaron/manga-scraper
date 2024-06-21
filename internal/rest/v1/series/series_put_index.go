@@ -14,6 +14,7 @@ import (
 // @Security		TokenAuth
 // @Tags			series
 // @Produce		json
+// @Param			provider_slug path string true "Provider Slug"
 // @Success		200	{object}	ResponseV1
 // @Failure		401	{object}	ResponseV1
 // @Failure		403	{object}	ResponseV1
