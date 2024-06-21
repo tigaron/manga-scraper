@@ -837,6 +837,15 @@ const docTemplate = `{
                     "series"
                 ],
                 "summary": "Feed the open search engine",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provider Slug",
+                        "name": "provider_slug",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
