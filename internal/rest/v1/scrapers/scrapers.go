@@ -28,9 +28,9 @@ func NewScraperHandler(svc ScraperService) *ScraperHandler {
 }
 
 func (h *ScraperHandler) Register(g *echo.Group, mid *middlewares.Middleware) {
-	g.POST("", h.Create)
+	g.POST("", h.Create, mid.IsAdmin)
 	// g.GET("", h.FindPendings)
-	g.GET("/:id", h.Find)
+	g.GET("/:id", h.Find, mid.IsAdmin)
 	// g.PUT("/:id", h.Update)
 	// g.DELETE("/:id", h.Delete)
 }
