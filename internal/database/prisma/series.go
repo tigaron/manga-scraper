@@ -32,6 +32,20 @@ func (s *SeriesModel) toSeries() internal.Series {
 	}
 }
 
+func (s *SeriesModel) toSeriesUpsert(provider *ProviderModel) internal.Series {
+	return internal.Series{
+		Provider:      provider.Slug,
+		Slug:          s.Slug,
+		Title:         s.Title,
+		SourceURL:     provider.Scheme + provider.Host + s.SourcePath,
+		CoverURL:      s.ThumbnailURL,
+		Synopsis:      s.Synopsis,
+		Genres:        newStringSliceFromBytes(s.Genres),
+		ChaptersCount: s.ChaptersCount,
+		LatestChapter: s.LatestChapter,
+	}
+}
+
 func (s *SeriesModel) toBC() internal.SeriesBC {
 	provider := s.Provider()
 
@@ -79,7 +93,7 @@ func (s *SeriesRepo) CreateInit(ctx context.Context, params internal.CreateInitS
 	series, err := s.q.Series.CreateOne(
 		Series.Slug.Set(params.Slug),
 		Series.Title.Set(params.Title),
-		Series.SourcePath.Set(""),
+		Series.SourcePath.Set(params.SourcePath),
 		Series.ThumbnailURL.Set(""),
 		Series.Synopsis.Set(""),
 		Series.Genres.Set([]byte("[]")),
@@ -96,6 +110,41 @@ func (s *SeriesRepo) CreateInit(ctx context.Context, params internal.CreateInitS
 	}
 
 	return series.toSeries(), nil
+}
+
+func (s *SeriesRepo) UpsertInit(ctx context.Context, params internal.CreateInitSeriesParams) (internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesRepo.UpsertInit").Finish()
+
+	series, err := s.q.Series.UpsertOne(
+		Series.SeriesUnique(
+			Series.ProviderSlug.Equals(params.Provider),
+			Series.Slug.Equals(params.Slug),
+		),
+	).Create(
+		Series.Slug.Set(params.Slug),
+		Series.Title.Set(params.Title),
+		Series.SourcePath.Set(params.SourcePath),
+		Series.ThumbnailURL.Set(""),
+		Series.Synopsis.Set(""),
+		Series.Genres.Set([]byte("[]")),
+		Series.Provider.Link(Provider.Slug.Equals(params.Provider)),
+	).Update(
+		Series.Title.Set(params.Title),
+		Series.SourcePath.Set(params.SourcePath),
+	).Exec(ctx)
+
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to upsert series")
+	}
+
+	provider, err := s.q.Provider.FindUnique(
+		Provider.Slug.Equals(params.Provider),
+	).Exec(ctx)
+	if err != nil {
+		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to find provider")
+	}
+
+	return series.toSeriesUpsert(provider), nil
 }
 
 func (s *SeriesRepo) Find(ctx context.Context, params internal.FindSeriesParams) (internal.Series, error) {

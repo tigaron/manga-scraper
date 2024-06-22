@@ -96,7 +96,7 @@ func (r *ScraperRepo) Update(ctx context.Context, params internal.UpdateScrapeRe
 		ScrapeRequest.ID.Equals(params.ID),
 	).Update(
 		ScrapeRequest.Status.Set(string(params.Status)),
-		ScrapeRequest.Retries.Set(params.Retries),
+		ScrapeRequest.Retries.Increment(1),
 		ScrapeRequest.TotalTime.Set(params.TotalTime),
 		ScrapeRequest.Error.Set(params.Error),
 		ScrapeRequest.Message.Set(params.Message),
