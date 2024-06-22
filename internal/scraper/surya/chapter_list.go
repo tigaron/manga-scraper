@@ -9,9 +9,10 @@ import (
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
+	"go.uber.org/zap"
 )
 
-func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]internal.ChapterListResult, error) {
+func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string, logger *zap.Logger) ([]internal.ChapterListResult, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return nil, err
@@ -131,6 +132,8 @@ func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string) ([]int
 	if err := <-errCh; err != nil {
 		return nil, err
 	}
+
+	logger.Info("Scraped chapter list", zap.Int("count", len(results)))
 
 	return results, nil
 }

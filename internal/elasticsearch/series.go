@@ -129,6 +129,10 @@ func (s *SeriesSearchRepository) Search(ctx context.Context, q string) ([]intern
 		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "json.NewDecoder.Decode")
 	}
 
+	if len(hits.Hits.Hits) == 0 {
+		return nil, internal.NewErrorf(internal.ErrNotFound, "no results found")
+	}
+
 	result := make([]internal.Series, len(hits.Hits.Hits))
 
 	for i, hit := range hits.Hits.Hits {

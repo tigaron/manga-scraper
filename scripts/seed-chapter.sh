@@ -22,8 +22,28 @@ check_error_loop() {
   return 0
 }
 
-provider="asura"
-s="i-killed-an-academy-player"
+poll_scrape_status() {
+  local jobId="$1"
+  local statusApi
+  local status
+
+  while true; do
+    statusApi=$(curl -s "$apiUrl/api/v1/scrapers/$jobId")
+    check_error "$statusApi"
+    status=$(echo "$statusApi" | jq -r '.data.status')
+
+    if [ "$status" = "COMPLETED" ]; then
+      echo "Scraping operation completed"
+      break
+    else
+      echo "Scraping operation in progress, waiting..."
+      sleep 10
+    fi
+  done
+}
+
+provider="mangagalaxy"
+s="i-regressed-to-level-up-instead-of-being-a-simp"
 pageS=1
 while true; do
   chaptersApi=$(curl -s "$apiUrl/api/v1/chapters/$provider/$s?page=$pageS&size=10")
@@ -35,18 +55,23 @@ while true; do
   chapters=$(echo "$chaptersApi" | jq -r '.data.chapters[].slug')
   for c in $chapters; do
     echo "Scraping $c from $s of $provider"
-#     curl -s -X PUT "$apiUrl/api/v1/scrape-requests/chapters/detail" \
-#       -H "Content-Type: application/json" \
-#       -d @- <<EOF
-# {
-# "provider": "$provider",
-# "series": "$s",
-# "chapter": "$c"
-# }
-# EOF
-    curl -s -X PUT "$apiUrl/api/v1/scrape-requests/chapters/detail" -H "Content-Type: application/json" -d "{\"provider\": \"$provider\", \"series\": \"$s\", \"chapter\": \"$c\"}" > /dev/null 2>&1 &
-    sleep 10
-    # echo "$c from $s of $provider has been scraped"
+    scrapeChapterResponse=$(curl -s -X POST "$apiUrl/api/v1/scrapers" \
+      -H "Content-Type: application/json" \
+      -d @- <<EOF
+{
+"type": "CHAPTER_DETAIL",
+"provider": "$provider",
+"series": "$s",
+"chapter": "$c"
+}
+EOF
+    )
+
+    check_error "$scrapeChapterResponse"
+    chapterJobId=$(echo "$scrapeChapterResponse" | jq -r '.data.id')
+
+    poll_scrape_status "$chapterJobId"
+    echo "$c from $s of $provider has been scraped"
   done
 
   pageS=$((pageS + 1))

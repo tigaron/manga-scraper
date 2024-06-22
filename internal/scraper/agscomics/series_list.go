@@ -9,9 +9,10 @@ import (
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
+	"go.uber.org/zap"
 )
 
-func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]internal.SeriesListResult, error) {
+func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *zap.Logger) ([]internal.SeriesListResult, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return nil, err
@@ -109,6 +110,8 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string) ([]intern
 	if err := <-errCh; err != nil {
 		return nil, err
 	}
+
+	logger.Info("Scraped series list", zap.Int("count", len(results)))
 
 	return results, nil
 }
