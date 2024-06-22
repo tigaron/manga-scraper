@@ -25,7 +25,6 @@ import (
 )
 
 type SeriesRepository interface {
-	CreateInit(ctx context.Context, params internal.CreateInitSeriesParams) (internal.Series, error)
 	UpsertInit(ctx context.Context, params internal.CreateInitSeriesParams) (internal.Series, error)
 	Find(ctx context.Context, params internal.FindSeriesParams) (internal.Series, error)
 	UpdateInit(ctx context.Context, params internal.UpdateInitSeriesParams) (internal.Series, error)
@@ -37,11 +36,11 @@ type SeriesSearchRepository interface {
 }
 
 type ChapterRepository interface {
-	CreateInit(ctx context.Context, params internal.CreateInitChapterParams) (internal.Chapter, error)
-	UpdateInit(ctx context.Context, params internal.UpdateInitChapterParams) (internal.Chapter, error)
+	UpsertInit(ctx context.Context, params internal.CreateInitChapterParams) (internal.Chapter, error)
 	Find(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error)
 	FindLatest(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error)
 	Count(ctx context.Context, params internal.FindChapterParams) (int, error)
+	UpdateInit(ctx context.Context, params internal.UpdateInitChapterParams) (internal.Chapter, error)
 }
 
 type ScrapeRequestRepository interface {
@@ -270,7 +269,7 @@ func (s *Scraper) ScrapeSeriesList(ctx context.Context, event internal.ScrapeReq
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
-			Status:    "failed",
+			Status:    internal.FailedRequestStatus,
 			TotalTime: endTime,
 			Error:     true,
 			Message:   err.Error(),
@@ -310,7 +309,7 @@ func (s *Scraper) ScrapeSeriesList(ctx context.Context, event internal.ScrapeReq
 
 	_, err = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 		ID:        event.ID,
-		Status:    "success",
+		Status:    internal.CompletedRequestStatus,
 		TotalTime: endTime,
 		Error:     false,
 		Message:   "Completed successfully",
@@ -363,7 +362,7 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
-			Status:    "failed",
+			Status:    internal.FailedRequestStatus,
 			TotalTime: endTime,
 			Error:     true,
 			Message:   err.Error(),
@@ -383,7 +382,7 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
-			Status:    "failed",
+			Status:    internal.FailedRequestStatus,
 			TotalTime: endTime,
 			Error:     true,
 			Message:   err.Error(),
@@ -395,7 +394,7 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 	if err := s.search.Index(ctx, series); err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
-			Status:    "failed",
+			Status:    internal.FailedRequestStatus,
 			TotalTime: endTime,
 			Error:     true,
 			Message:   err.Error(),
@@ -406,7 +405,7 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 
 	_, err = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 		ID:        event.ID,
-		Status:    "success",
+		Status:    internal.CompletedRequestStatus,
 		TotalTime: endTime,
 		Error:     false,
 		Message:   "Completed successfully",
@@ -459,7 +458,7 @@ func (s *Scraper) ScrapeChapterList(ctx context.Context, event internal.ScrapeRe
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
-			Status:    "failed",
+			Status:    internal.FailedRequestStatus,
 			TotalTime: endTime,
 			Error:     true,
 			Message:   err.Error(),
@@ -476,7 +475,7 @@ func (s *Scraper) ScrapeChapterList(ctx context.Context, event internal.ScrapeRe
 		go func(i int) {
 			defer wg.Done()
 
-			_, err := s.chapter.CreateInit(ctx, internal.CreateInitChapterParams{
+			_, err := s.chapter.UpsertInit(ctx, internal.CreateInitChapterParams{
 				Provider:   event.Provider,
 				Series:     event.Series,
 				Slug:       result[i].Slug,
@@ -497,7 +496,7 @@ func (s *Scraper) ScrapeChapterList(ctx context.Context, event internal.ScrapeRe
 
 	_, err = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 		ID:        event.ID,
-		Status:    "success",
+		Status:    internal.CompletedRequestStatus,
 		TotalTime: endTime,
 		Error:     false,
 		Message:   "Completed successfully",
@@ -551,7 +550,7 @@ func (s *Scraper) ScrapeChapterDetail(ctx context.Context, event internal.Scrape
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
-			Status:    "failed",
+			Status:    internal.FailedRequestStatus,
 			TotalTime: endTime,
 			Error:     true,
 			Message:   err.Error(),
@@ -576,7 +575,7 @@ func (s *Scraper) ScrapeChapterDetail(ctx context.Context, event internal.Scrape
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
-			Status:    "failed",
+			Status:    internal.FailedRequestStatus,
 			TotalTime: endTime,
 			Error:     true,
 			Message:   err.Error(),
@@ -587,7 +586,7 @@ func (s *Scraper) ScrapeChapterDetail(ctx context.Context, event internal.Scrape
 
 	_, err = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 		ID:        event.ID,
-		Status:    "success",
+		Status:    internal.CompletedRequestStatus,
 		TotalTime: endTime,
 		Error:     false,
 		Message:   "Completed successfully",
