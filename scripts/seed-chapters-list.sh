@@ -22,24 +22,52 @@ check_error_loop() {
   return 0
 }
 
-provider="flame"
-page=1
+poll_scrape_status() {
+  local jobId="$1"
+  local statusApi
+  local status
+
+  while true; do
+    statusApi=$(curl -s "$apiUrl/api/v1/scrapers/$jobId")
+    check_error "$statusApi"
+    status=$(echo "$statusApi" | jq -r '.data.status')
+
+    if [ "$status" = "COMPLETED" ]; then
+      echo "Scraping operation completed"
+      break
+    else
+      echo "Scraping operation in progress, waiting..."
+      sleep 10
+    fi
+  done
+}
+
+provider="mangagalaxy"
+page=41
 while true; do
+  if [ $page -eq 51 ]; then
+    break
+  fi
   seriesApi=$(curl -s "$apiUrl/api/v1/series/$provider?page=$page&size=1")
   check_error "$seriesApi"
 
   series=$(echo "$seriesApi" | jq -r '.data.series[].slug')
   for s in $series; do
     echo "Scraping chapter list of $s from $provider"
-    curl -s -X POST "$apiUrl/api/v1/scrape-requests/chapters/list" \
+    scrapeResponse=$(curl -s -X POST "$apiUrl/api/v1/scrapers" \
       -H "Content-Type: application/json" \
       -d @- <<EOF
 {
+"type": "CHAPTER_LIST",
 "provider": "$provider",
 "series": "$s"
 }
 EOF
+    )
+    check_error "$scrapeResponse"
+    jobId=$(echo "$scrapeResponse" | jq -r '.data.id')
 
+    poll_scrape_status "$jobId"
     echo "Chapter list of $s from $provider has been scraped"
 
     pageS=1
@@ -53,16 +81,22 @@ EOF
       chapters=$(echo "$chaptersApi" | jq -r '.data.chapters[].slug')
       for c in $chapters; do
         echo "Scraping $c from $s of $provider"
-        curl -s -X PUT "$apiUrl/api/v1/scrape-requests/chapters/detail" \
+        scrapeChapterResponse=$(curl -s -X POST "$apiUrl/api/v1/scrapers" \
           -H "Content-Type: application/json" \
           -d @- <<EOF
 {
+"type": "CHAPTER_DETAIL",
 "provider": "$provider",
 "series": "$s",
 "chapter": "$c"
 }
 EOF
+        )
 
+        check_error "$scrapeChapterResponse"
+        chapterJobId=$(echo "$scrapeChapterResponse" | jq -r '.data.id')
+
+        poll_scrape_status "$chapterJobId"
         echo "$c from $s of $provider has been scraped"
       done
 

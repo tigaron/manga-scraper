@@ -17,7 +17,7 @@ import (
 // @Accept			json
 // @Produce		json
 // @Param			body	body		CreateScrapeRequest	true	"Request body"
-// @Success		200		{object}	ResponseV1
+// @Success		202		{object}	ResponseV1
 // @Failure		400		{object}	ResponseV1
 // @Failure		401		{object}	ResponseV1
 // @Failure		403		{object}	ResponseV1
@@ -76,7 +76,11 @@ func (h *ScraperHandler) Create(c echo.Context) error {
 		if err != nil {
 			return v1Handler.RenderErrorResponse(c, "Failed to find chapter", err, span)
 		}
+
 		params.RequestPath = strings.Replace(chapter.SourceURL, provider.BaseURL, "", 1)
+		if params.RequestPath == "" {
+			params.RequestPath = strings.Replace(chapter.SourceHref, provider.BaseURL, "", 1)
+		}
 	}
 
 	scrapeRequest, err := h.svc.Create(c.Request().Context(), params)

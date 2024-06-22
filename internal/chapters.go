@@ -10,6 +10,7 @@ type Chapter struct {
 	SourceURL   string      `json:"sourceURL,omitempty"`
 	ChapterNav  *ChapterNav `json:"chapterNav,omitempty"`
 	ContentURLs []string    `json:"contentURLs,omitempty"`
+	SourceHref  string      `json:"sourceHref,omitempty"`
 }
 
 type ChapterList struct {

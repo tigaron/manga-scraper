@@ -8,7 +8,7 @@ on:
       - 'cmd/**'
       - 'docs/**'
       - '!docs/diagrams/**'
-      - '!internal/**'
+      - 'internal/**'
       - '!internal/doc/**'
       - '!migrations/**'
       - '!scripts/**'
