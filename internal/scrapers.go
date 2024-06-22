@@ -16,7 +16,6 @@ type ScrapeRequest struct {
 }
 
 type CreateScrapeRequestParams struct {
-	ID          string
 	Type        ScrapeRequestType   `json:"type"`
 	Status      ScrapeRequestStatus `json:"status"`
 	BaseURL     string              `json:"baseURL"`
@@ -29,7 +28,6 @@ type CreateScrapeRequestParams struct {
 type UpdateScrapeRequestParams struct {
 	ID        string
 	Status    ScrapeRequestStatus
-	Retries   int
 	TotalTime float64
 	Error     bool
 	Message   string

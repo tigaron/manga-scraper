@@ -20,6 +20,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
+	go.uber.org/zap v1.21.0
 	goa.design/model v1.9.8
 )
 
