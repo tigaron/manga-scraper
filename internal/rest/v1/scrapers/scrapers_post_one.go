@@ -2,6 +2,7 @@ package scrapers
 
 import (
 	"net/http"
+	"strings"
 
 	"fourleaves.studio/manga-scraper/internal"
 	v1Handler "fourleaves.studio/manga-scraper/internal/rest/v1"
@@ -38,14 +39,44 @@ func (h *ScraperHandler) Create(c echo.Context) error {
 		return v1Handler.RenderErrorResponse(c, "Invalid request", internal.WrapErrorf(err, internal.ErrInvalidInput, "validate request"), span)
 	}
 
+	provider, err := h.provider.Find(c.Request().Context(), req.Provider)
+	if err != nil {
+		return v1Handler.RenderErrorResponse(c, "Failed to find provider", err, span)
+	}
+
 	params := internal.CreateScrapeRequestParams{
-		Type:        internal.ScrapeRequestType(req.Type),
-		Status:      internal.ScrapeRequestStatus(req.Status),
-		BaseURL:     req.BaseURL,
-		RequestPath: req.RequestPath,
-		Provider:    req.Provider,
-		Series:      req.Series,
-		Chapter:     req.Chapter,
+		Type:     internal.ScrapeRequestType(req.Type),
+		Status:   internal.PendingRequestStatus,
+		BaseURL:  provider.BaseURL,
+		Provider: req.Provider,
+		Series:   req.Series,
+		Chapter:  req.Chapter,
+	}
+
+	switch req.Type {
+	case string(internal.SeriesListRequestType):
+		params.RequestPath = strings.Replace(provider.ListURL, provider.BaseURL, "", 1)
+	case string(internal.SeriesDetailRequestType):
+		fallthrough
+	case string(internal.ChapterListRequestType):
+		series, err := h.series.Find(c.Request().Context(), internal.FindSeriesParams{
+			Provider: req.Provider,
+			Slug:     req.Series,
+		})
+		if err != nil {
+			return v1Handler.RenderErrorResponse(c, "Failed to find series", err, span)
+		}
+		params.RequestPath = strings.Replace(series.SourceURL, provider.BaseURL, "", 1)
+	case string(internal.ChapterDetailRequestType):
+		chapter, err := h.chapter.Find(c.Request().Context(), internal.FindChapterParams{
+			Provider: req.Provider,
+			Series:   req.Series,
+			Slug:     req.Chapter,
+		})
+		if err != nil {
+			return v1Handler.RenderErrorResponse(c, "Failed to find chapter", err, span)
+		}
+		params.RequestPath = strings.Replace(chapter.SourceURL, provider.BaseURL, "", 1)
 	}
 
 	scrapeRequest, err := h.svc.Create(c.Request().Context(), params)

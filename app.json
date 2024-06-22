@@ -1,13 +1,14 @@
 {
   "healthchecks": {
     "web": [
-        {
-            "type":        "liveness",
-            "name":        "web check",
-            "description": "Checking if the app responds to the /health endpoint",
-            "path":        "/health",
-            "attempts": 3
-        }
+      {
+        "type": "liveness",
+        "name": "web-check",
+        "description": "Checking if the app responds to the /health endpoint",
+        "path": "/health",
+        "timeout": 5,
+        "attempts": 3
+      }
     ]
   }
 }
