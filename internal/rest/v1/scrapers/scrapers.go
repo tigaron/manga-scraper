@@ -17,13 +17,36 @@ type ScraperService interface {
 	Delete(ctx context.Context, id string) error
 }
 
-type ScraperHandler struct {
-	svc ScraperService
+type ProviderService interface {
+	Find(ctx context.Context, slug string) (internal.Provider, error)
 }
 
-func NewScraperHandler(svc ScraperService) *ScraperHandler {
+type SeriesService interface {
+	Find(ctx context.Context, params internal.FindSeriesParams) (internal.Series, error)
+}
+
+type ChapterService interface {
+	Find(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error)
+}
+
+type ScraperHandler struct {
+	svc      ScraperService
+	provider ProviderService
+	series   SeriesService
+	chapter  ChapterService
+}
+
+func NewScraperHandler(
+	svc ScraperService,
+	provider ProviderService,
+	series SeriesService,
+	chapter ChapterService,
+) *ScraperHandler {
 	return &ScraperHandler{
-		svc: svc,
+		svc:      svc,
+		provider: provider,
+		series:   series,
+		chapter:  chapter,
 	}
 }
 
@@ -36,13 +59,10 @@ func (h *ScraperHandler) Register(g *echo.Group, mid *middlewares.Middleware) {
 }
 
 type CreateScrapeRequest struct {
-	Type        string `json:"type" validate:"required,oneof=SERIES_LIST SERIES_DETAIL CHAPTER_LIST CHAPTER_DETAIL" example:"CHAPTER_DETAIL"`
-	Status      string `json:"status" validate:"required,oneof=PENDING COMPLETED FAILED" example:"PENDING"`
-	BaseURL     string `json:"baseURL" validate:"required" example:"https://asuratoon.com"`
-	RequestPath string `json:"requestPath" validate:"required" example:"/manga/list-mode/"`
-	Provider    string `json:"provider" validate:"required" example:"asura"`
-	Series      string `json:"series,omitempty" example:"reincarnator"`
-	Chapter     string `json:"chapter,omitempty" example:"reincarnator-chapter-1"`
+	Type     string `json:"type" validate:"required,oneof=SERIES_LIST SERIES_DETAIL CHAPTER_LIST CHAPTER_DETAIL" example:"CHAPTER_DETAIL"`
+	Provider string `json:"provider" validate:"required" example:"asura"`
+	Series   string `json:"series,omitempty" example:"reincarnator"`
+	Chapter  string `json:"chapter,omitempty" example:"reincarnator-chapter-1"`
 } // @name CreateScrapeRequest
 
 func newSentrySpan(ctx context.Context, operation string) *sentry.Span {

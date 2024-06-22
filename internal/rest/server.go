@@ -88,7 +88,7 @@ func NewRESTServer(config *config.Config, dbClient *prisma.PrismaClient, esClien
 	scraperRepo := prisma.NewScraperRepo(dbClient)
 	scaperMessageBroker := kafkaDomain.NewScraperMessageBroker(kafkaClient)
 	scraperService := service.NewScraperService(scraperRepo, scaperMessageBroker, router.Logger)
-	scraperHandler.NewScraperHandler(scraperService).Register(router.Group("/api/v1/scrapers"), mid)
+	scraperHandler.NewScraperHandler(scraperService, providerCache, seriesCache, chapterCache).Register(router.Group("/api/v1/scrapers"), mid)
 
 	router.GET("/health", v1Handler.GetHealthCheck)
 
@@ -128,9 +128,11 @@ func (s *RESTServer) StartServer() (<-chan error, error) {
 		close(errC)
 	}()
 
-	if err := s.router.Shutdown(ctx); err != nil {
-		errC <- err
-	}
+	go func() {
+		if err := s.router.Shutdown(ctx); err != nil {
+			errC <- err
+		}
+	}()
 
 	return errC, nil
 }

@@ -16,67 +16,6 @@ import (
 	"github.com/opensearch-project/opensearch-go/v2"
 )
 
-var (
-	envConfig   *config.Config
-	dbClient    *prisma.PrismaClient
-	esClient    *opensearch.Client
-	kafkaClient *kafka.Producer
-)
-
-func init() {
-	// Set local timezone to Asia/Singapore
-	loc, err := time.LoadLocation("Asia/Singapore")
-	if err != nil {
-		log.Fatal("[init] failed to load location: ", err)
-	}
-
-	time.Local = loc
-
-	// Load config from .env file
-	envConfig, err = config.LoadConfig(".env")
-	if err != nil {
-		log.Fatal("[init] failed to load config: ", err)
-	}
-
-	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
-	if err := sentry.Init(sentry.ClientOptions{
-		Dsn:           envConfig.SentryDSN,
-		Environment:   envConfig.ENV,
-		Release:       envConfig.Version,
-		EnableTracing: true,
-		// Set TracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production,
-		TracesSampleRate:   1.0,
-		IgnoreTransactions: []string{"/health", "/swagger"},
-	}); err != nil {
-		log.Fatal("[init] failed to initialize sentry: ", err)
-	}
-
-	dbClient = prisma.NewClient(prisma.WithDatasourceURL(envConfig.DBURL))
-	if err := dbClient.Connect(); err != nil {
-		log.Fatal("[init] failed to connect to database: ", err)
-	}
-
-	esClient, err = opensearch.NewClient(opensearch.Config{
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		},
-		Addresses: []string{envConfig.SearchURL},
-	})
-	if err != nil {
-		log.Fatal("[init] failed to create elasticsearch client: ", err)
-	}
-
-	kafkaClient, err = kafka.NewProducer(&kafka.ConfigMap{
-		"bootstrap.servers": envConfig.KafkaURL,
-		"sasl.mechanism":    "SCRAM-SHA-256",
-		"security.protocol": "SASL_SSL",
-		"sasl.username":     envConfig.KafkaUsername,
-		"sasl.password":     envConfig.KafkaPassword,
-	})
-}
-
 // @title						Manga Scraper API
 // @version					1.0
 // @description				This is a Manga Scraper API server.
@@ -91,6 +30,61 @@ func init() {
 // @name						Authorization
 // @tokenUrl					https://manga-reader.fourleaves.studio/sign-in
 func main() {
+	// Set local timezone to Asia/Singapore
+	loc, err := time.LoadLocation("Asia/Singapore")
+	if err != nil {
+		log.Fatal("[main] failed to load location: ", err)
+	}
+
+	time.Local = loc
+
+	// Load config from .env file
+	envConfig, err := config.LoadConfig(".env")
+	if err != nil {
+		log.Fatal("[main] failed to load config: ", err)
+	}
+
+	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn:           envConfig.SentryDSN,
+		Environment:   envConfig.ENV,
+		Release:       envConfig.Version,
+		EnableTracing: true,
+		// Set TracesSampleRate to 1.0 to capture 100%
+		// of transactions for performance monitoring.
+		// We recommend adjusting this value in production,
+		TracesSampleRate:   1.0,
+		IgnoreTransactions: []string{"/health", "/swagger"},
+	}); err != nil {
+		log.Fatal("[main] failed to initialize sentry: ", err)
+	}
+
+	dbClient := prisma.NewClient(prisma.WithDatasourceURL(envConfig.DBURL))
+	if err := dbClient.Connect(); err != nil {
+		log.Fatal("[main] failed to connect to database: ", err)
+	}
+
+	esClient, err := opensearch.NewClient(opensearch.Config{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+		Addresses: []string{envConfig.SearchURL},
+	})
+	if err != nil {
+		log.Fatal("[main] failed to create elasticsearch client: ", err)
+	}
+
+	kafkaClient, err := kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": envConfig.KafkaURL,
+		"sasl.mechanism":    "SCRAM-SHA-256",
+		"security.protocol": "SASL_SSL",
+		"sasl.username":     envConfig.KafkaUsername,
+		"sasl.password":     envConfig.KafkaPassword,
+	})
+	if err != nil {
+		log.Fatal("[main] failed to create kafka client: ", err)
+	}
+
 	srv := server.NewRESTServer(envConfig, dbClient, esClient, kafkaClient)
 	errC, err := srv.StartServer()
 	if err != nil {

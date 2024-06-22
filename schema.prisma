@@ -1,7 +1,7 @@
 generator client {
   provider = "go run github.com/steebchen/prisma-client-go"
   output   = "./internal/database/prisma"
-  package = "prisma"
+  package  = "prisma"
 }
 
 datasource db {
@@ -70,83 +70,22 @@ model Chapter {
 }
 
 model ScrapeRequest {
-  id                String              @id @default(uuid())
-  type              ScrapeRequestType
-  baseUrl           String              @db.Text
-  requestPath       String              @db.Text
-  provider          String              @db.Text
-  series            String              @db.Text
-  chapter           String              @db.Text
-  status            String
-  retries           Int
-  totalTime         Float
-  error             Boolean
-  message           String              @db.Text
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  ChapterDetailData ChapterDetailData[]
-  chapterListData   ChapterListData[]
-  seriesDetailData  SeriesDetailData[]
-  seriesListData    SeriesListData[]
+  id          String            @id @default(uuid())
+  type        ScrapeRequestType
+  baseUrl     String            @db.Text
+  requestPath String            @db.Text
+  provider    String            @db.Text
+  series      String            @db.Text
+  chapter     String            @db.Text
+  status      String
+  retries     Int
+  totalTime   Float
+  error       Boolean
+  message     String            @db.Text
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 
   @@index([type], map: "typeIndex")
-}
-
-model SeriesListData {
-  id         String        @id @default(uuid())
-  title      String        @db.Text
-  slug       String        @db.Text
-  sourcePath String        @db.Text
-  requestId  String
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  request    ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-
-  @@index([requestId], map: "requestIndex")
-}
-
-model SeriesDetailData {
-  id           String        @id @default(uuid())
-  thumbnailUrl String        @db.Text
-  synopsis     String        @db.Text
-  genres       Json
-  requestId    String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  request      ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-
-  @@index([requestId], map: "requestIndex")
-}
-
-model ChapterListData {
-  id         String        @id @default(uuid())
-  shortTitle String        @db.Text
-  slug       String        @db.Text
-  number     Float
-  href       String        @db.Text
-  requestId  String
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  request    ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-
-  @@index([requestId], map: "requestIndex")
-}
-
-model ChapterDetailData {
-  id           String        @id @default(uuid())
-  fullTitle    String        @db.Text
-  sourcePath   String        @db.Text
-  nextSlug     String        @db.Text
-  nextPath     String        @db.Text
-  prevSlug     String        @db.Text
-  prevPath     String        @db.Text
-  contentPaths Json
-  requestId    String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  request      ScrapeRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-
-  @@index([requestId], map: "requestIndex")
 }
 
 enum ScrapeRequestType {
