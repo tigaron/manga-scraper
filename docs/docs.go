@@ -1088,17 +1088,10 @@ const docTemplate = `{
         "CreateScrapeRequest": {
             "type": "object",
             "required": [
-                "baseURL",
                 "provider",
-                "requestPath",
-                "status",
                 "type"
             ],
             "properties": {
-                "baseURL": {
-                    "type": "string",
-                    "example": "https://asuratoon.com"
-                },
                 "chapter": {
                     "type": "string",
                     "example": "reincarnator-chapter-1"
@@ -1107,22 +1100,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "asura"
                 },
-                "requestPath": {
-                    "type": "string",
-                    "example": "/manga/list-mode/"
-                },
                 "series": {
                     "type": "string",
                     "example": "reincarnator"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "PENDING",
-                        "COMPLETED",
-                        "FAILED"
-                    ],
-                    "example": "PENDING"
                 },
                 "type": {
                     "type": "string",

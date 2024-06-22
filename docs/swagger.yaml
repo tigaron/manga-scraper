@@ -29,27 +29,14 @@ definitions:
     type: object
   CreateScrapeRequest:
     properties:
-      baseURL:
-        example: https://asuratoon.com
-        type: string
       chapter:
         example: reincarnator-chapter-1
         type: string
       provider:
         example: asura
         type: string
-      requestPath:
-        example: /manga/list-mode/
-        type: string
       series:
         example: reincarnator
-        type: string
-      status:
-        enum:
-        - PENDING
-        - COMPLETED
-        - FAILED
-        example: PENDING
         type: string
       type:
         enum:
@@ -60,10 +47,7 @@ definitions:
         example: CHAPTER_DETAIL
         type: string
     required:
-    - baseURL
     - provider
-    - requestPath
-    - status
     - type
     type: object
   ResponseV1:
