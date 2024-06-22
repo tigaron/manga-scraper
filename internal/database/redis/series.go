@@ -46,7 +46,7 @@ func (s *SeriesCache) CreateInit(ctx context.Context, params internal.CreateInit
 		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.CreateInit")
 	}
 
-	cacheKey := fmt.Sprintf("v1:series:%s", series.Slug)
+	cacheKey := fmt.Sprintf("v1:series:%s:%s", series.Provider, series.Slug)
 
 	s.logger.Debugj(map[string]interface{}{
 		"_source": "SeriesCache.CreateInit",
@@ -66,7 +66,7 @@ func (s *SeriesCache) CreateInit(ctx context.Context, params internal.CreateInit
 func (s *SeriesCache) Find(ctx context.Context, params internal.FindSeriesParams) (internal.Series, error) {
 	defer newSentrySpan(ctx, "SeriesCache.Find").Finish()
 
-	cacheKey := fmt.Sprintf("v1:series:%s", params.Slug)
+	cacheKey := fmt.Sprintf("v1:series:%s:%s", params.Provider, params.Slug)
 
 	s.logger.Debugj(map[string]interface{}{
 		"_source": "SeriesCache.Find",
@@ -108,7 +108,7 @@ func (s *SeriesCache) Find(ctx context.Context, params internal.FindSeriesParams
 func (s *SeriesCache) FindBC(ctx context.Context, params internal.FindSeriesParams) (internal.SeriesBC, error) {
 	defer newSentrySpan(ctx, "SeriesCache.FindBC").Finish()
 
-	cacheKey := fmt.Sprintf("v1:series:%s:_bc", params.Slug)
+	cacheKey := fmt.Sprintf("v1:series:%s:%s:_bc", params.Provider, params.Slug)
 
 	s.logger.Debugj(map[string]interface{}{
 		"_source": "SeriesCache.FindBC",
@@ -239,7 +239,7 @@ func (s *SeriesCache) UpdateInit(ctx context.Context, params internal.UpdateInit
 		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.UpdateInit")
 	}
 
-	cacheKey := fmt.Sprintf("v1:series:%s", series.Slug)
+	cacheKey := fmt.Sprintf("v1:series:%s:%s", series.Provider, series.Slug)
 
 	s.logger.Debugj(map[string]interface{}{
 		"_source": "SeriesCache.UpdateInit",
@@ -266,7 +266,7 @@ func (s *SeriesCache) UpdateLatest(ctx context.Context, params internal.UpdateLa
 		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "store.UpdateLatest")
 	}
 
-	cacheKey := fmt.Sprintf("v1:series:%s", series.Slug)
+	cacheKey := fmt.Sprintf("v1:series:%s:%s", series.Provider, series.Slug)
 
 	s.logger.Debugj(map[string]interface{}{
 		"_source": "SeriesCache.UpdateLatest",
@@ -288,7 +288,7 @@ func (s *SeriesCache) UpdateLatest(ctx context.Context, params internal.UpdateLa
 func (s *SeriesCache) Delete(ctx context.Context, params internal.FindSeriesParams) error {
 	defer newSentrySpan(ctx, "SeriesCache.Delete").Finish()
 
-	cacheKey := fmt.Sprintf("v1:series:%s", params.Slug)
+	cacheKey := fmt.Sprintf("v1:series:%s:%s", params.Provider, params.Slug)
 
 	s.logger.Debugj(map[string]interface{}{
 		"_source": "SeriesCache.Delete",
