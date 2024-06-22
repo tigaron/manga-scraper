@@ -60,6 +60,7 @@ func (c *ChapterModel) toChapter() internal.Chapter {
 			PrevURL:  prevURL,
 		},
 		ContentURLs: newContentURLsFromSlice(contentPaths, provider.Scheme+provider.Host),
+		SourceHref:  c.SourceHref,
 	}
 }
 
@@ -104,6 +105,7 @@ func (c *ChapterModel) toChapterUpsert(provider *ProviderModel) internal.Chapter
 			PrevURL:  prevURL,
 		},
 		ContentURLs: newContentURLsFromSlice(contentPaths, provider.Scheme+provider.Host),
+		SourceHref:  c.SourceHref,
 	}
 }
 
@@ -176,6 +178,7 @@ func (s *SeriesModel) toChapterList() []internal.Chapter {
 				PrevURL:  prevURL,
 			},
 			ContentURLs: newContentURLsFromSlice(contentPaths, provider.Scheme+provider.Host),
+			SourceHref:  chaptersList[i].SourceHref,
 		})
 	}
 

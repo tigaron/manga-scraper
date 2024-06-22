@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"os"
 	"os/signal"
 	"sync"
@@ -158,43 +159,43 @@ func (s *Scraper) ListenAndServe() error {
 					continue
 				}
 
-				maxRetries := 3
+				timeout := 1 * time.Minute
+
+				ctx, cancel := context.WithTimeout(context.Background(), timeout)
+				defer cancel()
+
 				switch evt.Type {
 				case string(internal.SeriesListRequestType):
-					for attempt := 1; attempt <= maxRetries; attempt++ {
-						if err := s.ScrapeSeriesList(context.Background(), evt.Value); err != nil {
-							s.logger.Error("Error processing message, retrying", zap.Error(err), zap.Int("attempt", attempt))
-							time.Sleep(time.Duration(attempt) * 5 * time.Second)
-							continue
+					if err := s.ScrapeSeriesList(ctx, evt.Value); err != nil {
+						if errors.Is(err, context.DeadlineExceeded) {
+							s.logger.Error("ScrapeSeriesList timed out", zap.Error(err))
+						} else {
+							s.logger.Error("ScrapeSeriesList failed", zap.Error(err))
 						}
-						break
 					}
 				case string(internal.SeriesDetailRequestType):
-					for attempt := 1; attempt <= maxRetries; attempt++ {
-						if err := s.ScrapeSeriesDetail(context.Background(), evt.Value); err != nil {
-							s.logger.Error("Error processing message, retrying", zap.Error(err), zap.Int("attempt", attempt))
-							time.Sleep(time.Duration(attempt) * 5 * time.Second)
-							continue
+					if err := s.ScrapeSeriesDetail(ctx, evt.Value); err != nil {
+						if errors.Is(err, context.DeadlineExceeded) {
+							s.logger.Error("ScrapeSeriesDetail timed out", zap.Error(err))
+						} else {
+							s.logger.Error("ScrapeSeriesDetail failed", zap.Error(err))
 						}
-						break
 					}
 				case string(internal.ChapterListRequestType):
-					for attempt := 1; attempt <= maxRetries; attempt++ {
-						if err := s.ScrapeChapterList(context.Background(), evt.Value); err != nil {
-							s.logger.Error("Error processing message, retrying", zap.Error(err), zap.Int("attempt", attempt))
-							time.Sleep(time.Duration(attempt) * 5 * time.Second)
-							continue
+					if err := s.ScrapeChapterList(ctx, evt.Value); err != nil {
+						if errors.Is(err, context.DeadlineExceeded) {
+							s.logger.Error("ScrapeChapterList timed out", zap.Error(err))
+						} else {
+							s.logger.Error("ScrapeChapterList failed", zap.Error(err))
 						}
-						break
 					}
 				case string(internal.ChapterDetailRequestType):
-					for attempt := 1; attempt <= maxRetries; attempt++ {
-						if err := s.ScrapeChapterDetail(context.Background(), evt.Value); err != nil {
-							s.logger.Error("Error processing message, retrying", zap.Error(err), zap.Int("attempt", attempt))
-							time.Sleep(time.Duration(attempt) * 5 * time.Second)
-							continue
+					if err := s.ScrapeChapterDetail(ctx, evt.Value); err != nil {
+						if errors.Is(err, context.DeadlineExceeded) {
+							s.logger.Error("ScrapeChapterDetail timed out", zap.Error(err))
+						} else {
+							s.logger.Error("ScrapeChapterDetail failed", zap.Error(err))
 						}
-						break
 					}
 				}
 
@@ -245,21 +246,21 @@ func (s *Scraper) ScrapeSeriesList(ctx context.Context, event internal.ScrapeReq
 
 	switch event.Provider {
 	case "asura":
-		result, err = asura.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = asura.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	case "surya":
-		result, err = surya.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = surya.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	case "flame":
-		result, err = flame.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = flame.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	case "luminous":
-		result, err = luminous.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = luminous.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	case "anigliscans":
-		result, err = anigliscans.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = anigliscans.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	case "agscomics":
-		result, err = agscomics.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = agscomics.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	case "nightscans":
-		result, err = nightscans.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = nightscans.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	case "mangagalaxy":
-		result, err = mangagalaxy.ScrapeSeriesList(ctx, s.browserURL, requestURL)
+		result, err = mangagalaxy.ScrapeSeriesList(ctx, s.browserURL, requestURL, s.logger)
 	default:
 		err = internal.NewErrorf(internal.ErrInvalidInput, "not implemented yet")
 	}
@@ -338,21 +339,21 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 
 	switch event.Provider {
 	case "asura":
-		result, err = asura.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = asura.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "surya":
-		result, err = surya.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = surya.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "flame":
-		result, err = flame.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = flame.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "luminous":
-		result, err = luminous.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = luminous.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "anigliscans":
-		result, err = anigliscans.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = anigliscans.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "agscomics":
-		result, err = agscomics.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = agscomics.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "nightscans":
-		result, err = nightscans.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = nightscans.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "mangagalaxy":
-		result, err = mangagalaxy.ScrapeSeriesDetail(ctx, s.browserURL, requestURL)
+		result, err = mangagalaxy.ScrapeSeriesDetail(ctx, s.browserURL, requestURL, s.logger)
 	default:
 		err = internal.NewErrorf(internal.ErrInvalidInput, "not implemented yet")
 	}
@@ -434,21 +435,21 @@ func (s *Scraper) ScrapeChapterList(ctx context.Context, event internal.ScrapeRe
 
 	switch event.Provider {
 	case "asura":
-		result, err = asura.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = asura.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	case "surya":
-		result, err = surya.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = surya.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	case "flame":
-		result, err = flame.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = flame.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	case "luminous":
-		result, err = luminous.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = luminous.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	case "anigliscans":
-		result, err = anigliscans.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = anigliscans.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	case "agscomics":
-		result, err = agscomics.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = agscomics.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	case "nightscans":
-		result, err = nightscans.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = nightscans.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	case "mangagalaxy":
-		result, err = mangagalaxy.ScrapeChapterList(ctx, s.browserURL, requestURL)
+		result, err = mangagalaxy.ScrapeChapterList(ctx, s.browserURL, requestURL, s.logger)
 	default:
 		err = internal.NewErrorf(internal.ErrInvalidInput, "not implemented yet")
 	}
@@ -526,21 +527,21 @@ func (s *Scraper) ScrapeChapterDetail(ctx context.Context, event internal.Scrape
 
 	switch event.Provider {
 	case "asura":
-		result, err = asura.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = asura.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "surya":
-		result, err = surya.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = surya.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "flame":
-		result, err = flame.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = flame.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "luminous":
-		result, err = luminous.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = luminous.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "anigliscans":
-		result, err = anigliscans.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = anigliscans.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "agscomics":
-		result, err = agscomics.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = agscomics.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "nightscans":
-		result, err = nightscans.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = nightscans.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	case "mangagalaxy":
-		result, err = mangagalaxy.ScrapeChapterDetail(ctx, s.browserURL, requestURL)
+		result, err = mangagalaxy.ScrapeChapterDetail(ctx, s.browserURL, requestURL, s.logger)
 	default:
 		err = internal.NewErrorf(internal.ErrInvalidInput, "not implemented yet")
 	}

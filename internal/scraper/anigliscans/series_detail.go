@@ -11,9 +11,10 @@ import (
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
+	"go.uber.org/zap"
 )
 
-func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (internal.SeriesDetailResult, error) {
+func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string, logger *zap.Logger) (internal.SeriesDetailResult, error) {
 	l, err := launcher.NewManaged(browserUrl)
 	if err != nil {
 		return internal.SeriesDetailResult{}, err
@@ -126,6 +127,8 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string) (inte
 		Synopsis:     synopsis,
 		Genres:       genres,
 	}
+
+	logger.Info("Scraped series detail", zap.Any("result", result))
 
 	return result, nil
 }
