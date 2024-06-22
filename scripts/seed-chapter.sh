@@ -27,7 +27,12 @@ poll_scrape_status() {
   local statusApi
   local status
 
+  attempt=1
   while true; do
+    if [ $attempt -eq 5 ]; then
+      echo "Scraping operation failed"
+      break
+    fi
     statusApi=$(curl -s "$apiUrl/api/v1/scrapers/$jobId")
     check_error "$statusApi"
     status=$(echo "$statusApi" | jq -r '.data.status')
@@ -36,6 +41,7 @@ poll_scrape_status() {
       echo "Scraping operation completed"
       break
     else
+      attempt=$((attempt + 1))
       echo "Scraping operation in progress, waiting..."
       sleep 10
     fi
@@ -43,7 +49,7 @@ poll_scrape_status() {
 }
 
 provider="mangagalaxy"
-s="i-regressed-to-level-up-instead-of-being-a-simp"
+s="villainess"
 pageS=1
 while true; do
   chaptersApi=$(curl -s "$apiUrl/api/v1/chapters/$provider/$s?page=$pageS&size=10")
