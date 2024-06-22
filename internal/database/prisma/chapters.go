@@ -63,6 +63,50 @@ func (c *ChapterModel) toChapter() internal.Chapter {
 	}
 }
 
+func (c *ChapterModel) toChapterUpsert(provider *ProviderModel) internal.Chapter {
+	var sourceURL string
+
+	sourcePath := c.SourcePath
+	if sourcePath != "" {
+		sourceURL = provider.Scheme + provider.Host + sourcePath
+	}
+
+	var nextSlug, nextURL, prevSlug, prevURL string
+
+	if c.NextSlug != "" {
+		nextSlug = c.NextSlug
+		if c.NextPath != "" {
+			nextURL = provider.Scheme + provider.Host + c.NextPath
+		}
+	}
+
+	if c.PrevSlug != "" {
+		prevSlug = c.PrevSlug
+		if c.PrevPath != "" {
+			prevURL = provider.Scheme + provider.Host + c.PrevPath
+		}
+	}
+
+	contentPaths := newStringSliceFromBytes(c.ContentPaths)
+
+	return internal.Chapter{
+		Provider:   provider.Slug,
+		Series:     c.SeriesSlug,
+		Slug:       c.Slug,
+		Number:     c.Number,
+		FullTitle:  c.FullTitle,
+		ShortTitle: c.ShortTitle,
+		SourceURL:  sourceURL,
+		ChapterNav: &internal.ChapterNav{
+			NextSlug: nextSlug,
+			NextURL:  nextURL,
+			PrevSlug: prevSlug,
+			PrevURL:  prevURL,
+		},
+		ContentURLs: newContentURLsFromSlice(contentPaths, provider.Scheme+provider.Host),
+	}
+}
+
 func (c *ChapterModel) toBC() internal.ChapterBC {
 	provider := c.Provider()
 	series := c.Series()
@@ -204,6 +248,54 @@ func (c *ChapterRepo) CreateInit(ctx context.Context, params internal.CreateInit
 	}
 
 	return chapter.toChapter(), nil
+}
+
+func (c *ChapterRepo) UpsertInit(ctx context.Context, params internal.CreateInitChapterParams) (internal.Chapter, error) {
+	defer newSentrySpan(ctx, "ChapterRepo.UpsertInit").Finish()
+
+	chapter, err := c.q.Chapter.UpsertOne(
+		Chapter.ChapterUnique(
+			Chapter.ProviderSlug.Equals(params.Provider),
+			Chapter.SeriesSlug.Equals(params.Series),
+			Chapter.Slug.Equals(params.Slug),
+		),
+	).Create(
+		Chapter.Slug.Set(params.Slug),
+		Chapter.Number.Set(params.Number),
+		Chapter.ShortTitle.Set(params.ShortTitle),
+		Chapter.SourceHref.Set(params.SourceHref),
+		Chapter.FullTitle.Set(""),
+		Chapter.SourcePath.Set(""),
+		Chapter.NextSlug.Set(""),
+		Chapter.NextPath.Set(""),
+		Chapter.PrevSlug.Set(""),
+		Chapter.PrevPath.Set(""),
+		Chapter.ContentPaths.Set([]byte("[]")),
+		Chapter.Provider.Link(
+			Provider.Slug.Equals(params.Provider),
+		),
+		Chapter.Series.Link(Series.SeriesUnique(
+			Series.ProviderSlug.Equals(params.Provider),
+			Series.Slug.Equals(params.Series),
+		)),
+	).Update(
+		Chapter.Slug.Set(params.Slug),
+		Chapter.Number.Set(params.Number),
+		Chapter.ShortTitle.Set(params.ShortTitle),
+		Chapter.SourceHref.Set(params.SourceHref),
+	).Exec(ctx)
+	if err != nil {
+		return internal.Chapter{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to create chapter")
+	}
+
+	provider, err := c.q.Provider.FindUnique(
+		Provider.Slug.Equals(params.Provider),
+	).Exec(ctx)
+	if err != nil {
+		return internal.Chapter{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to find provider")
+	}
+
+	return chapter.toChapterUpsert(provider), nil
 }
 
 func (c *ChapterRepo) Find(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error) {
