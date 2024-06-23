@@ -7,6 +7,7 @@ import (
 	"fourleaves.studio/manga-scraper/internal"
 	"github.com/labstack/echo/v4"
 	"github.com/mercari/go-circuitbreaker"
+	"go.uber.org/zap"
 )
 
 type ScrapeRequestRepository interface {
@@ -41,6 +42,20 @@ func NewScraperService(repo ScrapeRequestRepository, msgBroker ScrapeRequestMess
 					"old":     string(oldState),
 					"new":     string(newState),
 				})
+			}),
+		),
+	}
+}
+
+func NewScraperCronService(repo ScrapeRequestRepository, msgBroker ScrapeRequestMessageBroker, logger *zap.Logger) *ScraperService {
+	return &ScraperService{
+		repo:      repo,
+		msgBroker: msgBroker,
+		cb: circuitbreaker.New(
+			circuitbreaker.WithOpenTimeout(time.Minute*2),
+			circuitbreaker.WithTripFunc(circuitbreaker.NewTripFuncConsecutiveFailures(3)),
+			circuitbreaker.WithOnStateChangeHookFn(func(oldState, newState circuitbreaker.State) {
+				logger.Info("circuit breaker state change", zap.String("old", string(oldState)), zap.String("new", string(newState)))
 			}),
 		),
 	}
