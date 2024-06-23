@@ -778,6 +778,7 @@ func TestChapterRepo_UpdateInit(t *testing.T) {
 			PrevURL:  providerModel.Scheme + providerModel.Host + updatedModel.PrevPath,
 		},
 		ContentURLs: newContentURLsFromSlice(contentURLs, providerModel.Scheme+providerModel.Host),
+		SourceHref:  updatedModel.SourceHref,
 	}
 
 	require.NoError(t, err)
