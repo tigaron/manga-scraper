@@ -7,13 +7,14 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/getsentry/sentry-go"
+	"github.com/opensearch-project/opensearch-go/v2"
+
 	_ "fourleaves.studio/manga-scraper/docs"
 	"fourleaves.studio/manga-scraper/internal/config"
 	"fourleaves.studio/manga-scraper/internal/database/prisma"
 	server "fourleaves.studio/manga-scraper/internal/rest"
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
-	"github.com/getsentry/sentry-go"
-	"github.com/opensearch-project/opensearch-go/v2"
 )
 
 // @title						Manga Scraper API
