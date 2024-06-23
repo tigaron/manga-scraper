@@ -48,7 +48,7 @@ func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jo
 				_, _ = s.repo.CreateStatus(context.Background(), internal.CreateCronJobStatusParams{
 					JobID:    jobID.String(),
 					Status:   "started",
-					Message:  "",
+					Message:  jobName,
 					Duration: 0,
 				})
 			}),
@@ -57,7 +57,7 @@ func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jo
 				_, _ = s.repo.CreateStatus(context.Background(), internal.CreateCronJobStatusParams{
 					JobID:    jobID.String(),
 					Status:   "completed",
-					Message:  "",
+					Message:  jobName,
 					Duration: s.cronMonitor.time[jobName][s.cronMonitor.counter[jobName]].Seconds(),
 				})
 			}),
@@ -66,7 +66,7 @@ func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jo
 				_, _ = s.repo.CreateStatus(context.Background(), internal.CreateCronJobStatusParams{
 					JobID:    jobID.String(),
 					Status:   "failed",
-					Message:  "",
+					Message:  jobName,
 					Duration: s.cronMonitor.time[jobName][s.cronMonitor.counter[jobName]].Seconds(),
 				})
 			}),
