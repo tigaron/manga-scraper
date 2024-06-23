@@ -88,6 +88,29 @@ model ScrapeRequest {
   @@index([type], map: "typeIndex")
 }
 
+model CronJob {
+  id            String          @id
+  name          String          @db.Text
+  crontab       String          @db.Text
+  tags          String          @db.Text
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  CronJobStatus CronJobStatus[]
+}
+
+model CronJobStatus {
+  id        String   @id @default(uuid())
+  jobId     String
+  status    String   @db.Text
+  message   String   @db.Text
+  duration  Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  CronJob   CronJob  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId], map: "cronJobIndex")
+}
+
 enum ScrapeRequestType {
   SERIES_LIST
   SERIES_DETAIL
