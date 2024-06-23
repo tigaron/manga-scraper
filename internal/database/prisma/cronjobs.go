@@ -35,6 +35,22 @@ func (c *CronJobStatusModel) toCronJobStatus() internal.CronJobStatus {
 	}
 }
 
+func (c *CronJobRepo) Create(ctx context.Context, params internal.CreateCronJobParams) (internal.CronJob, error) {
+	defer newSentrySpan(ctx, "CronJobRepo.Create").Finish()
+
+	cronJob, err := c.q.CronJob.CreateOne(
+		CronJob.ID.Set(params.ID),
+		CronJob.Name.Set(params.Name),
+		CronJob.Crontab.Set(params.Crontab),
+		CronJob.Tags.Set(params.Tags),
+	).Exec(ctx)
+	if err != nil {
+		return internal.CronJob{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to create cron job")
+	}
+
+	return cronJob.toCronJob(), nil
+}
+
 func (c *CronJobRepo) Upsert(ctx context.Context, params internal.CreateCronJobParams) (internal.CronJob, error) {
 	defer newSentrySpan(ctx, "CronJobRepo.Upsert").Finish()
 
@@ -119,4 +135,17 @@ func (c *CronJobRepo) UpdateStatus(ctx context.Context, params internal.UpdateCr
 	}
 
 	return cronJobStatus.toCronJobStatus(), nil
+}
+
+func (c *CronJobRepo) Delete(ctx context.Context, id string) error {
+	defer newSentrySpan(ctx, "CronJobRepo.Delete").Finish()
+
+	_, err := c.q.CronJob.FindUnique(
+		CronJob.ID.Equals(id),
+	).Delete().Exec(ctx)
+	if err != nil {
+		return internal.WrapErrorf(err, internal.ErrUnknown, "failed to delete cron job")
+	}
+
+	return nil
 }
