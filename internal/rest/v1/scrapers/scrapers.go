@@ -51,9 +51,9 @@ func NewScraperHandler(
 }
 
 func (h *ScraperHandler) Register(g *echo.Group, mid *middlewares.Middleware) {
-	g.POST("", h.Create /* , mid.IsAdmin */)
+	g.POST("", h.Create, mid.IsAdmin)
 	// g.GET("", h.FindPendings)
-	g.GET("/:id", h.Find /* , mid.IsAdmin */)
+	g.GET("/:id", h.Find, mid.IsAdmin)
 	// g.PUT("/:id", h.Update)
 	// g.DELETE("/:id", h.Delete)
 }
