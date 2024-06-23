@@ -12,8 +12,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string, logger *zap.Logger) ([]internal.ChapterListResult, error) {
-	l, err := launcher.NewManaged(browserUrl)
+func ScrapeChapterList(ctx context.Context, browserURL, seriesURL string, logger *zap.Logger) ([]internal.ChapterListResult, error) {
+	l, err := launcher.NewManaged(browserURL)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string, logger
 
 	defer browser.MustClose()
 
-	pg, err := browser.Page(proto.TargetCreateTarget{URL: seriesUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: seriesURL})
 	if err != nil {
 		return nil, err
 	}

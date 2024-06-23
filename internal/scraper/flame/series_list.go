@@ -13,8 +13,8 @@ import (
 )
 
 // TODO: exclude novel
-func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *zap.Logger) ([]internal.SeriesListResult, error) {
-	l, err := launcher.NewManaged(browserUrl)
+func ScrapeSeriesList(ctx context.Context, browserURL, listURL string, logger *zap.Logger) ([]internal.SeriesListResult, error) {
+	l, err := launcher.NewManaged(browserURL)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *z
 
 	defer browser.MustClose()
 
-	pg, err := browser.Page(proto.TargetCreateTarget{URL: listUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: listURL})
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *z
 				return
 			}
 
-			postId, err := e.Attribute("rel")
+			postID, err := e.Attribute("rel")
 			if err != nil {
 				select {
 				case errCh <- err:
@@ -82,7 +82,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *z
 				return
 			}
 
-			sourcePath := "/?p=" + *postId
+			sourcePath := "/?p=" + *postID
 
 			href, err := e.Attribute("href")
 			if err != nil {

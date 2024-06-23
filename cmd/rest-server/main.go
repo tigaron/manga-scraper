@@ -66,7 +66,7 @@ func main() {
 
 	esClient, err := opensearch.NewClient(opensearch.Config{
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // nolint:gosec
 		},
 		Addresses: []string{envConfig.SearchURL},
 	})

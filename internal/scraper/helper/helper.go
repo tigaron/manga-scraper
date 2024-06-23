@@ -36,7 +36,7 @@ func GetSlug(s string) string {
 
 // get post id from url, ex:
 // https://asuratoon.com/?p=280097
-func GetPostId(s string) string {
+func GetPostID(s string) string {
 	sArr := strings.Split(s, "/?p=")
 	return sArr[len(sArr)-1]
 }
