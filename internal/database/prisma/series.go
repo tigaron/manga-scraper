@@ -132,7 +132,6 @@ func (s *SeriesRepo) UpsertInit(ctx context.Context, params internal.CreateInitS
 		Series.Title.Set(params.Title),
 		Series.SourcePath.Set(params.SourcePath),
 	).Exec(ctx)
-
 	if err != nil {
 		return internal.Series{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to upsert series")
 	}

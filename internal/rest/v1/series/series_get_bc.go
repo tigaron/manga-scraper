@@ -19,7 +19,7 @@ import (
 // @Failure		404				{object}	ResponseV1
 // @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/series/{provider_slug}/{series_slug}/_bc [get]
-func (h *SeriesHandler) FindBC(c echo.Context) error {
+func (h *Handler) FindBC(c echo.Context) error {
 	span := newSentrySpan(c.Request().Context(), "v1.FindBC")
 	defer span.Finish()
 

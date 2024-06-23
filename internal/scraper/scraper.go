@@ -370,7 +370,6 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 		Synopsis:     result.Synopsis,
 		Genres:       result.Genres,
 	})
-
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
@@ -571,7 +570,6 @@ func (s *Scraper) ScrapeChapterDetail(ctx context.Context, event internal.Scrape
 		PrevSlug:     result.PrevSlug,
 		PrevPath:     result.PrevPath,
 	})
-
 	if err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,

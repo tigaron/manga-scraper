@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Cloning repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22.3'
+
+    - name: Test
+      run: go test -shuffle=on -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+    - name: Vet
+      run: go vet ./...
+
+    - name: Codecov
+      run: bash <(curl -s https://codecov.io/bash)

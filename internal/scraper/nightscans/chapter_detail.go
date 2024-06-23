@@ -14,8 +14,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, logger *zap.Logger) (internal.ChapterDetailResult, error) {
-	l, err := launcher.NewManaged(browserUrl)
+func ScrapeChapterDetail(ctx context.Context, browserURL, chapterURL string, logger *zap.Logger) (internal.ChapterDetailResult, error) {
+	l, err := launcher.NewManaged(browserURL)
 	if err != nil {
 		return internal.ChapterDetailResult{}, err
 	}
@@ -36,7 +36,7 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, log
 
 	defer browser.MustClose()
 
-	pg, err := browser.Page(proto.TargetCreateTarget{URL: chapterUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: chapterURL})
 	if err != nil {
 		return internal.ChapterDetailResult{}, err
 	}
@@ -65,8 +65,8 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, log
 		return internal.ChapterDetailResult{}, err
 	}
 
-	postId := helper.GetPostId(*href)
-	sourcePath := "/?p=" + postId
+	postID := helper.GetPostID(*href)
+	sourcePath := "/?p=" + postID
 
 	elTS, err := page.ElementR("script", "ts_reader.run")
 	if err != nil {
@@ -107,7 +107,7 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, log
 		}
 	}
 
-	contentPathsJson, err := json.Marshal(helper.RemoveDuplicate(contentPaths))
+	contentPathsJSON, err := json.Marshal(helper.RemoveDuplicate(contentPaths))
 	if err != nil {
 		return internal.ChapterDetailResult{}, err
 	}
@@ -136,8 +136,8 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, log
 			return internal.ChapterDetailResult{}, err
 		}
 
-		postIdN := helper.GetPostId(*hrefN)
-		nextPath = "/?p=" + postIdN
+		postIDN := helper.GetPostID(*hrefN)
+		nextPath = "/?p=" + postIDN
 	} else {
 		nextPath = ""
 	}
@@ -160,8 +160,8 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, log
 			return internal.ChapterDetailResult{}, err
 		}
 
-		postIdP := helper.GetPostId(*hrefP)
-		prevPath = "/?p=" + postIdP
+		postIDP := helper.GetPostID(*hrefP)
+		prevPath = "/?p=" + postIDP
 	} else {
 		prevPath = ""
 	}
@@ -169,7 +169,7 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, log
 	result := internal.ChapterDetailResult{
 		FullTitle:    fullTitle,
 		SourcePath:   sourcePath,
-		ContentPaths: contentPathsJson,
+		ContentPaths: contentPathsJSON,
 		NextPath:     nextPath,
 		NextSlug:     nextSlug,
 		PrevPath:     prevPath,

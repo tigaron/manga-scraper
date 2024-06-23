@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type SeriesService interface {
+type Service interface {
 	CreateInit(ctx context.Context, params internal.CreateInitSeriesParams) (internal.Series, error)
 	Search(ctx context.Context, q string) ([]internal.Series, error)
 	Index(ctx context.Context, series []internal.Series) error
@@ -22,17 +22,17 @@ type SeriesService interface {
 	Delete(ctx context.Context, params internal.FindSeriesParams) error
 }
 
-type SeriesHandler struct {
-	svc SeriesService
+type Handler struct {
+	svc Service
 }
 
-func NewSeriesHandler(svc SeriesService) *SeriesHandler {
-	return &SeriesHandler{
+func NewSeriesHandler(svc Service) *Handler {
+	return &Handler{
 		svc: svc,
 	}
 }
 
-func (h *SeriesHandler) Register(g *echo.Group, mid *middlewares.Middleware) {
+func (h *Handler) Register(g *echo.Group, mid *middlewares.Middleware) {
 	g.GET("", h.Search)
 	g.PUT("/:provider_slug", h.Index, mid.IsAdmin)
 	g.GET("/:provider_slug", h.FindPaginated)

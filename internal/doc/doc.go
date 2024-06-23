@@ -3,11 +3,11 @@ package doc
 import (
 	"fmt"
 
-	. "goa.design/model/dsl"
-	"goa.design/model/expr"
+	"goa.design/model/dsl"
+	expr "goa.design/model/expr"
 )
 
-var _ = Design("Manga Scraper API", "Go microservice project using Domain Driven Design!", func() {
+var _ = dsl.Design("Manga Scraper API", "Go microservice project using Domain Driven Design!", func() {
 	var (
 		System        *expr.SoftwareSystem
 		ElasticSearch *expr.Container
@@ -38,158 +38,158 @@ var _ = Design("Manga Scraper API", "Go microservice project using Domain Driven
 		componentRedis         = "internal.database.redis"
 	)
 
-	Person("User", "Interacts with Service", func() {
-		External()
+	dsl.Person("User", "Interacts with Service", func() {
+		dsl.External()
 
-		Tag(stylePerson)
+		dsl.Tag(stylePerson)
 
-		Uses(softwareSystem, "Reads and writes data using", "HTTPS/JSON", Synchronous, func() {
-			Tag("Relationship", "Synchronous")
+		dsl.Uses(softwareSystem, "Reads and writes data using", "HTTPS/JSON", dsl.Synchronous, func() {
+			dsl.Tag("Relationship", "Synchronous")
 		})
 
-		Uses(fmt.Sprintf("%s/%s", softwareSystem, containerRESTfulAPI), "Reads and writes data using", "HTTPS/JSON", Synchronous, func() {
-			Tag("Relationship", "Synchronous")
+		dsl.Uses(fmt.Sprintf("%s/%s", softwareSystem, containerRESTfulAPI), "Reads and writes data using", "HTTPS/JSON", dsl.Synchronous, func() {
+			dsl.Tag("Relationship", "Synchronous")
 		})
 	})
 
-	System = SoftwareSystem(softwareSystem, "Allows users to interact with Manga data", func() {
-		URL("https://github.com/tigaron/manga-scraper")
+	System = dsl.SoftwareSystem(softwareSystem, "Allows users to interact with Manga data", func() {
+		dsl.URL("https://github.com/tigaron/manga-scraper")
 
-		MySQL = Container("MySQL", "Stores Manga records", "MySQL 8.x", func() {
-			Tag(styleDatabase)
-			Tag(styleContainer)
+		MySQL = dsl.Container("MySQL", "Stores Manga records", "MySQL 8.x", func() {
+			dsl.Tag(styleDatabase)
+			dsl.Tag(styleContainer)
 		})
 
-		Redis = Container("Redis", "Stores cached Manga records", "Redis 6.x", func() {
-			Tag(styleDatabase)
-			Tag(styleContainer)
+		Redis = dsl.Container("Redis", "Stores cached Manga records", "Redis 6.x", func() {
+			dsl.Tag(styleDatabase)
+			dsl.Tag(styleContainer)
 		})
 
-		ElasticSearch = Container("ElasticSearch", "Stores searchable Manga records", "OpenSearch 2.x", func() {
-			Tag(styleDatabase)
-			Tag(styleContainer)
+		ElasticSearch = dsl.Container("ElasticSearch", "Stores searchable Manga records", "OpenSearch 2.x", func() {
+			dsl.Tag(styleDatabase)
+			dsl.Tag(styleContainer)
 		})
 
-		Kafka = Container("Kafka", "Streams Scrape Request events", "Kafka 2.x", func() {
-			Tag(styleDatabase)
-			Tag(styleContainer)
+		Kafka = dsl.Container("Kafka", "Streams Scrape Request events", "Kafka 2.x", func() {
+			dsl.Tag(styleDatabase)
+			dsl.Tag(styleContainer)
 		})
 
-		RESTfulAPI = Container(containerRESTfulAPI, "RESTful API", "Go 1.22", func() {
-			Uses(Redis, "Reads from and Writes to", "Redis", Synchronous, func() {})
-			Uses(MySQL, "Reads from and Writes to", "MySQL", Synchronous, func() {})
-			Uses(ElasticSearch, "Reads from", "HTTPS", Synchronous, func() {})
-			Uses(Kafka, "Produces", "Kafka", Asynchronous, func() {})
+		RESTfulAPI = dsl.Container(containerRESTfulAPI, "RESTful API", "Go 1.22", func() {
+			dsl.Uses(Redis, "Reads from and Writes to", "Redis", dsl.Synchronous, func() {})
+			dsl.Uses(MySQL, "Reads from and Writes to", "MySQL", dsl.Synchronous, func() {})
+			dsl.Uses(ElasticSearch, "Reads from", "HTTPS", dsl.Synchronous, func() {})
+			dsl.Uses(Kafka, "Produces", "Kafka", dsl.Asynchronous, func() {})
 
-			Component(componentElasticsearch, "interacts with ElasticSearch", "Go Package", func() {
-				Uses(ElasticSearch, "Uses", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+			dsl.Component(componentElasticsearch, "interacts with ElasticSearch", "Go Package", func() {
+				dsl.Uses(ElasticSearch, "Uses", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Tag(styleComponent)
+				dsl.Tag(styleComponent)
 			})
 
-			Component(componentMySQL, "interacts with MySQL", "Go Package", func() {
-				Uses(MySQL, "Uses", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+			dsl.Component(componentMySQL, "interacts with MySQL", "Go Package", func() {
+				dsl.Uses(MySQL, "Uses", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Tag(styleComponent)
+				dsl.Tag(styleComponent)
 			})
 
-			Component(componentRedis, "interacts with Redis", "Go Package", func() {
-				Uses(Redis, "Uses", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+			dsl.Component(componentRedis, "interacts with Redis", "Go Package", func() {
+				dsl.Uses(Redis, "Uses", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Tag(styleComponent)
+				dsl.Tag(styleComponent)
 			})
 
-			Component(componentKafka, "interacts with Kafka", "Go Package", func() {
-				Uses(Kafka, "Uses", Asynchronous, func() {
-					Tag("Relationship", "Asynchronous")
+			dsl.Component(componentKafka, "interacts with Kafka", "Go Package", func() {
+				dsl.Uses(Kafka, "Uses", dsl.Asynchronous, func() {
+					dsl.Tag("Relationship", "Asynchronous")
 				})
 
-				Tag(styleComponent)
+				dsl.Tag(styleComponent)
 			})
 
-			Component("internal.service", "interacts with all datastores", "Go Package", func() {
-				Uses(componentElasticsearch, "Reads records from", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+			dsl.Component("internal.service", "interacts with all datastores", "Go Package", func() {
+				dsl.Uses(componentElasticsearch, "Reads records from", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Uses(componentKafka, "Produce events to", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+				dsl.Uses(componentKafka, "Produce events to", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Uses(componentMySQL, "Uses", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+				dsl.Uses(componentMySQL, "Uses", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Uses(componentRedis, "Uses", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+				dsl.Uses(componentRedis, "Uses", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Tag(styleComponent)
+				dsl.Tag(styleComponent)
 			})
 
-			Component("internal.rest", "defines HTTP handlers", "Go Package", func() {
-				Uses("internal.service", "Uses", Synchronous, func() {
-					Tag("Relationship", "Synchronous")
+			dsl.Component("internal.rest", "defines HTTP handlers", "Go Package", func() {
+				dsl.Uses("internal.service", "Uses", dsl.Synchronous, func() {
+					dsl.Tag("Relationship", "Synchronous")
 				})
 
-				Tag(styleComponent)
+				dsl.Tag(styleComponent)
 			})
 
-			Tag(styleContainer)
+			dsl.Tag(styleContainer)
 		})
 
-		Tag(styleSoftwareSystem)
+		dsl.Tag(styleSoftwareSystem)
 	})
 
-	Views(func() {
-		SystemContextView(System, "Manga Scraper System", func() {
-			AddDefault()
+	dsl.Views(func() {
+		dsl.SystemContextView(System, "Manga Scraper System", func() {
+			dsl.AddDefault()
 
-			EnterpriseBoundaryVisible()
+			dsl.EnterpriseBoundaryVisible()
 		})
 
-		ContainerView(softwareSystem, "Containers", "Container diagram for the Manga Scraper System", func() {
-			AddDefault()
+		dsl.ContainerView(softwareSystem, "Containers", "Container diagram for the Manga Scraper System", func() {
+			dsl.AddDefault()
 
-			SystemBoundariesVisible()
+			dsl.SystemBoundariesVisible()
 		})
 
-		ComponentView(RESTfulAPI, "RESTful API", "Component diagram for the REST Server", func() {
-			AddDefault()
+		dsl.ComponentView(RESTfulAPI, "RESTful API", "Component diagram for the REST Server", func() {
+			dsl.AddDefault()
 
-			ContainerBoundariesVisible()
+			dsl.ContainerBoundariesVisible()
 		})
 
-		Styles(func() {
-			ElementStyle(styleSoftwareSystem, func() {
-				Background("#1168bd")
-				Color("#ffffff")
+		dsl.Styles(func() {
+			dsl.ElementStyle(styleSoftwareSystem, func() {
+				dsl.Background("#1168bd")
+				dsl.Color("#ffffff")
 			})
 
-			ElementStyle(stylePerson, func() {
-				Background("#08427b")
-				Color("#ffffff")
-				Shape(ShapePerson)
+			dsl.ElementStyle(stylePerson, func() {
+				dsl.Background("#08427b")
+				dsl.Color("#ffffff")
+				dsl.Shape(dsl.ShapePerson)
 			})
 
-			ElementStyle(styleComponent, func() {
-				Background("#85bbf0")
-				Color("#000000")
+			dsl.ElementStyle(styleComponent, func() {
+				dsl.Background("#85bbf0")
+				dsl.Color("#000000")
 			})
 
-			ElementStyle(styleContainer, func() {
-				Background("#438dd5")
-				Color("#ffffff")
+			dsl.ElementStyle(styleContainer, func() {
+				dsl.Background("#438dd5")
+				dsl.Color("#ffffff")
 			})
 
-			ElementStyle(styleDatabase, func() {
-				Shape(ShapeCylinder)
+			dsl.ElementStyle(styleDatabase, func() {
+				dsl.Shape(dsl.ShapeCylinder)
 			})
 		})
 	})

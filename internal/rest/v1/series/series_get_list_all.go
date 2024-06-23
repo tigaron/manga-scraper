@@ -19,7 +19,7 @@ import (
 // @Failure		404				{object}	ResponseV1
 // @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/series/{provider_slug}/_all [get]
-func (h *SeriesHandler) FindAll(c echo.Context) error {
+func (h *Handler) FindAll(c echo.Context) error {
 	span := newSentrySpan(c.Request().Context(), "v1.FindAll")
 	defer span.Finish()
 

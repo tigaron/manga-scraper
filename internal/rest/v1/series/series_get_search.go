@@ -18,7 +18,7 @@ import (
 // @Failure		404	{object}	ResponseV1
 // @Failure		500	{object}	ResponseV1
 // @Router			/api/v1/series [get]
-func (h *SeriesHandler) Search(c echo.Context) error {
+func (h *Handler) Search(c echo.Context) error {
 	span := newSentrySpan(c.Request().Context(), "v1.Search")
 	defer span.Finish()
 
