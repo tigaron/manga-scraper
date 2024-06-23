@@ -89,13 +89,12 @@ model ScrapeRequest {
 }
 
 model CronJob {
-  id            String          @id
-  name          String          @db.Text
-  crontab       String          @db.Text
-  tags          String          @db.Text
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  CronJobStatus CronJobStatus[]
+  id        String   @id
+  name      String   @db.Text
+  crontab   String   @db.Text
+  tags      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CronJobStatus {
@@ -106,7 +105,6 @@ model CronJobStatus {
   duration  Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  CronJob   CronJob  @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
   @@index([jobId], map: "cronJobIndex")
 }
