@@ -15,6 +15,7 @@ import (
 // @Produce		json
 // @Param			provider_slug	path		string	true	"Provider slug"	example(asura)
 // @Param			series_slug		path		string	true	"Series slug"	example(reincarnator)
+// @Param			sort			query		string	false	"Sort order"	enum(asc, desc)	default(asc)
 // @Success		200				{object}	ResponseV1
 // @Failure		404				{object}	ResponseV1
 // @Failure		500				{object}	ResponseV1
@@ -25,10 +26,12 @@ func (h *ChapterHandler) FindListWithRel(c echo.Context) error {
 
 	providerSlug := c.Param("provider_slug")
 	seriesSlug := c.Param("series_slug")
+	sort := c.QueryParam("sort")
 
 	params := internal.FindChapterParams{
 		Provider: providerSlug,
 		Series:   seriesSlug,
+		Order:    internal.NewSortOrder(sort),
 	}
 
 	chaptersList, err := h.svc.FindListWithRel(c.Request().Context(), params)
