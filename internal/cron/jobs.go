@@ -19,13 +19,13 @@ func (s *Cron) scheduleJobs(scheduler gocron.Scheduler) error {
 	for i := range cronjobs {
 		switch cronjobs[i].Name {
 		case "scrape-series-list":
-			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeSeriesList)
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeSeriesList, cronjobs[i].ID)
 		case "scrape-series-detail":
-			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeSeriesDetail)
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeSeriesDetail, cronjobs[i].ID)
 		case "scrape-chapters-list":
-			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeChaptersList)
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeChaptersList, cronjobs[i].ID)
 		case "scrape-chapters-detail":
-			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeChaptersDetail)
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeChaptersDetail, cronjobs[i].ID)
 		}
 	}
 
@@ -36,8 +36,8 @@ func (s *Cron) scheduleJobs(scheduler gocron.Scheduler) error {
 	return nil
 }
 
-func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jobFunc func()) error {
-	_, err := scheduler.NewJob(
+func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jobFunc func(), prevJobID string) error {
+	job, err := scheduler.NewJob(
 		gocron.CronJob(crontab, false),
 		gocron.NewTask(jobFunc),
 		gocron.WithName(name),
@@ -76,7 +76,17 @@ func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jo
 		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create job")
 	}
 
-	return nil
+	_, err = s.repo.Create(context.Background(), internal.CreateCronJobParams{
+		ID:      job.ID().String(),
+		Name:    job.Name(),
+		Crontab: crontab,
+		Tags:    "",
+	})
+	if err != nil {
+		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create new job")
+	}
+
+	return s.repo.Delete(context.Background(), prevJobID)
 }
 
 // TODO:
