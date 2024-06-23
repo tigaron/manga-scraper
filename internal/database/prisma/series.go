@@ -2,6 +2,7 @@ package prisma
 
 import (
 	"context"
+	"strings"
 
 	"fourleaves.studio/manga-scraper/internal"
 )
@@ -29,6 +30,19 @@ func (s *SeriesModel) toSeries() internal.Series {
 		Genres:        newStringSliceFromBytes(s.Genres),
 		ChaptersCount: s.ChaptersCount,
 		LatestChapter: s.LatestChapter,
+	}
+}
+
+func (s *SeriesModel) toSeriesSR() internal.CreateScrapeRequestParams {
+	provider := s.Provider()
+
+	return internal.CreateScrapeRequestParams{
+		Type:        internal.SeriesDetailRequestType,
+		Status:      internal.PendingRequestStatus,
+		BaseURL:     provider.Scheme + provider.Host,
+		RequestPath: s.SourcePath,
+		Provider:    provider.Slug,
+		Series:      s.Slug,
 	}
 }
 
@@ -82,6 +96,43 @@ func (p *ProviderModel) toSeriesList() []internal.Series {
 			ChaptersCount: seriesList[i].ChaptersCount,
 			LatestChapter: seriesList[i].LatestChapter,
 		})
+	}
+
+	return result
+}
+
+func (p *ProviderModel) toChapterSR() []internal.CreateScrapeRequestParams {
+	seriesList := p.Series()
+
+	if len(seriesList) == 0 {
+		return nil
+	}
+
+	var result []internal.CreateScrapeRequestParams
+
+	for i := range seriesList {
+		chaptersList := seriesList[i].Chapters()
+
+		if len(chaptersList) == 0 {
+			continue
+		}
+
+		for j := range chaptersList {
+			requestPath := chaptersList[j].SourcePath
+			if requestPath == "" {
+				requestPath = strings.Replace(chaptersList[j].SourceHref, p.Scheme+p.Host, "", 1)
+			}
+
+			result = append(result, internal.CreateScrapeRequestParams{
+				Type:        internal.ChapterDetailRequestType,
+				Status:      internal.PendingRequestStatus,
+				BaseURL:     p.Scheme + p.Host,
+				RequestPath: requestPath,
+				Provider:    p.Slug,
+				Series:      seriesList[i].Slug,
+				Chapter:     chaptersList[j].Slug,
+			})
+		}
 	}
 
 	return result
@@ -215,6 +266,103 @@ func (s *SeriesRepo) FindAll(ctx context.Context, params internal.FindSeriesPara
 	}
 
 	result := provider.toSeriesList()
+
+	if len(result) == 0 {
+		return nil, internal.WrapErrorf(err, internal.ErrNotFound, "no series found")
+	}
+
+	return result, nil
+}
+
+func (s *SeriesRepo) FindEmptyThumb(ctx context.Context, order internal.SortOrder) ([]internal.CreateScrapeRequestParams, error) {
+	defer newSentrySpan(ctx, "SeriesRepo.FindEmptyThumb").Finish()
+
+	seriesList, err := s.q.Series.FindMany(
+		Series.ThumbnailURL.Equals(""),
+	).With(
+		Series.Provider.Fetch(),
+	).OrderBy(
+		Series.Slug.Order(newSortOrder(order)),
+	).Exec(ctx)
+	if err != nil {
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "failed to find series")
+	}
+
+	if len(seriesList) == 0 {
+		return nil, internal.WrapErrorf(err, internal.ErrNotFound, "no series found")
+	}
+
+	result := make([]internal.CreateScrapeRequestParams, 0, len(seriesList))
+
+	for i := range seriesList {
+		result = append(result, seriesList[i].toSeriesSR())
+	}
+
+	return result, nil
+}
+
+func (s *SeriesRepo) FindOnGoing(ctx context.Context, params internal.FindSeriesParams) ([]internal.Series, error) {
+	defer newSentrySpan(ctx, "SeriesRepo.FindOnGoing").Finish()
+
+	provider, err := s.q.Provider.FindUnique(
+		Provider.Slug.Equals(params.Provider),
+	).With(
+		Provider.Series.Fetch(
+			Series.Status.Equals(SeriesStatusOngoing),
+		).OrderBy(
+			Series.Slug.Order(newSortOrder(params.Order)),
+		),
+	).Exec(ctx)
+	if err != nil {
+		if IsErrNotFound(err) {
+			return nil, internal.WrapErrorf(err, internal.ErrNotFound, "provider not found")
+		}
+
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "failed to find provider")
+	}
+
+	result := provider.toSeriesList()
+
+	if len(result) == 0 {
+		return nil, internal.WrapErrorf(err, internal.ErrNotFound, "no series found")
+	}
+
+	return result, nil
+}
+
+func (s *SeriesRepo) FindEmptyChapters(ctx context.Context, params internal.FindSeriesParams) ([]internal.CreateScrapeRequestParams, error) {
+	defer newSentrySpan(ctx, "SeriesRepo.FindEmptyChapters").Finish()
+
+	provider, err := s.q.Provider.FindUnique(
+		Provider.Slug.Equals(params.Provider),
+	).With(
+		Provider.Series.Fetch(
+			Series.Status.Equals(SeriesStatusOngoing),
+		).With(
+			Series.Chapters.Fetch(
+				Chapter.Or(
+					Chapter.FullTitle.Equals(""),
+					Chapter.And(
+						Chapter.FullTitle.Not(""),
+						Chapter.NextSlug.Equals(""),
+					),
+				),
+			).OrderBy(
+				Chapter.Number.Order(newSortOrder(params.Order)),
+			),
+		).OrderBy(
+			Series.Slug.Order(newSortOrder(params.Order)),
+		),
+	).Exec(ctx)
+	if err != nil {
+		if IsErrNotFound(err) {
+			return nil, internal.WrapErrorf(err, internal.ErrNotFound, "provider not found")
+		}
+
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "failed to find provider")
+	}
+
+	result := provider.toChapterSR()
 
 	if len(result) == 0 {
 		return nil, internal.WrapErrorf(err, internal.ErrNotFound, "no series found")
