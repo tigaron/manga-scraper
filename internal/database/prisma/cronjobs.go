@@ -70,6 +70,22 @@ func (c *CronJobRepo) Find(ctx context.Context, id string) (internal.CronJob, er
 	return cronJob.toCronJob(), nil
 }
 
+func (c *CronJobRepo) FindAll(ctx context.Context) ([]internal.CronJob, error) {
+	defer newSentrySpan(ctx, "CronJobRepo.FindAll").Finish()
+
+	cronJobs, err := c.q.CronJob.FindMany().Exec(ctx)
+	if err != nil {
+		return nil, internal.WrapErrorf(err, internal.ErrUnknown, "failed to find all cron jobs")
+	}
+
+	var res []internal.CronJob
+	for i := range cronJobs {
+		res = append(res, cronJobs[i].toCronJob())
+	}
+
+	return res, nil
+}
+
 func (c *CronJobRepo) CreateStatus(ctx context.Context, params internal.CreateCronJobStatusParams) (internal.CronJobStatus, error) {
 	defer newSentrySpan(ctx, "CronJobRepo.CreateStatus").Finish()
 

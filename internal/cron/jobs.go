@@ -11,31 +11,33 @@ import (
 )
 
 func (s *Cron) scheduleJobs(scheduler gocron.Scheduler) error {
-	err := s.createNewJob(scheduler, "0 0 * * *", "scrape-series-list", s.scrapeSeriesList)
+	cronjobs, err := s.repo.FindAll(context.Background())
 	if err != nil {
-		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create scrape-series-list job")
+		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to find all cron jobs")
 	}
 
-	err = s.createNewJob(scheduler, "0 0 * * *", "scrape-series-detail", s.scrapeSeriesDetail)
-	if err != nil {
-		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create scrape-series-detail job")
+	for i := range cronjobs {
+		switch cronjobs[i].Name {
+		case "scrape-series-list":
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeSeriesList)
+		case "scrape-series-detail":
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeSeriesDetail)
+		case "scrape-chapters-list":
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeChaptersList)
+		case "scrape-chapters-detail":
+			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeChaptersDetail)
+		}
 	}
 
-	err = s.createNewJob(scheduler, "0 0,12 * * *", "scrape-chapters-list", s.scrapeChaptersList)
 	if err != nil {
-		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create scrape-chapters-list job")
-	}
-
-	err = s.createNewJob(scheduler, "0 0,12 * * *", "scrape-chapters-detail", s.scrapeChaptersDetail)
-	if err != nil {
-		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create scrape-chapters-detail job")
+		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create job")
 	}
 
 	return nil
 }
 
 func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jobFunc func()) error {
-	job, err := scheduler.NewJob(
+	_, err := scheduler.NewJob(
 		gocron.CronJob(crontab, false),
 		gocron.NewTask(jobFunc),
 		gocron.WithName(name),
@@ -72,16 +74,6 @@ func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jo
 	)
 	if err != nil {
 		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create job")
-	}
-
-	_, err = s.repo.Upsert(context.Background(), internal.CreateCronJobParams{
-		ID:      job.ID().String(),
-		Name:    job.Name(),
-		Crontab: crontab,
-		Tags:    "",
-	})
-	if err != nil {
-		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to upsert job")
 	}
 
 	return nil

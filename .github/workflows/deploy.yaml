@@ -5,11 +5,14 @@ on:
     branches: [ main ]
     paths:
       - '!build/**'
+      - '!cmd/**'
       - 'cmd/rest-server/**'
       - 'docs/**'
       - '!docs/diagrams/**'
       - 'internal/**'
+      - '!internal/database/prisma/cronjobs.go'
       - '!internal/doc/**'
+      - '!internal/cron/**'
       - '!internal/scraper/**'
       - '!migrations/**'
       - '!scripts/**'
