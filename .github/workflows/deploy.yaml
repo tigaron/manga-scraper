@@ -5,13 +5,16 @@ on:
     branches:
       - main
     paths:
-      - 'cmd/**'
+      - '!build/**'
+      - 'cmd/rest-server/**'
       - 'docs/**'
       - '!docs/diagrams/**'
       - 'internal/**'
       - '!internal/doc/**'
+      - '!internal/scraper/**'
       - '!migrations/**'
       - '!scripts/**'
+      - '!README.md'
 
 jobs:
   deploy:

@@ -133,7 +133,7 @@ func ScrapeChapterList(ctx context.Context, browserUrl, seriesUrl string, logger
 		return nil, err
 	}
 
-	logger.Info("Scraped chapter list", zap.Int("count", len(results)))
+	logger.Debug("Scraped chapter list", zap.Int("count", len(results)))
 
 	return results, nil
 }

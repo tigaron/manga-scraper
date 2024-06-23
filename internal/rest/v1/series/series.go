@@ -39,7 +39,6 @@ func (h *SeriesHandler) Register(g *echo.Group, mid *middlewares.Middleware) {
 	g.GET("/:provider_slug/_all", h.FindAll)
 	g.GET("/:provider_slug/:series_slug", h.Find)
 	g.GET("/:provider_slug/:series_slug/_bc", h.FindBC)
-	// g.GET("/:provider_slug/:series_slug/_bc", h.GetSeriesBreadcrumbs)
 	// g.PUT("/:provider_slug/:series_slug/_chc", h.PutSeriesChaptersCount /* , middlewares.IsAdmin(s.config.AdminSub) */)
 	// g.PUT("/:provider_slug/:series_slug/_lch", h.PutSeriesLastChapter /* , middlewares.IsAdmin(s.config.AdminSub) */)
 }

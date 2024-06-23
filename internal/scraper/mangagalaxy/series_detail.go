@@ -141,7 +141,7 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string, logge
 		Genres:       genres,
 	}
 
-	logger.Info("Scraped series detail", zap.Any("result", result))
+	logger.Debug("Scraped series detail", zap.Any("result", result))
 
 	return result, nil
 }
