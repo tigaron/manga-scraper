@@ -176,7 +176,7 @@ func ScrapeChapterDetail(ctx context.Context, browserUrl, chapterUrl string, log
 		PrevSlug:     prevSlug,
 	}
 
-	logger.Info("Scraped chapter detail", zap.Any("result", result))
+	logger.Debug("Scraped chapter detail", zap.Any("result", result))
 
 	return result, nil
 }

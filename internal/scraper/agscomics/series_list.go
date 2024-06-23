@@ -111,7 +111,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *z
 		return nil, err
 	}
 
-	logger.Info("Scraped series list", zap.Int("count", len(results)))
+	logger.Debug("Scraped series list", zap.Int("count", len(results)))
 
 	return results, nil
 }
