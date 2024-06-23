@@ -206,6 +206,11 @@ paths:
         name: series_slug
         required: true
         type: string
+      - default: asc
+        description: Sort order
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
