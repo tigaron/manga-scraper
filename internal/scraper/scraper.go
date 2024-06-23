@@ -31,10 +31,6 @@ type SeriesRepository interface {
 	UpdateLatest(ctx context.Context, params internal.UpdateLatestSeriesParams) (internal.Series, error)
 }
 
-type SeriesSearchRepository interface {
-	Index(ctx context.Context, series internal.Series) error
-}
-
 type ChapterRepository interface {
 	UpsertInit(ctx context.Context, params internal.CreateInitChapterParams) (internal.Chapter, error)
 	Find(ctx context.Context, params internal.FindChapterParams) (internal.Chapter, error)
@@ -52,7 +48,6 @@ type ScrapeRequestRepository interface {
 type Scraper struct {
 	repo        ScrapeRequestRepository
 	series      SeriesRepository
-	search      SeriesSearchRepository
 	chapter     ChapterRepository
 	kafkaClient *kafka.Consumer
 	logger      *zap.Logger
@@ -64,7 +59,6 @@ type Scraper struct {
 func NewScraper(
 	repo ScrapeRequestRepository,
 	series SeriesRepository,
-	search SeriesSearchRepository,
 	chapter ChapterRepository,
 	kafkaClient *kafka.Consumer,
 	logger *zap.Logger,
@@ -73,7 +67,6 @@ func NewScraper(
 	return &Scraper{
 		repo:        repo,
 		series:      series,
-		search:      search,
 		chapter:     chapter,
 		kafkaClient: kafkaClient,
 		logger:      logger,
@@ -163,6 +156,7 @@ func (s *Scraper) ListenAndServe() error {
 				ctx, cancel := context.WithTimeout(context.Background(), timeout)
 				defer cancel()
 
+				// TODO: retry on temp network error
 				switch evt.Type {
 				case string(internal.SeriesListRequestType):
 					if err := s.ScrapeSeriesList(ctx, evt.Value); err != nil {
@@ -208,6 +202,14 @@ func (s *Scraper) Shutdown(ctx context.Context) error {
 			return nil
 		}
 	}
+}
+
+var skipSeriesSlug = map[string]bool{
+	"worn-and-torn-newbie%d9%8e%d9%8e-1": true,
+	"novel-of-memorize":                  true,
+	"overlord-16%d9%8e":                  true,
+	"april-fools-catalogue":              true,
+	"discord.gg":                         true,
 }
 
 func (s *Scraper) ScrapeSeriesList(ctx context.Context, event internal.ScrapeRequest) error {
@@ -274,7 +276,12 @@ func (s *Scraper) ScrapeSeriesList(ctx context.Context, event internal.ScrapeReq
 		go func(i int) {
 			defer wg.Done()
 
-			series, err := s.series.UpsertInit(ctx, internal.CreateInitSeriesParams{
+			if skipSeriesSlug[result[i].Slug] {
+				s.logger.Info("skipping series", zap.String("slug", result[i].Slug))
+				return
+			}
+
+			_, err := s.series.UpsertInit(ctx, internal.CreateInitSeriesParams{
 				Provider:   event.Provider,
 				Slug:       result[i].Slug,
 				Title:      result[i].Title,
@@ -282,12 +289,6 @@ func (s *Scraper) ScrapeSeriesList(ctx context.Context, event internal.ScrapeReq
 			})
 			if err != nil {
 				s.logger.Error("failed to create series", zap.Error(err))
-				return
-			}
-
-			err = s.search.Index(ctx, series)
-			if err != nil {
-				s.logger.Error("failed to index series", zap.Error(err))
 				return
 			}
 		}(i)
@@ -363,7 +364,7 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 		return err
 	}
 
-	series, err := s.series.UpdateInit(ctx, internal.UpdateInitSeriesParams{
+	_, err = s.series.UpdateInit(ctx, internal.UpdateInitSeriesParams{
 		Provider:     event.Provider,
 		Slug:         event.Series,
 		ThumbnailURL: result.ThumbnailURL,
@@ -371,18 +372,6 @@ func (s *Scraper) ScrapeSeriesDetail(ctx context.Context, event internal.ScrapeR
 		Genres:       result.Genres,
 	})
 	if err != nil {
-		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
-			ID:        event.ID,
-			Status:    internal.FailedRequestStatus,
-			TotalTime: endTime,
-			Error:     true,
-			Message:   err.Error(),
-		})
-
-		return err
-	}
-
-	if err := s.search.Index(ctx, series); err != nil {
 		_, _ = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 			ID:        event.ID,
 			Status:    internal.FailedRequestStatus,
@@ -486,8 +475,6 @@ func (s *Scraper) ScrapeChapterList(ctx context.Context, event internal.ScrapeRe
 	}
 
 	wg.Wait()
-
-	// TODO: handle series count and latest chapter
 
 	_, err = s.repo.Update(ctx, internal.UpdateScrapeRequestParams{
 		ID:        event.ID,
