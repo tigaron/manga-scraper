@@ -14,8 +14,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string, logger *zap.Logger) (internal.SeriesDetailResult, error) {
-	l, err := launcher.NewManaged(browserUrl)
+func ScrapeSeriesDetail(ctx context.Context, browserURL, seriesURL string, logger *zap.Logger) (internal.SeriesDetailResult, error) {
+	l, err := launcher.NewManaged(browserURL)
 	if err != nil {
 		return internal.SeriesDetailResult{}, err
 	}
@@ -36,7 +36,7 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string, logge
 
 	defer browser.MustClose()
 
-	pg, err := browser.Page(proto.TargetCreateTarget{URL: seriesUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: seriesURL})
 	if err != nil {
 		return internal.SeriesDetailResult{}, err
 	}
@@ -48,13 +48,13 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string, logge
 		return internal.SeriesDetailResult{}, err
 	}
 
-	thumbnailUrl, err := elTH.Attribute("src")
+	thumbnailURL, err := elTH.Attribute("src")
 	if err != nil {
 		return internal.SeriesDetailResult{}, err
 	}
 
-	if !strings.HasPrefix(*thumbnailUrl, "http") {
-		thumbnailUrl, err = elTH.Attribute("data-src")
+	if !strings.HasPrefix(*thumbnailURL, "http") {
+		thumbnailURL, err = elTH.Attribute("data-src")
 		if err != nil {
 			return internal.SeriesDetailResult{}, err
 		}
@@ -123,7 +123,7 @@ func ScrapeSeriesDetail(ctx context.Context, browserUrl, seriesUrl string, logge
 	}
 
 	result := internal.SeriesDetailResult{
-		ThumbnailURL: *thumbnailUrl,
+		ThumbnailURL: *thumbnailURL,
 		Synopsis:     synopsis,
 		Genres:       genres,
 	}

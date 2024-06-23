@@ -21,7 +21,7 @@ import (
 // @Failure		404				{object}	ResponseV1
 // @Failure		500				{object}	ResponseV1
 // @Router			/api/v1/series/{provider_slug} [get]
-func (h *SeriesHandler) FindPaginated(c echo.Context) error {
+func (h *Handler) FindPaginated(c echo.Context) error {
 	span := newSentrySpan(c.Request().Context(), "v1.FindPaginated")
 	defer span.Finish()
 

@@ -14,8 +14,8 @@ import (
 )
 
 // TODO: exclude novel
-func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *zap.Logger) ([]internal.SeriesListResult, error) {
-	l, err := launcher.NewManaged(browserUrl)
+func ScrapeSeriesList(ctx context.Context, browserURL, listURL string, logger *zap.Logger) ([]internal.SeriesListResult, error) {
+	l, err := launcher.NewManaged(browserURL)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func ScrapeSeriesList(ctx context.Context, browserUrl, listUrl string, logger *z
 
 	defer browser.MustClose()
 
-	pg, err := browser.Page(proto.TargetCreateTarget{URL: listUrl})
+	pg, err := browser.Page(proto.TargetCreateTarget{URL: listURL})
 	if err != nil {
 		return nil, err
 	}
