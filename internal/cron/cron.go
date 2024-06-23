@@ -14,11 +14,13 @@ import (
 )
 
 type JobRepository interface {
+	Create(ctx context.Context, params internal.CreateCronJobParams) (internal.CronJob, error)
 	Upsert(ctx context.Context, params internal.CreateCronJobParams) (internal.CronJob, error)
 	Find(ctx context.Context, id string) (internal.CronJob, error)
 	FindAll(ctx context.Context) ([]internal.CronJob, error)
 	CreateStatus(ctx context.Context, params internal.CreateCronJobStatusParams) (internal.CronJobStatus, error)
 	UpdateStatus(ctx context.Context, params internal.UpdateCronJobStatusParams) (internal.CronJobStatus, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type ProviderRepository interface {
