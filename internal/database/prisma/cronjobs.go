@@ -106,12 +106,10 @@ func (c *CronJobRepo) CreateStatus(ctx context.Context, params internal.CreateCr
 	defer newSentrySpan(ctx, "CronJobRepo.CreateStatus").Finish()
 
 	cronJobStatus, err := c.q.CronJobStatus.CreateOne(
+		CronJobStatus.JobID.Set(params.JobID),
 		CronJobStatus.Status.Set(params.Status),
 		CronJobStatus.Message.Set(params.Message),
 		CronJobStatus.Duration.Set(params.Duration),
-		CronJobStatus.CronJob.Link(
-			CronJob.ID.Equals(params.JobID),
-		),
 	).Exec(ctx)
 	if err != nil {
 		return internal.CronJobStatus{}, internal.WrapErrorf(err, internal.ErrUnknown, "failed to create cron job status")
