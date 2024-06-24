@@ -58,10 +58,7 @@ func TestProviderService_Create(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			tc.modifyParams(&tc.params)
 			tc.mockReturn()
 
@@ -109,10 +106,7 @@ func TestProviderService_Find(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			tc.mockReturn()
 
 			_, err := service.Find(context.Background(), tc.slug)
@@ -159,10 +153,7 @@ func TestProviderService_FindBC(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			tc.mockReturn()
 
 			_, err := service.FindBC(context.Background(), tc.slug)
@@ -209,10 +200,7 @@ func TestProviderService_FindAll(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			tc.mockReturn()
 
 			_, err := service.FindAll(context.Background(), tc.order)
@@ -271,10 +259,7 @@ func TestProviderService_Update(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			tc.modifyParams(&tc.params)
 			tc.mockReturn()
 
@@ -322,10 +307,7 @@ func TestProviderService_Delete(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			t.Parallel()
-
 			tc.mockReturn()
 
 			err := service.Delete(context.Background(), tc.slug)
