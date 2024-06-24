@@ -44,3 +44,15 @@ func (p *ProviderParams) Validate() error {
 
 	return nil
 }
+
+func CreateValidProviderParams() *ProviderParams {
+	isActive := true
+	return &ProviderParams{
+		Slug:     "validSlug",
+		Name:     "validName",
+		Scheme:   "validScheme",
+		Host:     "validHost",
+		ListPath: "validListPath",
+		IsActive: &isActive,
+	}
+}

@@ -5,19 +5,8 @@ import (
 	"testing"
 )
 
-func createValidCreateInitChapterParams() *CreateInitChapterParams {
-	return &CreateInitChapterParams{
-		Provider:   "validProvider",
-		Series:     "validSeries",
-		Slug:       "validSlug",
-		Number:     1,
-		ShortTitle: "validShortTitle",
-		SourceHref: "validSourceHref",
-	}
-}
-
 func TestCreateInitChapterParams_Validate_Valid(t *testing.T) {
-	params := createValidCreateInitChapterParams()
+	params := CcreateValidCreateInitChapterParams()
 
 	err := params.Validate()
 	if err != nil {
@@ -42,7 +31,7 @@ func TestCreateInitChapterParams_Validate_Invalid(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			params := createValidCreateInitChapterParams()
+			params := CcreateValidCreateInitChapterParams()
 			tc.modify(params)
 
 			err := params.Validate()
@@ -58,18 +47,8 @@ func TestCreateInitChapterParams_Validate_Invalid(t *testing.T) {
 	}
 }
 
-func createValidUpdateInitChapterParams() *UpdateInitChapterParams {
-	return &UpdateInitChapterParams{
-		Provider:   "validProvider",
-		Series:     "validSeries",
-		Slug:       "validSlug",
-		FullTitle:  "validFullTitle",
-		SourcePath: "validSourcePath",
-	}
-}
-
 func TestUpdateInitChapterParams_Validate_Valid(t *testing.T) {
-	params := createValidUpdateInitChapterParams()
+	params := CreateValidUpdateInitChapterParams()
 
 	err := params.Validate()
 	if err != nil {
@@ -94,7 +73,7 @@ func TestUpdateInitChapterParams_Validate_Invalid(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			params := createValidUpdateInitChapterParams()
+			params := CreateValidUpdateInitChapterParams()
 			tc.modify(params)
 
 			err := params.Validate()

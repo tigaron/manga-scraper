@@ -5,20 +5,8 @@ import (
 	"testing"
 )
 
-func createValidProviderParams() *ProviderParams {
-	isActive := true
-	return &ProviderParams{
-		Slug:     "validSlug",
-		Name:     "validName",
-		Scheme:   "validScheme",
-		Host:     "validHost",
-		ListPath: "validListPath",
-		IsActive: &isActive,
-	}
-}
-
 func TestCreateProviderParams_Validate_Valid(t *testing.T) {
-	params := createValidProviderParams()
+	params := CreateValidProviderParams()
 
 	err := params.Validate()
 	if err != nil {
@@ -43,7 +31,7 @@ func TestCreateProviderParams_Validate_Invalid(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			params := createValidProviderParams()
+			params := CreateValidProviderParams()
 			tc.modify(params)
 
 			err := params.Validate()

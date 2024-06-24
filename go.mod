@@ -6,8 +6,10 @@ require (
 	github.com/clerk/clerk-sdk-go/v2 v2.0.4
 	github.com/confluentinc/confluent-kafka-go/v2 v2.4.0
 	github.com/getsentry/sentry-go v0.27.0
+	github.com/go-co-op/gocron/v2 v2.7.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/go-rod/rod v0.116.0
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/labstack/gommon v0.4.2
@@ -20,6 +22,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
+	go.uber.org/mock v0.4.0
 	go.uber.org/zap v1.21.0
 	goa.design/model v1.9.8
 )
@@ -36,7 +39,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-chi/chi/v5 v5.0.12 // indirect
-	github.com/go-co-op/gocron/v2 v2.7.0 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.1 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
@@ -45,7 +47,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect

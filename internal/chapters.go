@@ -115,3 +115,24 @@ func (u *UpdateInitChapterParams) Validate() error {
 
 	return nil
 }
+
+func CcreateValidCreateInitChapterParams() *CreateInitChapterParams {
+	return &CreateInitChapterParams{
+		Provider:   "validProvider",
+		Series:     "validSeries",
+		Slug:       "validSlug",
+		Number:     1,
+		ShortTitle: "validShortTitle",
+		SourceHref: "validSourceHref",
+	}
+}
+
+func CreateValidUpdateInitChapterParams() *UpdateInitChapterParams {
+	return &UpdateInitChapterParams{
+		Provider:   "validProvider",
+		Series:     "validSeries",
+		Slug:       "validSlug",
+		FullTitle:  "validFullTitle",
+		SourcePath: "validSourcePath",
+	}
+}
