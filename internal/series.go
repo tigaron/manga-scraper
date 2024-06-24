@@ -120,3 +120,29 @@ func (s *UpdateLatestSeriesParams) Validate() error {
 
 	return nil
 }
+
+func CreateValidInitSeriesParams() *CreateInitSeriesParams {
+	return &CreateInitSeriesParams{
+		Provider:   "provider",
+		Slug:       "slug",
+		Title:      "title",
+		SourcePath: "sourcePath",
+	}
+}
+
+func UpdateValidInitSeriesParams() *UpdateInitSeriesParams {
+	return &UpdateInitSeriesParams{
+		Provider:     "provider",
+		Slug:         "slug",
+		ThumbnailURL: "thumbnailURL",
+	}
+}
+
+func UpdateValidLatestSeriesParams() *UpdateLatestSeriesParams {
+	return &UpdateLatestSeriesParams{
+		Provider:      "provider",
+		Slug:          "slug",
+		AddChapters:   1,
+		LatestChapter: "latestChapter",
+	}
+}

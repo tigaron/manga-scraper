@@ -101,11 +101,17 @@ func (s *SeriesService) Index(ctx context.Context, series []internal.Series) (er
 		err = s.cb.Done(ctx, err)
 	}()
 
+	var loopErr error
+
 	for i := range series {
-		err = s.search.Index(ctx, series[i])
+		err := s.search.Index(ctx, series[i])
+		if err != nil {
+			loopErr = internal.WrapErrorf(err, internal.ErrUnknown, "search.Index")
+			break
+		}
 	}
 
-	return err
+	return loopErr
 }
 
 func (s *SeriesService) Find(ctx context.Context, params internal.FindSeriesParams) (internal.Series, error) {

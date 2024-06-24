@@ -147,3 +147,13 @@ func (s *UpdateScrapeRequestParams) Validate() error {
 
 	return nil
 }
+
+func CreateValidScrapeRequestParams() *CreateScrapeRequestParams {
+	return &CreateScrapeRequestParams{
+		Type:        SeriesListRequestType,
+		Status:      PendingRequestStatus,
+		BaseURL:     "validBaseURL",
+		RequestPath: "validRequestPath",
+		Provider:    "validProvider",
+	}
+}
