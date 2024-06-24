@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '!**_test.go'
       - '!build/**'
       - '!cmd/**'
       - 'cmd/rest-server/**'
