@@ -2,7 +2,7 @@
 CGO_ENABLED = "1"
 
 [phases.setup]
-nixPkgs = ["go", "gcc"]
+nixPkgs = ["go", "musl", "musl-dev", "musl-static"]
 
 [phases.install]
 cmds = [
