@@ -1,36 +1,37 @@
-# name: Deploy
+name: Deploy
 
-# on:
-#   push:
-#     branches: [ main ]
-#     paths:
-#       - '!*_test.go'
-#       - '!build/**'
-#       - '!cmd/**'
-#       - 'cmd/rest-server/**'
-#       - 'docs/**'
-#       - '!docs/diagrams/**'
-#       - 'internal/**'
-#       - '!internal/database/prisma/cronjobs.go'
-#       - '!internal/doc/**'
-#       - '!internal/cron/**'
-#       - '!internal/scraper/**'
-#       - '!migrations/**'
-#       - '!scripts/**'
-#       - '!README.md'
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [ main ]
+  #   paths:
+  #     - '!*_test.go'
+  #     - '!build/**'
+  #     - '!cmd/**'
+  #     - 'cmd/rest-server/**'
+  #     - 'docs/**'
+  #     - '!docs/diagrams/**'
+  #     - 'internal/**'
+  #     - '!internal/database/prisma/cronjobs.go'
+  #     - '!internal/doc/**'
+  #     - '!internal/cron/**'
+  #     - '!internal/scraper/**'
+  #     - '!migrations/**'
+  #     - '!scripts/**'
+  #     - '!README.md'
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-22.04
-#     steps:
-#       - name: Cloning repo
-#         uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 0
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-#       - name: Push to dokku
-#         uses: dokku/github-action@master
-#         with:
-#           branch: main
-#           git_remote_url: ${{ secrets.GIT_REMOTE_URL }}
-#           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Push to dokku
+        uses: dokku/github-action@master
+        with:
+          branch: main
+          git_remote_url: ${{ secrets.GIT_REMOTE_URL }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
