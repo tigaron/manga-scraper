@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	// "github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/opensearch-project/opensearch-go/v2"
 	"go.uber.org/zap"
@@ -16,7 +15,7 @@ import (
 	"fourleaves.studio/manga-scraper/internal/database/prisma"
 	"fourleaves.studio/manga-scraper/internal/elasticsearch"
 
-	// kafkaDomain "fourleaves.studio/manga-scraper/internal/kafka"
+	kafkaDomain "fourleaves.studio/manga-scraper/internal/kafka"
 	"fourleaves.studio/manga-scraper/internal/service"
 )
 
@@ -75,8 +74,8 @@ func main() {
 	seriesSearch := elasticsearch.NewSeriesSearchRepository(esClient)
 
 	scraperRepo := prisma.NewScraperRepo(dbClient)
-	// scaperMessageBroker := kafkaDomain.NewScraperMessageBroker(kafkaClient)
-	scraperService := service.NewScraperCronService(scraperRepo /* scaperMessageBroker, */, logger)
+	scaperMessageBroker := kafkaDomain.NewScraperMessageBroker(kafkaClient)
+	scraperService := service.NewScraperCronService(scraperRepo, scaperMessageBroker, logger)
 
 	cronWorker := cron.NewCron(providerRepo, seriesRepo, cronRepo, scraperService, seriesSearch, logger)
 

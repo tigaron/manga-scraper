@@ -47,10 +47,10 @@ func NewScraperService(repo ScrapeRequestRepository, msgBroker ScrapeRequestMess
 	}
 }
 
-func NewScraperCronService(repo ScrapeRequestRepository /* msgBroker ScrapeRequestMessageBroker, */, logger *zap.Logger) *ScraperService {
+func NewScraperCronService(repo ScrapeRequestRepository, msgBroker ScrapeRequestMessageBroker, logger *zap.Logger) *ScraperService {
 	return &ScraperService{
-		repo: repo,
-		// msgBroker: msgBroker,
+		repo:      repo,
+		msgBroker: msgBroker,
 		cb: circuitbreaker.New(
 			circuitbreaker.WithOpenTimeout(time.Minute*2),
 			circuitbreaker.WithTripFunc(circuitbreaker.NewTripFuncConsecutiveFailures(3)),
