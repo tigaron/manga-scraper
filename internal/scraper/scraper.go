@@ -1,16 +1,16 @@
 package scraper
 
 import (
-	"bytes"
+	// "bytes"
 	"context"
-	"encoding/json"
+	// "encoding/json"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	// "github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"go.uber.org/zap"
 
 	"fourleaves.studio/manga-scraper/internal"
@@ -46,33 +46,33 @@ type ScrapeRequestRepository interface {
 }
 
 type Scraper struct {
-	repo        ScrapeRequestRepository
-	series      SeriesRepository
-	chapter     ChapterRepository
-	kafkaClient *kafka.Consumer
-	logger      *zap.Logger
-	browserURL  string
-	doneC       chan struct{}
-	closeC      chan struct{}
+	repo    ScrapeRequestRepository
+	series  SeriesRepository
+	chapter ChapterRepository
+	// kafkaClient *kafka.Consumer
+	logger     *zap.Logger
+	browserURL string
+	doneC      chan struct{}
+	closeC     chan struct{}
 }
 
 func NewScraper(
 	repo ScrapeRequestRepository,
 	series SeriesRepository,
 	chapter ChapterRepository,
-	kafkaClient *kafka.Consumer,
+	// kafkaClient *kafka.Consumer,
 	logger *zap.Logger,
 	browserURL string,
 ) *Scraper {
 	return &Scraper{
-		repo:        repo,
-		series:      series,
-		chapter:     chapter,
-		kafkaClient: kafkaClient,
-		logger:      logger,
-		browserURL:  browserURL,
-		doneC:       make(chan struct{}),
-		closeC:      make(chan struct{}),
+		repo:    repo,
+		series:  series,
+		chapter: chapter,
+		// kafkaClient: kafkaClient,
+		logger:     logger,
+		browserURL: browserURL,
+		doneC:      make(chan struct{}),
+		closeC:     make(chan struct{}),
 	}
 }
 
@@ -94,7 +94,7 @@ func (s *Scraper) StartServer() (<-chan error, error) {
 
 		defer func() {
 			_ = s.logger.Sync()
-			_ = s.kafkaClient.Unsubscribe()
+			// _ = s.kafkaClient.Unsubscribe()
 
 			stop()
 			cancel()
@@ -120,71 +120,71 @@ func (s *Scraper) StartServer() (<-chan error, error) {
 }
 
 func (s *Scraper) ListenAndServe() error {
-	commit := func(msg *kafka.Message) {
-		if _, err := s.kafkaClient.CommitMessage(msg); err != nil {
-			s.logger.Error("commit failed", zap.Error(err))
-		}
-	}
+	// commit := func(msg *kafka.Message) {
+	// 	if _, err := s.kafkaClient.CommitMessage(msg); err != nil {
+	// 		s.logger.Error("commit failed", zap.Error(err))
+	// 	}
+	// }
 
-	go func() {
-		run := true
+	// go func() {
+	// 	run := true
 
-		for run {
-			select {
-			case <-s.closeC:
-				run = false
-			default:
-				msg, ok := s.kafkaClient.Poll(150).(*kafka.Message)
-				if !ok {
-					continue
-				}
+	// 	for run {
+	// 		select {
+	// 		case <-s.closeC:
+	// 			run = false
+	// 		default:
+	// 			msg, ok := s.kafkaClient.Poll(150).(*kafka.Message)
+	// 			if !ok {
+	// 				continue
+	// 			}
 
-				var evt struct {
-					Type  string
-					Value internal.ScrapeRequest
-				}
+	// 			var evt struct {
+	// 				Type  string
+	// 				Value internal.ScrapeRequest
+	// 			}
 
-				if err := json.NewDecoder(bytes.NewReader(msg.Value)).Decode(&evt); err != nil {
-					s.logger.Info("Ignoring message, invalid", zap.Error(err))
-					commit(msg)
+	// 			if err := json.NewDecoder(bytes.NewReader(msg.Value)).Decode(&evt); err != nil {
+	// 				s.logger.Info("Ignoring message, invalid", zap.Error(err))
+	// 				commit(msg)
 
-					continue
-				}
+	// 				continue
+	// 			}
 
-				timeout := 2 * time.Minute
+	// 			timeout := 2 * time.Minute
 
-				ctx, cancel := context.WithTimeout(context.Background(), timeout)
-				defer cancel()
+	// 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	// 			defer cancel()
 
-				// TODO: retry on temp network error
-				switch evt.Type {
-				case string(internal.SeriesListRequestType):
-					if err := s.ScrapeSeriesList(ctx, evt.Value); err != nil {
-						s.logger.Error("ScrapeSeriesList failed", zap.Error(err))
-					}
-				case string(internal.SeriesDetailRequestType):
-					if err := s.ScrapeSeriesDetail(ctx, evt.Value); err != nil {
-						s.logger.Error("ScrapeSeriesDetail failed", zap.Error(err))
-					}
-				case string(internal.ChapterListRequestType):
-					if err := s.ScrapeChapterList(ctx, evt.Value); err != nil {
-						s.logger.Error("ScrapeChapterList failed", zap.Error(err))
-					}
-				case string(internal.ChapterDetailRequestType):
-					if err := s.ScrapeChapterDetail(ctx, evt.Value); err != nil {
-						s.logger.Error("ScrapeChapterDetail failed", zap.Error(err))
-					}
-				}
+	// 			// TODO: retry on temp network error
+	// 			switch evt.Type {
+	// 			case string(internal.SeriesListRequestType):
+	// 				if err := s.ScrapeSeriesList(ctx, evt.Value); err != nil {
+	// 					s.logger.Error("ScrapeSeriesList failed", zap.Error(err))
+	// 				}
+	// 			case string(internal.SeriesDetailRequestType):
+	// 				if err := s.ScrapeSeriesDetail(ctx, evt.Value); err != nil {
+	// 					s.logger.Error("ScrapeSeriesDetail failed", zap.Error(err))
+	// 				}
+	// 			case string(internal.ChapterListRequestType):
+	// 				if err := s.ScrapeChapterList(ctx, evt.Value); err != nil {
+	// 					s.logger.Error("ScrapeChapterList failed", zap.Error(err))
+	// 				}
+	// 			case string(internal.ChapterDetailRequestType):
+	// 				if err := s.ScrapeChapterDetail(ctx, evt.Value); err != nil {
+	// 					s.logger.Error("ScrapeChapterDetail failed", zap.Error(err))
+	// 				}
+	// 			}
 
-				s.logger.Info("Consumed", zap.String("type", evt.Type), zap.String("id", evt.Value.ID))
-				commit(msg)
-			}
-		}
+	// 			s.logger.Info("Consumed", zap.String("type", evt.Type), zap.String("id", evt.Value.ID))
+	// 			commit(msg)
+	// 		}
+	// 	}
 
-		s.logger.Info("No more messages to consume. Exiting.")
+	// 	s.logger.Info("No more messages to consume. Exiting.")
 
-		s.doneC <- struct{}{}
-	}()
+	// 	s.doneC <- struct{}{}
+	// }()
 
 	return nil
 }

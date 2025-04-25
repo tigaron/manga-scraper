@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	// "github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"go.uber.org/zap"
 
 	"fourleaves.studio/manga-scraper/internal/config"
@@ -32,23 +32,23 @@ func main() {
 		log.Fatal("[main] failed to connect to database: ", err)
 	}
 
-	kafkaClient, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers":  envConfig.KafkaURL,
-		"sasl.mechanism":     "SCRAM-SHA-256",
-		"security.protocol":  "SASL_SSL",
-		"sasl.username":      envConfig.KafkaUsername,
-		"sasl.password":      envConfig.KafkaPassword,
-		"group.id":           "scraper-worker",
-		"auto.offset.reset":  "earliest",
-		"enable.auto.commit": false,
-	})
-	if err != nil {
-		log.Fatal("[main] failed to create kafka client: ", err)
-	}
+	// kafkaClient, err := kafka.NewConsumer(&kafka.ConfigMap{
+	// 	"bootstrap.servers":  envConfig.KafkaURL,
+	// 	"sasl.mechanism":     "SCRAM-SHA-256",
+	// 	"security.protocol":  "SASL_SSL",
+	// 	"sasl.username":      envConfig.KafkaUsername,
+	// 	"sasl.password":      envConfig.KafkaPassword,
+	// 	"group.id":           "scraper-worker",
+	// 	"auto.offset.reset":  "earliest",
+	// 	"enable.auto.commit": false,
+	// })
+	// if err != nil {
+	// 	log.Fatal("[main] failed to create kafka client: ", err)
+	// }
 
-	if err := kafkaClient.Subscribe("scrape-request", nil); err != nil {
-		log.Fatal("[main] failed to subscribe to kafka topic: ", err)
-	}
+	// if err := kafkaClient.Subscribe("scrape-request", nil); err != nil {
+	// 	log.Fatal("[main] failed to subscribe to kafka topic: ", err)
+	// }
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -59,7 +59,7 @@ func main() {
 	chapterRepo := prisma.NewChapterRepo(dbClient)
 	scraperRepo := prisma.NewScraperRepo(dbClient)
 
-	scraperService := scraper.NewScraper(scraperRepo, seriesRepo, chapterRepo, kafkaClient, logger, envConfig.RodURL)
+	scraperService := scraper.NewScraper(scraperRepo, seriesRepo, chapterRepo /* kafkaClient, */, logger, envConfig.RodURL)
 
 	errC, err := scraperService.StartServer()
 	if err != nil {
