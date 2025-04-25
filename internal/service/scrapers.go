@@ -28,10 +28,10 @@ type ScraperService struct {
 	cb        *circuitbreaker.CircuitBreaker
 }
 
-func NewScraperService(repo ScrapeRequestRepository, msgBroker ScrapeRequestMessageBroker, logger echo.Logger) *ScraperService {
+func NewScraperService(repo ScrapeRequestRepository /* msgBroker ScrapeRequestMessageBroker, */, logger echo.Logger) *ScraperService {
 	return &ScraperService{
-		repo:      repo,
-		msgBroker: msgBroker,
+		repo: repo,
+		// msgBroker: msgBroker,
 		cb: circuitbreaker.New(
 			circuitbreaker.WithOpenTimeout(time.Minute*2),
 			circuitbreaker.WithTripFunc(circuitbreaker.NewTripFuncConsecutiveFailures(3)),

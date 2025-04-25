@@ -10,7 +10,7 @@ cmds = [
 [phases.build]
 cmds = [
   "go run github.com/steebchen/prisma-client-go generate",
-  "go build -o out fourleaves.studio/manga-scraper/cmd/rest-server/main.go"
+  "CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags \"-extldflags \\\"-static\\\"\" -o out fourleaves.studio/manga-scraper/cmd/rest-server"
 ]
 
 [start]
