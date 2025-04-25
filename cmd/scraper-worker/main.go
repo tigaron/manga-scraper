@@ -34,10 +34,6 @@ func main() {
 
 	kafkaClient, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":  envConfig.KafkaURL,
-		"sasl.mechanism":     "SCRAM-SHA-256",
-		"security.protocol":  "SASL_SSL",
-		"sasl.username":      envConfig.KafkaUsername,
-		"sasl.password":      envConfig.KafkaPassword,
 		"group.id":           "scraper-worker",
 		"auto.offset.reset":  "earliest",
 		"enable.auto.commit": false,

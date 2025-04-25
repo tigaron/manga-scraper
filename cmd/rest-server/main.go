@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	// "github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/getsentry/sentry-go"
 	"github.com/opensearch-project/opensearch-go/v2"
 
@@ -75,18 +75,14 @@ func main() {
 		log.Fatal("[main] failed to create elasticsearch client: ", err)
 	}
 
-	// kafkaClient, err := kafka.NewProducer(&kafka.ConfigMap{
-	// 	"bootstrap.servers": envConfig.KafkaURL,
-	// 	"sasl.mechanism":    "SCRAM-SHA-256",
-	// 	"security.protocol": "SASL_SSL",
-	// 	"sasl.username":     envConfig.KafkaUsername,
-	// 	"sasl.password":     envConfig.KafkaPassword,
-	// })
-	// if err != nil {
-	// 	log.Fatal("[main] failed to create kafka client: ", err)
-	// }
+	kafkaClient, err := kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": envConfig.KafkaURL,
+	})
+	if err != nil {
+		log.Fatal("[main] failed to create kafka client: ", err)
+	}
 
-	srv := server.NewRESTServer(envConfig, dbClient, esClient /* , kafkaClient */)
+	srv := server.NewRESTServer(envConfig, dbClient, esClient, kafkaClient)
 	errC, err := srv.StartServer()
 	if err != nil {
 		log.Fatal("[main] couldn't run: ", err)
