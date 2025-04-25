@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	// "github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/opensearch-project/opensearch-go/v2"
 	"go.uber.org/zap"
 
@@ -14,7 +14,8 @@ import (
 	"fourleaves.studio/manga-scraper/internal/cron"
 	"fourleaves.studio/manga-scraper/internal/database/prisma"
 	"fourleaves.studio/manga-scraper/internal/elasticsearch"
-	kafkaDomain "fourleaves.studio/manga-scraper/internal/kafka"
+
+	// kafkaDomain "fourleaves.studio/manga-scraper/internal/kafka"
 	"fourleaves.studio/manga-scraper/internal/service"
 )
 
@@ -53,17 +54,17 @@ func main() {
 		log.Fatal("[main] failed to create elasticsearch client: ", err)
 	}
 
-	kafkaClient, err := kafka.NewProducer(&kafka.ConfigMap{
-		"bootstrap.servers": envConfig.KafkaURL,
-		"sasl.mechanism":    "SCRAM-SHA-256",
-		"security.protocol": "SASL_SSL",
-		"sasl.username":     envConfig.KafkaUsername,
-		"sasl.password":     envConfig.KafkaPassword,
-	})
-	if err != nil {
-		log.Fatal("[main] failed to create kafka client: ", err)
-	}
-	defer kafkaClient.Close()
+	// kafkaClient, err := kafka.NewProducer(&kafka.ConfigMap{
+	// 	"bootstrap.servers": envConfig.KafkaURL,
+	// 	"sasl.mechanism":    "SCRAM-SHA-256",
+	// 	"security.protocol": "SASL_SSL",
+	// 	"sasl.username":     envConfig.KafkaUsername,
+	// 	"sasl.password":     envConfig.KafkaPassword,
+	// })
+	// if err != nil {
+	// 	log.Fatal("[main] failed to create kafka client: ", err)
+	// }
+	// defer kafkaClient.Close()
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -77,8 +78,8 @@ func main() {
 	seriesSearch := elasticsearch.NewSeriesSearchRepository(esClient)
 
 	scraperRepo := prisma.NewScraperRepo(dbClient)
-	scaperMessageBroker := kafkaDomain.NewScraperMessageBroker(kafkaClient)
-	scraperService := service.NewScraperCronService(scraperRepo, scaperMessageBroker, logger)
+	// scaperMessageBroker := kafkaDomain.NewScraperMessageBroker(kafkaClient)
+	scraperService := service.NewScraperCronService(scraperRepo /* scaperMessageBroker, */, logger)
 
 	cronWorker := cron.NewCron(providerRepo, seriesRepo, cronRepo, scraperService, seriesSearch, logger)
 
