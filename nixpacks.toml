@@ -2,10 +2,16 @@
 nixPkgs = ["go"]
 
 [phases.install]
-cmds = ["go mod download", "go run github.com/steebchen/prisma-client-go prefetch"]
+cmds = [
+  "go mod download",
+  "go run github.com/steebchen/prisma-client-go prefetch"
+]
 
 [phases.build]
-cmds = ["go run github.com/steebchen/prisma-client-go generate", "CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o out ./cmd/rest-server/main.go"]
+cmds = [
+  "go run github.com/steebchen/prisma-client-go generate",
+  "CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags \"-extldflags \\\"-static\\\"\" -o out ./cmd/rest-server/main.go"
+]
 
 [start]
 cmd = "./out"
