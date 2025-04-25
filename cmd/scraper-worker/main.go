@@ -42,9 +42,9 @@ func main() {
 		log.Fatal("[main] failed to create kafka client: ", err)
 	}
 
-	// if err := kafkaClient.Subscribe("scrape-request", nil); err != nil {
-	// 	log.Fatal("[main] failed to subscribe to kafka topic: ", err)
-	// }
+	if err := kafkaClient.Subscribe("scrape-request", nil); err != nil {
+		log.Fatal("[main] failed to subscribe to kafka topic: ", err)
+	}
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -55,7 +55,7 @@ func main() {
 	chapterRepo := prisma.NewChapterRepo(dbClient)
 	scraperRepo := prisma.NewScraperRepo(dbClient)
 
-	scraperService := scraper.NewScraper(scraperRepo, seriesRepo, chapterRepo /* kafkaClient, */, logger, envConfig.RodURL)
+	scraperService := scraper.NewScraper(scraperRepo, seriesRepo, chapterRepo, kafkaClient, logger, envConfig.RodURL)
 
 	errC, err := scraperService.StartServer()
 	if err != nil {
