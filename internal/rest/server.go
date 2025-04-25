@@ -13,7 +13,7 @@ import (
 	"fourleaves.studio/manga-scraper/internal/database/redis"
 	"fourleaves.studio/manga-scraper/internal/elasticsearch"
 
-	// kafkaDomain "fourleaves.studio/manga-scraper/internal/kafka"
+	kafkaDomain "fourleaves.studio/manga-scraper/internal/kafka"
 	"fourleaves.studio/manga-scraper/internal/rest/middlewares"
 	v1Handler "fourleaves.studio/manga-scraper/internal/rest/v1"
 	chapterHandler "fourleaves.studio/manga-scraper/internal/rest/v1/chapters"
@@ -23,7 +23,7 @@ import (
 	"fourleaves.studio/manga-scraper/internal/service"
 	"github.com/clerk/clerk-sdk-go/v2"
 
-	// "github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/getsentry/sentry-go"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -34,14 +34,14 @@ import (
 )
 
 type RESTServer struct {
-	router   *echo.Echo
-	config   *config.Config
-	dbClient *prisma.PrismaClient
-	esClient *opensearch.Client
-	// kafkaClient *kafka.Producer
+	router      *echo.Echo
+	config      *config.Config
+	dbClient    *prisma.PrismaClient
+	esClient    *opensearch.Client
+	kafkaClient *kafka.Producer
 }
 
-func NewRESTServer(config *config.Config, dbClient *prisma.PrismaClient, esClient *opensearch.Client /* , kafkaClient *kafka.Producer */) *RESTServer {
+func NewRESTServer(config *config.Config, dbClient *prisma.PrismaClient, esClient *opensearch.Client, kafkaClient *kafka.Producer) *RESTServer {
 	router := echo.New()
 	router.Use(middleware.Logger())
 	router.Use(middleware.Recover())
@@ -88,8 +88,8 @@ func NewRESTServer(config *config.Config, dbClient *prisma.PrismaClient, esClien
 	chapterHandler.NewChapterHandler(chapterService).Register(router.Group("/api/v1/chapters"))
 
 	scraperRepo := prisma.NewScraperRepo(dbClient)
-	// scaperMessageBroker := kafkaDomain.NewScraperMessageBroker(kafkaClient)
-	scraperService := service.NewScraperService(scraperRepo /* scaperMessageBroker, */, router.Logger)
+	scaperMessageBroker := kafkaDomain.NewScraperMessageBroker(kafkaClient)
+	scraperService := service.NewScraperService(scraperRepo, scaperMessageBroker, router.Logger)
 	scraperHandler.NewScraperHandler(scraperService, providerCache, seriesCache, chapterCache).Register(router.Group("/api/v1/scrapers"), mid)
 
 	router.GET("/health", v1Handler.GetHealthCheck)
@@ -97,11 +97,11 @@ func NewRESTServer(config *config.Config, dbClient *prisma.PrismaClient, esClien
 	router.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	return &RESTServer{
-		router:   router,
-		config:   config,
-		dbClient: dbClient,
-		esClient: esClient,
-		// kafkaClient: kafkaClient,
+		router:      router,
+		config:      config,
+		dbClient:    dbClient,
+		esClient:    esClient,
+		kafkaClient: kafkaClient,
 	}
 }
 
@@ -123,7 +123,7 @@ func (s *RESTServer) StartServer() (<-chan error, error) {
 
 	defer func() {
 		_ = s.dbClient.Disconnect()
-		// s.kafkaClient.Close()
+		s.kafkaClient.Close()
 		sentry.Flush(2 * time.Second)
 		stop()
 		cancel()
