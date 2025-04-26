@@ -17,6 +17,10 @@ func (s *Cron) scheduleJobs(scheduler gocron.Scheduler) error {
 	}
 
 	for i := range cronjobs {
+		if cronjobs[i].Tags == "skip" {
+			return nil
+		}
+
 		switch cronjobs[i].Name {
 		case "scrape-series-list":
 			err = s.createNewJob(scheduler, cronjobs[i].Crontab, cronjobs[i].Name, s.scrapeSeriesList, cronjobs[i].ID)
