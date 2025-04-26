@@ -14,7 +14,7 @@ cmds = [
 cmds = [
   "printenv > .env",
   "go run github.com/steebchen/prisma-client-go generate",
-  "CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags \"-extldflags \\\"-static\\\"\" -o out fourleaves.studio/manga-scraper/cmd/cron-worker"
+  "CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o out fourleaves.studio/manga-scraper/cmd/cron-worker"
 ]
 
 [start]
