@@ -84,7 +84,7 @@ func (s *Cron) createNewJob(scheduler gocron.Scheduler, crontab, name string, jo
 		ID:      job.ID().String(),
 		Name:    job.Name(),
 		Crontab: crontab,
-		Tags:    "",
+		Tags:    "skip",
 	})
 	if err != nil {
 		return internal.WrapErrorf(err, internal.ErrUnknown, "Failed to create new job")
